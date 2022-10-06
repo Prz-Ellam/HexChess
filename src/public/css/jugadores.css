@@ -1,0 +1,60 @@
+.container-box {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+body{
+    transition: all .3s;
+}
+
+body::after{
+    content: '';
+    width:100%;
+    height:100%;
+    position: fixed;
+    top: -100vw;
+    left:0;
+    transition: all .3s;
+}
+
+.loading::after{
+    top:0 ;
+}
+
+.title::after {
+    content: "SELECCIONA LOS JUGADORES";
+}
+
+/*Btn-1 Player*/
+#btn-1player {
+    position: relative;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-bottom: 150px;
+}
+
+/*Btn-MultiPlayer*/
+#btn-multiplayer {
+    position: relative; 
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-top:-150px;
+    margin-bottom: 150px;
+}
+
+/*Btn-Return*/
+#btn-return {
+    position: absolute;
+    right: 2em;
+    top: 2em;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+}
+    
+#btn-return span{
+    z-index: 1;
+}

@@ -1,0 +1,56 @@
+.container-box {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.title::after {
+    content: "SELECCIONA EL MODO DE JUEGO";
+}
+
+/*Btn-Jaque Mate*/
+#btn-mate {
+    position: relative;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-bottom: 150px;
+}
+
+#btn-mate span {
+    z-index: 1;
+}
+
+/*Btn-Jaque Mate*/
+#btn-guerra {
+    position: relative;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-bottom: 150px;
+}
+
+#btn-guerra span {
+    z-index: 1;
+}
+
+/*Btn-Return*/
+#btn-return{
+    position: absolute;
+    right: 2em;
+    top: 2em;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    transition: 0.5s;
+}
+
+#btn-return::before{
+    content: '';
+    inset: 2px;
+    background: #27282c;
+}
+     
+#btn-return span {
+    z-index: 1;
+}

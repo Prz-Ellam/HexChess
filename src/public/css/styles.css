@@ -1,0 +1,95 @@
+* {
+    margin:0;
+    padding:0;
+}
+
+body {
+    background:#0c192c !important;
+    overflow: hidden;
+}
+
+body::before {
+    position: absolute;
+    content: "";
+    background: linear-gradient(45deg,#CC2F64,#8A2FCC);
+    width: 100%;
+    min-height: 100vh;
+    top: 0;
+    left: 0;
+    opacity: 0.1;
+    z-index: -1;
+}
+
+h2 {
+    font-family: 'Silkscreen', cursive;
+    color:#fff;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    font-size: 42px;
+    text-shadow: 0 0 20px  #A29CD7;
+}
+
+.button {
+    background: #444;
+    color: #fff;
+    border-color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Silkscreen', cursive;
+    transition: 0.5s;
+    border-radius: 8px;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.button:hover{
+    color: var(--clr);
+    border-color: var(--clr);
+    box-shadow: 0 0 35px var(--clr);
+}
+
+.button::before {
+    content: '';
+    inset: 2px;
+    background: #27282c;
+}
+
+.widget::before {
+    content: '';
+    position: absolute;
+    left: 15%;
+    top: -5%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: skewX(325deg);
+    transition:0.5s;
+}
+
+.button-anim:hover .widget::before {
+    width: 20px; 
+    left: 80%;
+}
+     
+.button-anim .widget::after {
+    content:'';
+    position:absolute;
+    top: 95%;
+    left: 80%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: skewX(325deg);
+    transition:0.5s;
+}
+     
+.button-anim:hover .widget::after {
+    width: 20px;
+    left: 15%;
+}
+
+.container-box {
+    position: relative;
+    text-align: center;
+    width: 100%;
+}

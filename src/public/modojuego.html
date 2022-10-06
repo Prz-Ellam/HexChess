@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Modo Juego</title>
+
+    <link rel="stylesheet" href="./css/bubbles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/modo.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+
+    <!--Script-->
+    <script defer type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+    <script defer type="text/javascript" src="js/bubbles.js"></script>
+    <script defer type="text/javascript" src="js/locations.js"></script>
+</head>
+<body>
+    <div class="bubbles-circle"></div>
+    <div class="container-box">
+        <h2 class="title"></h2>
+
+        <!--Btn Check Mate-->
+        <div id="contain-mate">
+            <button class="button button-anim" onclick="modojuego()" id="btn-mate" style="--clr:#8A7DFD">
+                <span>MODO JAQUE MATE</span>
+                <i class="widget"></i>
+             </button>
+        </div>
+    
+        <!--Btn Guerra Fría-->
+        <div id="contain-guerra">
+            <button class="button button-anim" onclick="modojuego()" id="btn-guerra" style="--clr:#8A7DFD">
+                <span>MODO GUERRA FRÍA</span>
+                <i class="widget"></i>
+             </button>
+        </div>
+
+        <!--Btn Return-->
+        <div>
+            <button class="button" onclick="regresarJ()" id="btn-return" style="--clr:#8A7DFD">
+                <span></span>
+                <i id="#regreso"></i>
+                <i class='bx bx-undo'></i>
+            </button>
+        </div>       
+    </div>
+</body>
+</html>

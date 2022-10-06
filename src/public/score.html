@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HexChess</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/score.css">
+    <link rel="stylesheet" href="./css/stars.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="loader-wrapper">
+        <h5>Cargando...</h5>
+        <div class="loader">
+            <span style="--i:1"></span>
+            <span style="--i:2"></span>
+            <span style="--i:3"></span>
+            <span style="--i:4"></span>
+            <span style="--i:5"></span>
+            <span style="--i:6"></span>
+            <span style="--i:7"></span>
+            <span style="--i:8"></span>
+            <span style="--i:9"></span>
+            <span style="--i:10"></span>
+            <span style="--i:11"></span>
+            <span style="--i:12"></span>
+            <span style="--i:13"></span>
+            <span style="--i:14"></span>
+            <span style="--i:15"></span>
+            <span style="--i:16"></span>
+            <span style="--i:17"></span>
+            <span style="--i:18"></span>
+            <span style="--i:19"></span>
+            <span style="--i:20"></span>
+        </div>
+    </div>
+
+    <div class="container-box">
+        <h2>PUNTAJES</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Rank
+                    </th>
+                    <th>
+                        Nombre
+                    </th>
+                    <th>
+                        Score
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        1
+                    </td>
+                    <td>Eliam</td>
+                    <td>2000 pts</td>
+                </tr>
+                <tr>
+                    <td>
+                        2
+                    </td>
+                    <td>Zaira</td>
+                    <td>1300 pts</td>
+                </tr>
+                <tr>
+                    <td>
+                        3
+                    </td>
+                    <td>Debahni</td>
+                    <td>1000 pts</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--Stars-->
+        <div class="wrapper">
+            <div id="stars"></div>
+            <div id="stars2"></div>
+            <div id="stars3"></div>
+        </div>
+    </div>
+
+    <!--Btn Return-->
+    <button class="button" type="submit" onclick="regresar()" id="btn-return" style="--clr:#8A7DFD">
+        <span></span>
+        <i id="#regreso"></i>
+        <i class='bx bx-undo'></i>
+    </button>
+
+    <!--Scripts-->
+    <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="js/score.js"></script>
+    <script type="text/javascript" src="js/load.js"></script>
+    <script type="text/javascript" src="js/locations.js"></script>
+</body>
+</html>
