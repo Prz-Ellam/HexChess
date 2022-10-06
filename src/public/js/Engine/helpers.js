@@ -11,9 +11,8 @@ export function getContainerObjByChild(obj) {
 
 export function getObjectsByProperty(object, property, value, result = [])
 {
-
     // check the current object
-    if (object[property] === value ) result.push(object);
+    if (object[property] === value) result.push(object);
   
     // check children
     for (let i = 0, l = object.children.length; i < l; i++) {

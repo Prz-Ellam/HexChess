@@ -32,7 +32,18 @@ export class Character {
             model.position.z = hexagon.position.z;
             model.typeGame = 'Character';
             model.cell = hexagon.name;
-            model.movement = '2';
+
+            var regex = new RegExp(/\((\d+), (\d+)\)/);
+            var values = regex.exec(model.cell);
+
+            if (values[2] < 5) {
+                model.team = 'A';
+                model.rotation.z = 135;
+            }
+            else
+            {
+                model.team = 'B';
+            }
 
             model.userData.isContainer = true;
             model.findMoves = this.findMoves;
@@ -56,50 +67,7 @@ export class Character {
 
     findMoves(x, z)
     {
-        /*
-        let type = '2';
-        switch (type)
-        {
-            case '1': {
-                const valids = [];
-
-                let coords = [];
-                coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z - 1));
-                coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z + 1));
-                coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z - 1));
-                coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z + 1));
-
-                coords = coords.filter(coord => 
-                    coord.x <= this.boardCount.x && coord.x >= 1 && 
-                    coord.y <= this.boardCount.y && coord.y >= 1
-                );
-
-                coords.forEach(coords => valids.push(`(${coords.x}, ${coords.y})`))
-                
-                return valids;
-            }
-            case '2': {
-                const valids = [];
-
-                let coords = [];
-                coords.push(new THREE.Vector2(x - 1, z));
-                coords.push(new THREE.Vector2(x + 1, z));
-                coords.push(new THREE.Vector2(x + (1 - z % 2), z - 1));
-                coords.push(new THREE.Vector2(x + (1 - z % 2), z + 1));
-                coords.push(new THREE.Vector2(x - (z % 2), z - 1));
-                coords.push(new THREE.Vector2(x - (z % 2), z + 1));
-
-                coords = coords.filter(coord => 
-                    coord.x <= this.boardCount.x && coord.x >= 1 && 
-                    coord.y <= this.boardCount.y && coord.y >= 1
-                );
-
-                coords.forEach(coords => valids.push(`(${coords.x}, ${coords.y})`))
-                
-                return valids;
-            }
-        }
-        */
+        
     }
 
 }

@@ -3,10 +3,8 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 
 import { Board } from './Game/board.js';
-import { Character } from './Game/character.js';
-import { Knight } from './Game/knight.js';
-import { Monk } from './Game/monk.js';
 import { getObjectsByProperty, getContainerObjByChild } from './Engine/helpers.js';
+import { BoardDirector } from './Game/board-director.js';
 
 class Application
 {
@@ -88,15 +86,8 @@ class Application
 
         const board = new Board(this.scene, new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector2(10, 10), 1.75);
 
-        //const character  = new Character(this.scene, board, 'models/Monk/scene.gltf', '(4, 4)');
-        const monk  = new Monk(this.scene, board, '(4, 4)');
-        const knight = new Knight(this.scene, board, '(2, 4)');
-
-        const character2 = new Character(this.scene, board, 'models/Peasant/scene.gltf', '(9, 8)');
-        //const character3 = new Character(this.scene, board, 'models/Knight/scene.gltf', '(2, 4)');
-        const character5 = new Character(this.scene, board, 'models/Damsel/scene.gltf', '(5, 5)');
-        const character6 = new Character(this.scene, board, 'models/Scarecrow/scene.gltf', '(8, 3)');
-        const character7 = new Character(this.scene, board, 'models/Baba Yaga/scene.gltf', '(1, 1)');
+        const boardDirector = new BoardDirector();
+        boardDirector.create(this.scene, board);
 
         this.raycaster = new THREE.Raycaster();
         this.change = false;
@@ -143,6 +134,13 @@ class Application
                 && object.name !== '' && this.selectedObject !== null
                 && object.isValid === true) {
 
+                var e = getObjectsByProperty(this.scene, 'cell', object.name);
+                if (e.length !== 0) 
+                {
+                    this.scene.remove(e[0]);
+                }
+    
+
                 this.selectedObject.cell = object.name;
 
                 const validsCells = getObjectsByProperty(this.scene, 'isValid', true);
@@ -167,12 +165,28 @@ class Application
                 const cellCoords = container.cell;
                 const cell = this.scene.getObjectByName(cellCoords);
 
-                const x = Number(cell.name.substr(1, cell.name.indexOf(',') - 1));
-                const z = Number(cell.name.substr(cell.name.indexOf(',') + 2, cell.name.length - cell.name.indexOf(')')));
+                var regex = new RegExp(/\((\d+), (\d+)\)/);
+                var values = regex.exec(container.cell);
 
-                const moves = container.findMoves(x, z);
+                const x = Number(values[1]);
+                const z = Number(values[2]);
 
-                //console.log(moves);
+                var moves = container.findMoves(x, z);
+
+                moves = moves.filter(coord => {
+                    object = getObjectsByProperty(this.scene, 'cell' ,coord);
+
+                    if (object.length === 0)
+                    {
+                        return true;
+                    }
+                    if (object[0].team !== container.team)
+                    {
+                        return true;
+                    }
+                    return false;
+
+                });
 
                 moves.forEach((coords) => {
                     const cell = this.scene.getObjectByName(coords, true);
