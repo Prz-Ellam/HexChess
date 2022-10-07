@@ -1,5 +1,6 @@
 HexChess
 
+<p>
 <a><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" /></a>
 
 <a><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg" /><a>
@@ -10,3 +11,4 @@ HexChess
                     
 <a><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/socketio/socketio-original.svg" /></a>
           
+</p>
