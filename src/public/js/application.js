@@ -1,6 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
+import { TWEEN } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/libs/tween.module.min.js';
+import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
+
 
 import { Board } from './Game/board.js';
 import { getObjectsByProperty, getContainerObjByChild } from './Engine/helpers.js';
@@ -93,6 +96,61 @@ class Application
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
 
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(
+            'models/Peasant/Peasant.fbx',
+            (object) => {
+                object.traverse(function (child) {
+                    if (child.isMesh)
+                    {
+                        const oldMat = child.material;
+
+                        child.material = new THREE.MeshPhysicalMaterial( {  
+                        color: oldMat.color,
+                        map: oldMat.map,
+                        skinning: true
+                        //etc
+                        } );
+                    }
+                    child.castShadow = true;
+                })
+                object.position.y = 1;
+                object.scale.set(.01, .01, .01);
+
+
+                const tween = new TWEEN.Tween(
+                    {
+                        x: 0,
+                        y: 1,
+                        z: 0
+                    }
+                ).to(
+                    {
+                        x: 2,
+                        y: 1,
+                        z: 2
+                    }, 2000
+                ).onUpdate((coords, elapsed) => {
+                    object.position.set(coords.x, coords.y, coords.z);
+                }).repeat(10);
+
+
+
+                const animLoader = new FBXLoader();
+                animLoader.load('models/Peasant/anim.fbx', (animation) =>
+                {
+                    this.mixer = new THREE.AnimationMixer(object);
+                    // Buscamos la animacion y le damos play para que inicie
+                    const idle = this.mixer.clipAction(animation.animations[0]);
+                    idle.play();
+                });
+
+                this.scene.add(object);
+
+                tween.start();
+            }
+        )
+
         this.raycaster = new THREE.Raycaster();
         this.selectedObject = null;
 
@@ -106,7 +164,7 @@ class Application
 
     bindEvents()
     {
-        window.addEventListener('resize', () => { this.onWindowResizeEvent(); }, false);
+        window.addEventListener('resize', () => { this.onWindowResizeEvent(); });
         window.addEventListener('dblclick', (event) => { this.onDoubleClickEvent(event) });
     }
 
@@ -130,6 +188,7 @@ class Application
         if (intersects.length > 0)
         {
             var object = intersects[0].object;
+            console.log(object);
             var container = getContainerObjByChild(object);
             if (container === null) container = object;
 
@@ -272,6 +331,13 @@ class Application
                 
             }
 
+            if (this.mixer)
+            {
+                this.mixer.update(delta);
+            }
+
+            TWEEN.update();
+
             this.renderer.render(this.scene, this.camera);
             this.render();
         });
@@ -279,8 +345,6 @@ class Application
 }
 
 const socket = io();
-
-
 
 var app = null;
 

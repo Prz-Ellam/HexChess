@@ -43,9 +43,9 @@ export class Board {
                 hexagon.castShadow = true;
                 hexagon.receiveShadow = true;
 
-                let change = Math.random(0.5, 10);
-                hexagon.scale.y = change;
-                hexagon.position.y += change / 2;
+                //let change = Math.random(0.5, 10);
+                //hexagon.scale.y = change;
+                //hexagon.position.y += change / 2;
 
                 const xCoord = (x - startX) + 1;
                 const zCoord = (z * -1) - startZ;

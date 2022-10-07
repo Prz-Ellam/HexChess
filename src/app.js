@@ -13,8 +13,8 @@ const port = process.env.PORT || 3000;
 const socket = require('./socket');
 socket(io);
 
-database = require('./database');
-database();
+//database = require('./database');
+//database();
 
 app.set('views', path.join(__dirname, '/views'));
 app.engine('html', require('ejs').renderFile);

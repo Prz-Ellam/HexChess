@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
+import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 
 export class Character {
 
@@ -59,16 +60,16 @@ export class Character {
             model.boardCount = this.boardCount;
 
             //modelsNames.push(model.name);
-        /*
             const animLoader = new GLTFLoader();
-            animLoader.load('scene.gltf', (animation) =>
+            animLoader.load('models/Peasant/Death.gltf', (animation) =>
             {
-                mixer = new THREE.AnimationMixer(model);
+                const mixer = new THREE.AnimationMixer(model);
                 // Buscamos la animacion y le damos play para que inicie
                 const idle = mixer.clipAction(animation.animations[0]);
+                console.log(idle);
                 idle.play();
             });
-        */
+
             scene.add(model);
         });
 
