@@ -1,7 +1,7 @@
-function irhome(){
+function irhome() {
     location.href="playgame.html";
 }
 
-function irjuego(){
+function irjuego() {
     location.href="index.html";
 }

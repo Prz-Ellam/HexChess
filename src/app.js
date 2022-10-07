@@ -1,9 +1,22 @@
+const http = require('http');
 const express = require('express');
 const path = require('path');
+const socketio = require('socket.io');
+const dotenv = require('dotenv');
+
+dotenv.config();
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 const port = process.env.PORT || 3000;
 
-app.set('views', path.join(__dirname, '/public'));
+const socket = require('./socket');
+socket(io);
+
+database = require('./database');
+database();
+
+app.set('views', path.join(__dirname, '/views'));
 app.engine('html', require('ejs').renderFile);
 
 app.get('/', (req, res) => {
@@ -45,6 +58,6 @@ app.get('/pause', (req, res) => {
 // Static files (HTML, CSS, Front JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server started on port ${port}`);
-})
+});

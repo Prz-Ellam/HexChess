@@ -10,10 +10,10 @@ class Application
 {
     constructor()
     {
-        this.initialize();
+        this.create();
     }
 
-    initialize()
+    create()
     {
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -24,6 +24,9 @@ class Application
         this.renderer.setClearColor(new THREE.Color(1.0, 1.0, 1.0, 1.0));
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        //this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        //this.renderer.toneMappingExposure = 1.8;
 
         document.body.appendChild(this.renderer.domElement);
 
@@ -78,7 +81,8 @@ class Application
             new THREE.PlaneGeometry(100, 100, 10, 10),
             new THREE.MeshStandardMaterial({
                 color: 0xFFFFFF,
-            }));
+            }
+        ));
         plane.castShadow = false;
         plane.receiveShadow = true;
         plane.rotation.x = -Math.PI / 2;
@@ -90,13 +94,12 @@ class Application
         boardDirector.create(this.scene, board);
 
         this.raycaster = new THREE.Raycaster();
-        this.change = false;
         this.selectedObject = null;
 
         this.movement = 0.0;
         this.startMove = false;
         this.startPosition = null;
-        this.endPosition = null;
+        this.targetPosition = null;
 
         this.clock = new THREE.Clock();
     }
@@ -130,41 +133,8 @@ class Application
             var container = getContainerObjByChild(object);
             if (container === null) container = object;
 
-            if (this.change && object.typeGame !== 'Character' 
-                && object.name !== '' && this.selectedObject !== null
-                && object.isValid === true) {
-
-                var e = getObjectsByProperty(this.scene, 'cell', object.name);
-                if (e.length !== 0) 
-                {
-                    this.scene.remove(e[0]);
-                }
-    
-
-                this.selectedObject.cell = object.name;
-
-                const validsCells = getObjectsByProperty(this.scene, 'isValid', true);
-
-                validsCells.forEach(cell => {
-                    cell.isValid = false;
-                    cell.material.color.setHex(0x958ae6);
-                });
-
-                this.startMove = true;
-                this.startPosition = this.selectedObject.position;
-                this.endPosition = new THREE.Vector3(container.position.x, this.startPosition.y, container.position.z);
-                this.endPosition.y = this.startPosition.y;
-                
-                this.change = false;
-
-                return;
-            }
-
-            if (container.typeGame === 'Character' && !this.change)
+            if (container.typeGame === 'Character' && !this.selectedObject)
             {
-                const cellCoords = container.cell;
-                const cell = this.scene.getObjectByName(cellCoords);
-
                 var regex = new RegExp(/\((\d+), (\d+)\)/);
                 var values = regex.exec(container.cell);
 
@@ -174,7 +144,7 @@ class Application
                 var moves = container.findMoves(x, z);
 
                 moves = moves.filter(coord => {
-                    object = getObjectsByProperty(this.scene, 'cell' ,coord);
+                    object = getObjectsByProperty(this.scene, 'cell',coord);
 
                     if (object.length === 0)
                     {
@@ -188,6 +158,9 @@ class Application
 
                 });
 
+                // TODO: Aportacion
+                socket.emit('send', { type: 'selected', moves: moves });
+
                 moves.forEach((coords) => {
                     const cell = this.scene.getObjectByName(coords, true);
                     if (cell !== undefined)
@@ -198,7 +171,36 @@ class Application
                 });
 
                 this.selectedObject = container;
-                this.change = true;
+            }
+            else if (this.selectedObject !== null && object.typeGame === 'Cell' 
+                && object.isValid === true) {
+
+                var e = getObjectsByProperty(this.scene, 'cell', object.name);
+                if (e.length !== 0) 
+                {
+                    this.scene.remove(e[0]);
+                }
+    
+                const oldcell = this.selectedObject.cell;
+                //this.selectedObject.cell = object.name;
+
+                const validsCells = getObjectsByProperty(this.scene, 'isValid', true);
+
+                validsCells.forEach(cell => {
+                    cell.isValid = false;
+                    cell.material.color.setHex(0x958ae6);
+                });
+
+                //this.startMove = true;
+                //this.startPosition = this.selectedObject.position;
+                //this.targetPosition = new THREE.Vector3(container.position.x, this.startPosition.y, container.position.z);
+
+                socket.emit('send', {
+                    type: 'moved',
+                    object: oldcell,
+                    startPosition: this.selectedObject.position,
+                    targetPosition: new THREE.Vector3(container.position.x, this.selectedObject.position.y, container.position.z)
+                });
             }
 
         }
@@ -209,24 +211,62 @@ class Application
         this.render();
     }
 
+    select = socket.on('receive', message => {
+
+        if (message.type === 'selected')
+        {
+            const moves = message.moves;
+            moves.forEach((coords) => {
+                const cell = this.scene.getObjectByName(coords, true);
+                if (cell !== undefined)
+                {
+                    cell.material.color.setHex(0x858080);
+                    cell.isValid = true;
+                }
+            });
+        }
+        else if (message.type === 'moved')
+        {
+            const object = getObjectsByProperty(this.scene, 'cell', message.object);
+
+            if (object.length < 1) return;
+            
+            this.selectedObject = object[0];
+            this.startMove = true;
+            this.startPosition = message.startPosition;
+            this.targetPosition = message.targetPosition;
+            this.latency = true;
+            
+            return;
+        }
+     
+    });
+
     render()
     {
         requestAnimationFrame(() => {
 
-            const delta = this.clock.getDelta();
+            var delta = this.clock.getDelta();
+            if (this.latency)
+            {
+                delta = 0.0;
+                this.latency = false;
+            }
 
             if (this.startMove)
             {
-                this.selectedObject.position.lerpVectors(this.startPosition, this.endPosition, this.movement);
-                this.movement += delta * 0.1;
+                console.log(this.selectedObject.position);
+                this.selectedObject.position.lerpVectors(this.startPosition, this.targetPosition, this.movement);
+                this.movement += delta;
 
-                if (this.movement > 0.1)
+                console.log(this.movement);
+
+                if (this.movement > 1.0)
                 {
                     this.movement = 0.0;
                     this.startMove = false;
-                    this.change = false;
                     this.startPosition = null;
-                    this.endPosition = null;
+                    this.targetPosition = null;
                     this.selectedObject = null;
                 }
                 
@@ -237,6 +277,9 @@ class Application
         });
     }
 }
+
+const socket = io();
+
 
 
 var app = null;

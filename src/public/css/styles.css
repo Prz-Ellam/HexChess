@@ -42,7 +42,7 @@ h2 {
     cursor: pointer;
 }
 
-.button:hover{
+.button:hover {
     color: var(--clr);
     border-color: var(--clr);
     box-shadow: 0 0 35px var(--clr);

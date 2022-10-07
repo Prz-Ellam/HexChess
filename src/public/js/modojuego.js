@@ -1,7 +1,7 @@
-function regresar(){
+function regresar() {
     location.href="jugadores.html"
 }
 
-function modojuego(){
+function modojuego() {
     location.href="dificultad.html"
 }

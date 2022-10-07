@@ -1,9 +1,9 @@
-*{
-    margin:0;
-    padding:0;
+* {
+    margin: 0;
+    padding: 0;
 }
 
-.transition{
+.transition {
     position: fixed;
     top: 0;
     pointer-events: none;
@@ -11,7 +11,8 @@
     width: 100%;
     height: 100vh;
 }
-.page-transition{
+
+.page-transition {
     position: absolute;
     top: 0;
     background-color: #4a25af;
@@ -544,7 +545,7 @@ h2{
 
 /*Btn-1 Player*/
 
-div #btn-1player{
+#btn-1player{
     background: #444;
      color: #fff;
      border-color: #fff;
@@ -562,25 +563,25 @@ div #btn-1player{
      transition: 0.5s;
      }
      
-     div #btn-1player:hover{
+#btn-1player:hover {
          color:var(--clr);
          border-color: var(--clr);
          box-shadow: 0 0 35px var(--clr);
      }
      
-     div #btn-1player::before{
+#btn-1player::before {
       content: '';
       inset: 2px;
       background: #27282c;
      }
      
      
-     div #btn-1player #pl1 {
+#btn-1player #pl1 {
          inset:0;
          display: block;
      }
      
-     div #btn-1player #pl1::before {
+#btn-1player #pl1::before {
       content:'';
       position:absolute;
       top:-3%;
@@ -592,12 +593,12 @@ div #btn-1player{
       transition:0.5s;
      }
      
-     div #btn-1player:hover #pl1::before{
+#btn-1player:hover #pl1::before {
      width:20px; 
      left:20%;
      }
      
-     div #btn-1player #pl1::after{
+#btn-1player #pl1::after {
       content:'';
       position:absolute;
       top:97%;
@@ -609,14 +610,14 @@ div #btn-1player{
       transition:0.5s;
      }
      
-     div #btn-1player:hover #pl1::after{
+#btn-1player:hover #pl1::after {
      width:20px;
      left:80%;
-     }
+}
 
      /*Btn-MultiPlayer*/
 
-div #btn-multiplayer{
+#btn-multiplayer {
     background: #444;
      color: #fff;
      border-color: #fff;
@@ -634,129 +635,127 @@ div #btn-multiplayer{
      transition: 0.5s;
      }
      
-     div #btn-multiplayer:hover{
-         color:var(--clr);
-         border-color: var(--clr);
-         box-shadow: 0 0 35px var(--clr);
-     }
+#btn-multiplayer:hover {
+    color:var(--clr);
+    border-color: var(--clr);
+    box-shadow: 0 0 35px var(--clr);
+}
      
-     div #btn-multiplayer::before{
-      content: '';
-      inset: 2px;
-      background: #27282c;
-     }
+#btn-multiplayer::before{
+    content: '';
+    inset: 2px;
+    background: #27282c;
+}
     
+#btn-multiplayer #plm {
+    inset:0;
+    display: block;
+}
      
-     div #btn-multiplayer #plm {
-         inset:0;
-         display: block;
-     }
+#btn-multiplayer #plm::before {
+    content:'';
+    position:absolute;
+    top:-3%;
+    left: 93%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: translateX(-50%) skewX(325deg);
+    transition:0.5s;
+}
      
-     div #btn-multiplayer #plm::before {
-      content:'';
-      position:absolute;
-      top:-3%;
-      left: 93%;
-      width: 10px;
-      height: 5px;
-      background: #2c2727;
-      transform: translateX(-50%) skewX(325deg);
-      transition:0.5s;
-     }
+#btn-multiplayer:hover #plm::before {
+    width:20px; 
+    left:20%;
+}
      
-     div #btn-multiplayer:hover #plm::before{
-     width:20px; 
-     left:20%;
-     }
+#btn-multiplayer #plm::after {
+    content:'';
+    position:absolute;
+    top:97%;
+    left: 30%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: translateX(-50%) skewX(325deg);
+    transition:0.5s;
+}
      
-     div #btn-multiplayer #plm::after{
-      content:'';
-      position:absolute;
-      top:97%;
-      left: 30%;
-      width: 10px;
-      height: 5px;
-      background: #2c2727;
-      transform: translateX(-50%) skewX(325deg);
-      transition:0.5s;
-     }
-     
-     div #btn-multiplayer:hover #plm::after{
-     width:20px;
-     left:80%;
-     }
+#btn-multiplayer:hover #plm::after {
+    width:20px;
+    left:80%;
+}
 
-     /*Btn-Return*/
-
-div #btn-return{
+/*Btn-Return*/
+#btn-return {
     background: #444;
-     color: #fff;
-     border-color: #fff;
-     text-decoration: none;
-     text-transform: uppercase;
-     font-family: 'Silkscreen', cursive;
-     position: absolute;
-     right:25%;
-     top: 32%;
-     font-size: 1.2em;
-     letter-spacing: 0.1em;
-     padding: 10px 30px;
-     margin-top:-150px;
-     margin-bottom: 150px;
-     transition: 0.5s;
-     }
+    color: #fff;
+    border-color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Silkscreen', cursive;
+    position: absolute;
+    right:25%;
+    top: 32%;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-top:-150px;
+    margin-bottom: 150px;
+    transition: 0.5s;
+}
      
-     div #btn-return:hover{
-         color:var(--clr);
-         border-color: var(--clr);
-         box-shadow: 0 0 35px var(--clr);
-     }
+#btn-return:hover {
+    color:var(--clr);
+    border-color: var(--clr);
+    box-shadow: 0 0 35px var(--clr);
+}
      
-     div #btn-return::before{
-      content: '';
-      inset: 2px;
-      background: #27282c;
-     }
+#btn-return::before{
+    content: '';
+    inset: 2px;
+    background: #27282c;
+}
      
-     div #btn-return span{
-         z-index: 1;
-     }
+#btn-return span{
+    z-index: 1;
+}
      
-     div #btn-return #regreso {
-         inset:0;
-         display: block;
-     }
+#btn-return #regreso {
+    inset:0;
+    display: block;
+}
      
-     div #btn-return #regreso::before {
-      content:'';
-      position:absolute;
-      top:-3%;
-      left: 93%;
-      width: 10px;
-      height: 5px;
-      background: #2c2727;
-      transform: translateX(-50%) skewX(325deg);
-      transition:0.5s;
-     }
+#btn-return #regreso::before {
+    content:'';
+    position:absolute;
+    top:-3%;
+    left: 93%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: translateX(-50%) skewX(325deg);
+    transition:0.5s;
+}
      
-     div #btn-return:hover #regreso::before{
-     width:20px; 
-     left:20%;
-     }
+#btn-return:hover #regreso::before{
+    width:20px; 
+    left:20%;
+}
      
-     div #btn-return #regreso::after{
-      content:'';
-      position:absolute;
-      top:97%;
-      left: 30%;
-      width: 10px;
-      height: 5px;
-      background: #2c2727;
-      transform: translateX(-50%) skewX(325deg);
-      transition:0.5s;
-     }
+#btn-return #regreso::after {
+    content: '';
+    position: absolute;
+    top: 97%;
+    left: 30%;
+    width: 10px;
+    height: 5px;
+    background: #2c2727;
+    transform: translateX(-50%) skewX(325deg);
+    transition: 0.5s;
+}
      
-     div #btn-return:hover #regreso::after{
-     width:20px;
-     left:80%;
-     }
+#btn-return:hover #regreso::after {
+    width: 20px;
+    left: 80%;
+}

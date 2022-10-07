@@ -18,7 +18,16 @@ export class Character {
         let modelName;
         gltfLoader.load(model, (gltf) =>
         {
-            const model = gltf.scene.children[0];
+            const model = gltf.scene;
+
+            model.traverse( function( node ) {
+
+                if ( node.isMesh ) { 
+                    node.castShadow = true; 
+                    node.receiveShadow = true;
+                }
+        
+            } );
 
             model.scale.setScalar(1);
             //model.position.set(-6.0, 0.0, -6.0);
@@ -38,7 +47,7 @@ export class Character {
 
             if (values[2] < 5) {
                 model.team = 'A';
-                model.rotation.z = 135;
+                model.rotation.y = 135;
             }
             else
             {

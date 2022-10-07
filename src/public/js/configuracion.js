@@ -1,5 +1,5 @@
 
-function regresar(){
+function regresar() {
 	location.href="playgame.html";
 }
 

@@ -9,6 +9,7 @@ export class Board {
         this.create(scene);
     }
 
+    // TODO: Dificulty - Easy or Hard
     create(scene) {
 
         const startX = Math.round(this.position.x - (this.count.x / 2));
@@ -24,9 +25,13 @@ export class Board {
 
                 const hexagon = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.0, 1.0, 1.0, 6, 1, false),
-                    new THREE.MeshStandardMaterial({ 
+                    new THREE.MeshPhysicalMaterial({ 
+                        clearcoat: 1.0,
+                        clearcoatRoughness: 0.1,
                         color : (x % 2 == 0 ) ? 0x958ae6 : 0x958ae6,
-                        flatShading: true 
+                        flatShading: true,
+                        roughness: 0.5,
+                        metalness: 0.9
                     })
                 );
 
@@ -38,14 +43,15 @@ export class Board {
                 hexagon.castShadow = true;
                 hexagon.receiveShadow = true;
 
-                let change = Math.random(0, 2);
-                //hexagon.scale.y = change;
-                //hexagon.position.y += change / 2;
+                let change = Math.random(0.5, 10);
+                hexagon.scale.y = change;
+                hexagon.position.y += change / 2;
 
                 const xCoord = (x - startX) + 1;
                 const zCoord = (z * -1) - startZ;
                 hexagon.name = `(${xCoord}, ${zCoord})`;
                 hexagon.isValid = false;
+                hexagon.typeGame = 'Cell';
 
                 board.add(hexagon);
             }
