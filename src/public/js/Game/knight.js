@@ -9,10 +9,8 @@ export class Knight extends Character
         super(scene, board, modelpath, position);
     }
 
-    findMoves(x, z)
+    findMoves(scene, x, z)
     {
-        const valids = [];
-
         let coords = [];
         coords.push(new THREE.Vector2(x - 1, z));
         coords.push(new THREE.Vector2(x + 1, z));
@@ -21,13 +19,7 @@ export class Knight extends Character
         coords.push(new THREE.Vector2(x - (z % 2), z - 1));
         coords.push(new THREE.Vector2(x - (z % 2), z + 1));
 
-        coords = coords.filter(coord => 
-            coord.x <= this.boardCount.x && coord.x >= 1 && 
-            coord.y <= this.boardCount.y && coord.y >= 1
-        );
-
-        coords.forEach(coords => valids.push(`(${coords.x}, ${coords.y})`))
-        
+        const valids = super.discardCells(scene, coords);
         return valids;
     }
 }

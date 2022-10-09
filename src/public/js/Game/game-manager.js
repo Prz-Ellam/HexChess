@@ -1,78 +1,107 @@
+import { getObjectsByProperty } from '../Engine/helpers.js';
 export class GameManager
 {
-    constructor(scene)
+    constructor(scene, io)
     {
         this.scene = scene;
-        this.selectedObject = null;
+        this.io = io;
+        this.selected = {
+            status: false,
+            position: null,
+            object: null
+        };
     }
 
     makeTurn(object)
     {
         // No hay turno actualmente
-        if (object.typeGame === 'Character' && !this.selectedObject)
+        if (object.typeGame === 'Character' && !this.selected.status)
         {
             const regex = new RegExp(/\((\d+), (\d+)\)/);
             const values = regex.exec(object.cell);
             const x = Number(values[1]);
             const z = Number(values[2]);
 
-            var moves = object.findMoves(x, z);
-            moves = moves.filter(coord => {
-                anotherObject = getObjectsByProperty(this.scene, 'cell', coord);
+            var moves = object.findMoves(this.scene, x, z);
 
-                if (anotherObject.length === 0)
-                {
-                    return true;
-                }
-                if (anotherObject[0].team !== object.team)
-                {
-                    return true;
-                }
-                return false;
-
-            });
-
-            moves.forEach((coords) => {
-                const cell = this.scene.getObjectByName(coords, true);
-                if (cell !== undefined)
-                {
-                    cell.material.color.setHex(0x858080);
-                    cell.isValid = true;
+            this.io.emit('select', {
+                cells: moves,
+                target: {
+                    position: object.position,
+                    cell: object.cell
                 }
             });
-
-            this.selectedObject = container;
         }
 
-        if (object.typeGame === 'Cell' && this.selectedObject !== null
-            && object.isValid === true) {
+        if (object.typeGame === 'Cell' && this.selected.status && object.selectable) {
 
-            var e = getObjectsByProperty(this.scene, 'cell', object.name);
-            if (e.length !== 0) 
+            this.io.emit('move', {
+                target: {
+                    startPosition: this.selected.object.position,
+                    targetPosition: object.position,
+                    startCell: this.selected.object.cell,
+                    targetCell: object.name
+                }
+            });
+        }
+        
+    }
+
+    makeCellsSelectable(cells)
+    {
+        cells.forEach((coords) => {
+            const cell = this.scene.getObjectByName(coords, true);
+            if (cell !== undefined)
             {
-                this.scene.remove(e[0]);
+                cell.material.color.setHex(0xa7bad0);
+                cell.selectable = true;
             }
+        });
+    }
 
-            this.selectedObject.cell = object.name;
+    cleanCellsSelectable()
+    {
+        const validCells = getObjectsByProperty(this.scene, 'selectable', true);
+        validCells.forEach(cell => {
+            cell.selectable = false;
+            cell.material.color.setHex(0x958ae6);
+        });
+    }
 
-            const validCells = getObjectsByProperty(this.scene, 'isValid', true);
-            validCells.forEach(cell => {
-                cell.isValid = false;
-                cell.material.color.setHex(0x958ae6);
-            });
+    selectObject(position, cell)
+    {
+        this.selected = {
+            status: true,
+            object: {
+                position: position,
+                cell: cell
+            }
+        };
+    }
 
-            //this.startMove = true;
-            //this.startPosition = this.selectedObject.position;
-            //this.endPosition = new THREE.Vector3(container.position.x, this.startPosition.y, container.position.z);
-            //this.endPosition.y = this.startPosition.y;
-            
-            this.selectedObject = null;
-            //this.change = false;
-        }
+    freeObject()
+    {
+        this.selected = {
+            status: false,
+            object: {
+                position: null,
+                cell: null
+            }
+        };
     }
 
     spawnItem()
     {
         
+    }
+
+    gameOver()
+    {
+
+    }
+
+    scoring()
+    {
+
     }
 }

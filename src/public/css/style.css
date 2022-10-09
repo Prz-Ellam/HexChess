@@ -43,18 +43,17 @@ body{
     transition: all .3s;
 }
 
-body::after{
+body::after {
     content: '';
     width:100%;
     height:100%;
     position: fixed;
     top:-100vw;
     left:0;
-    background: #fff;
     transition: all .3s;
 }
 
-body::before{
+body::before {
     content: "";
     width: 100%;
     min-height: 100vh;

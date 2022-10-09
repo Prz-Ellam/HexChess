@@ -4,19 +4,68 @@ const path = require('path');
 const socketio = require('socket.io');
 const dotenv = require('dotenv');
 
+// Settings or Config
+
+
+// Middlewares
+// morgan
+// app.use(morgan('dev'))
+// app.use(express.json())
+
+// Routes
+
+// Static
+
+
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
-const port = process.env.PORT || 3000;
 
 const socket = require('./socket');
 socket(io);
 
-//database = require('./database');
+// database = require('./database');
 //database();
 
-app.set('views', path.join(__dirname, '/views'));
+const session = require('express-session');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook').Strategy;
+
+app.use(session({ secret: 'SECRET' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    done(null, id);
+})
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.FB_ID,
+    clientSecret: process.env.FB_SECRET,
+    callbackURL: '/facebook/callback',
+    profileFields: [ 'id', 'displayName', 'picture.type(large)', 'email' ]
+}, function(token, refreshToken, profile, done) {
+    console.log(profile);
+    return done(null, profile);
+}
+));
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+
+app.get('/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/profile',
+    failureRedirect: '/failed'
+}));
+
+
+
+
+app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 
 app.get('/', (req, res) => {
@@ -55,9 +104,29 @@ app.get('/pause', (req, res) => {
     res.render('pausa.html');
 })
 
-// Static files (HTML, CSS, Front JS)
+
+
+
+app.get('/profile', (req, res) => {
+    res.send('You are a valid user');
+})
+
+app.get('/failed', (req, res) => {
+    res.send('You are NOT a valid user');
+})
+
+
+
+
+
+
+
+
+app.set('port', process.env.PORT || 3000);
+
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-server.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+server.listen(app.get('port'), () => {
+    console.log(`Server started on port ${app.get('port')}`);
 });

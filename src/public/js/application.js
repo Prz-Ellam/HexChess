@@ -4,10 +4,21 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples
 import { TWEEN } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/libs/tween.module.min.js';
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 
-
 import { Board } from './Game/board.js';
 import { getObjectsByProperty, getContainerObjByChild } from './Engine/helpers.js';
 import { BoardDirector } from './Game/board-director.js';
+import { GameManager } from './Game/game-manager.js';
+
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/shaders/FXAAShader.js';
+
+import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { GlitchPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/GlitchPass.js';
+import { OutlinePass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/OutlinePass.js';
+
+import { ParticleSystem } from './Engine/particle-system.js';
 
 class Application
 {
@@ -41,7 +52,7 @@ class Application
             0.1, 
             1000.0
         );
-        this.camera.position.set(0.0, 1.0, 10.0);
+        this.camera.position.set(0.0, 8.0, 12.0);
         this.camera.lookAt(0.0, 1.0, 0.0);
 
         this.scene = new THREE.Scene();
@@ -68,17 +79,92 @@ class Application
         light.shadow.camera.far = 500.0;
         light.shadow.camera.near = 0.5;
         light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
+        light.shadow.camera.left = 20.0;
+        light.shadow.camera.right = -20.0;
+        light.shadow.camera.top = 20.0;
+        light.shadow.camera.bottom = -20.0;
         this.scene.add(light);
 
         light = new THREE.AmbientLight(0x303030);
         this.scene.add(light);
 
         const controls = new OrbitControls(this.camera, this.renderer.domElement);
+        controls.minDistance = 10;
+        controls.maxDistance = 25;
         controls.update();
+
+        // Postprocessing Effects
+        this.composer = new EffectComposer(this.renderer);
+        this.renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(this.renderPass);
+        const unrealBloomPass = new UnrealBloomPass({ x: 1024, y: 1024 }, 1.0, 0.0, 0.75);
+        //composer.addPass(unrealBloomPass);
+        const glitchPass = new GlitchPass();
+        //composer.addPass(glitchPass);
+
+        this.effectFXAA = new ShaderPass(FXAAShader);
+        var pixelRatio = this.renderer.getPixelRatio();
+        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio), 
+        1 / (window.innerHeight * pixelRatio));
+        this.effectFXAA.renderToScreen = true;
+        this.composer.addPass(this.effectFXAA);
+/*
+        var geometry = new THREE.Geometry(); 
+        geometry.vertices = [
+            new THREE.Vector3(-1.0, -1.0, 0.0),
+            new THREE.Vector3( 1.0, -1.0, 0.0),
+            new THREE.Vector3( 1.0,  1.0, 0.0),
+            new THREE.Vector3(-1.0,  1.0, 0.0)
+        ];
+        geometry.faces = [
+            new THREE.Face3(0, 1, 2),
+            new THREE.Face3(2, 3, 0)
+        ];
+
+        const vertex = `
+            void main()
+            {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0f);
+            }
+        `;
+
+        const fragment = `
+            void main()
+            {
+                gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 0.7f);
+            }
+        `;
+
+        const cube = new THREE.Mesh(
+            geometry,
+            new THREE.ShaderMaterial({
+                uniforms: {},
+                vertexShader: vertex,
+                fragmentShader: fragment,
+                side: THREE.DoubleSide,
+                //blending: THREE.AdditiveBlending,
+                //depthTest: true,
+                //depthWrite: false,
+                transparent: true
+                //vertexColors: true
+            }
+        ));
+        cube.position.y = 2;
+        this.scene.add(cube);
+*/
+
+        this.particleSystem = new ParticleSystem(this.scene, {
+            position: new THREE.Vector3(0.0, 0.0, 0.0),
+            rotationBegin: 0.0,
+            rotationEnd: 0.0,
+            rotationVariation: 0.0,
+            scaleBegin: new THREE.Vector3(0.0, 0.0, 0.0),
+            scaleEnd: new THREE.Vector3(0.0, 0.0, 0.0),
+            scaleVariation: new THREE.Vector3(0.0, 0.0, 0.0),
+            speed: new THREE.Vector3(0.0, 0.0, 0.0),
+            speedVariation: new THREE.Vector3(5.0, 2.0, 0.0),
+            lifetime: 1.0
+        }, 1000);
 
         const plane = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100, 10, 10),
@@ -96,76 +182,78 @@ class Application
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
 
-        const fbxLoader = new FBXLoader();
-        fbxLoader.load(
-            'models/Peasant/Peasant.fbx',
-            (object) => {
-                object.traverse(function (child) {
-                    if (child.isMesh)
-                    {
-                        const oldMat = child.material;
-
-                        child.material = new THREE.MeshPhysicalMaterial( {  
-                        color: oldMat.color,
-                        map: oldMat.map,
-                        skinning: true
-                        //etc
-                        } );
-                    }
-                    child.castShadow = true;
-                })
-                object.position.y = 1;
-                object.scale.set(.01, .01, .01);
-
-
-                const tween = new TWEEN.Tween(
-                    {
-                        x: 0,
-                        y: 1,
-                        z: 0
-                    }
-                ).to(
-                    {
-                        x: 2,
-                        y: 1,
-                        z: 2
-                    }, 2000
-                ).onUpdate((coords, elapsed) => {
-                    object.position.set(coords.x, coords.y, coords.z);
-                }).repeat(10);
-
-
-
-                const animLoader = new FBXLoader();
-                animLoader.load('models/Peasant/anim.fbx', (animation) =>
-                {
-                    this.mixer = new THREE.AnimationMixer(object);
-                    // Buscamos la animacion y le damos play para que inicie
-                    const idle = this.mixer.clipAction(animation.animations[0]);
-                    idle.play();
-                });
-
-                this.scene.add(object);
-
-                tween.start();
-            }
-        )
-
-        this.raycaster = new THREE.Raycaster();
-        this.selectedObject = null;
-
-        this.movement = 0.0;
-        this.startMove = false;
-        this.startPosition = null;
-        this.targetPosition = null;
-
         this.clock = new THREE.Clock();
+        socket = io();
+        socket.on('connect', () => {
+            this.id = socket.id;
+        });
+
+        socket.emit('hostGame', {
+            scenario: 'Forest',
+            mode: 'Checkmate',
+            dificulty: 'Easy',
+        });
+
+        this.gameManager = new GameManager(this.scene, socket);
+
+        this.select = socket.on('select', data => {
+
+            this.gameManager.makeCellsSelectable(data.cells);
+            this.gameManager.selectObject(data.target.position, data.target.cell);
+                
+        });
+    
+        this.move = socket.on('move', data => {
+    
+            this.gameManager.cleanCellsSelectable();
+
+            var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
+            if (e.length !== 0) 
+            {
+                const defeatedTeam = e[0].team;
+                this.scene.remove(e[0]);
+                const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
+                if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
+            }
+    
+            let selectedObject = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
+            if (selectedObject.length < 1) return;
+            selectedObject = selectedObject[0];
+    
+            const tween = new TWEEN.Tween(
+                {
+                    x: data.target.startPosition.x,
+                    y: data.target.startPosition.y,
+                    z: data.target.startPosition.z
+                }
+            ).to(
+                {
+                    x: data.target.targetPosition.x,
+                    y: data.target.startPosition.y,
+                    z: data.target.targetPosition.z
+                }, 1000
+            ).onUpdate(coords => {
+                selectedObject.position.set(coords.x, coords.y, coords.z);
+            }).onComplete(() => {
+                socket.emit('moveComplete', true);
+                socket.on('changeTurn', () => {
+
+                    selectedObject.cell = data.target.targetCell;
+                    this.gameManager.freeObject();
+                        
+                });
+            })
+            
+            tween.start();
+    
+        });
     }
 
     bindEvents()
     {
         window.addEventListener('resize', () => { this.onWindowResizeEvent(); });
         window.addEventListener('dblclick', (event) => { this.onDoubleClickEvent(event) });
+        window.addEventListener('keydown', () => this.onKeyEvent() );
     }
 
     onWindowResizeEvent()
@@ -173,96 +261,38 @@ class Application
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        this.composer.setSize(window.innerWidth, window.innerHeight);
+        var pixelRatio = this.renderer.getPixelRatio();
+        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio), 
+        1 / (window.innerHeight * pixelRatio));
     }
 
     onDoubleClickEvent(event)
     {
+        let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
+
         mouse.x = (event.clientX / window.innerWidth) * 2.0 - 1.0;
         mouse.y = -(event.clientY / window.innerHeight) * 2.0 + 1.0;
 
-        this.raycaster.setFromCamera(mouse, this.camera);
+        raycaster.setFromCamera(mouse, this.camera);
 
-        const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+        const intersects = raycaster.intersectObjects(this.scene.children, true);
 
         if (intersects.length > 0)
         {
-            var object = intersects[0].object;
-            console.log(object);
-            var container = getContainerObjByChild(object);
-            if (container === null) container = object;
+            var firstObject = intersects[0].object;
+            var object = getContainerObjByChild(firstObject);
+            if (object === null) object = firstObject;
 
-            if (container.typeGame === 'Character' && !this.selectedObject)
-            {
-                var regex = new RegExp(/\((\d+), (\d+)\)/);
-                var values = regex.exec(container.cell);
-
-                const x = Number(values[1]);
-                const z = Number(values[2]);
-
-                var moves = container.findMoves(x, z);
-
-                moves = moves.filter(coord => {
-                    object = getObjectsByProperty(this.scene, 'cell',coord);
-
-                    if (object.length === 0)
-                    {
-                        return true;
-                    }
-                    if (object[0].team !== container.team)
-                    {
-                        return true;
-                    }
-                    return false;
-
-                });
-
-                // TODO: Aportacion
-                socket.emit('send', { type: 'selected', moves: moves });
-
-                moves.forEach((coords) => {
-                    const cell = this.scene.getObjectByName(coords, true);
-                    if (cell !== undefined)
-                    {
-                        cell.material.color.setHex(0x858080);
-                        cell.isValid = true;
-                    }
-                });
-
-                this.selectedObject = container;
-            }
-            else if (this.selectedObject !== null && object.typeGame === 'Cell' 
-                && object.isValid === true) {
-
-                var e = getObjectsByProperty(this.scene, 'cell', object.name);
-                if (e.length !== 0) 
-                {
-                    this.scene.remove(e[0]);
-                }
-    
-                const oldcell = this.selectedObject.cell;
-                //this.selectedObject.cell = object.name;
-
-                const validsCells = getObjectsByProperty(this.scene, 'isValid', true);
-
-                validsCells.forEach(cell => {
-                    cell.isValid = false;
-                    cell.material.color.setHex(0x958ae6);
-                });
-
-                //this.startMove = true;
-                //this.startPosition = this.selectedObject.position;
-                //this.targetPosition = new THREE.Vector3(container.position.x, this.startPosition.y, container.position.z);
-
-                socket.emit('send', {
-                    type: 'moved',
-                    object: oldcell,
-                    startPosition: this.selectedObject.position,
-                    targetPosition: new THREE.Vector3(container.position.x, this.selectedObject.position.y, container.position.z)
-                });
-            }
-
+            this.gameManager.makeTurn(object);
         }
+    }
+
+    onKeyEvent(event)
+    {
+        this.particleSystem.emitParticles();
     }
 
     run()
@@ -270,66 +300,12 @@ class Application
         this.render();
     }
 
-    select = socket.on('receive', message => {
-
-        if (message.type === 'selected')
-        {
-            const moves = message.moves;
-            moves.forEach((coords) => {
-                const cell = this.scene.getObjectByName(coords, true);
-                if (cell !== undefined)
-                {
-                    cell.material.color.setHex(0x858080);
-                    cell.isValid = true;
-                }
-            });
-        }
-        else if (message.type === 'moved')
-        {
-            const object = getObjectsByProperty(this.scene, 'cell', message.object);
-
-            if (object.length < 1) return;
-            
-            this.selectedObject = object[0];
-            this.startMove = true;
-            this.startPosition = message.startPosition;
-            this.targetPosition = message.targetPosition;
-            this.latency = true;
-            
-            return;
-        }
-     
-    });
-
     render()
     {
+        
         requestAnimationFrame(() => {
 
             var delta = this.clock.getDelta();
-            if (this.latency)
-            {
-                delta = 0.0;
-                this.latency = false;
-            }
-
-            if (this.startMove)
-            {
-                console.log(this.selectedObject.position);
-                this.selectedObject.position.lerpVectors(this.startPosition, this.targetPosition, this.movement);
-                this.movement += delta;
-
-                console.log(this.movement);
-
-                if (this.movement > 1.0)
-                {
-                    this.movement = 0.0;
-                    this.startMove = false;
-                    this.startPosition = null;
-                    this.targetPosition = null;
-                    this.selectedObject = null;
-                }
-                
-            }
 
             if (this.mixer)
             {
@@ -337,14 +313,19 @@ class Application
             }
 
             TWEEN.update();
+            
+            this.particleSystem.onUpdate(delta);
+            this.particleSystem.onRender();
 
             this.renderer.render(this.scene, this.camera);
+            //this.composer.render();
             this.render();
         });
     }
 }
 
-const socket = io();
+var socket;
+var i = 0;
 
 var app = null;
 
