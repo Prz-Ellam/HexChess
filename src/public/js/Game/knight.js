@@ -5,7 +5,10 @@ export class Knight extends Character
 {
     constructor(scene, board, position)
     {
-        const modelpath = 'models/Knight/scene.gltf';
+        const modelpath = 
+        (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ? 
+        'models/Knight/RedKnight.fbx' : 
+        'models/Knight/GreenKnight.fbx';
         super(scene, board, modelpath, position);
     }
 

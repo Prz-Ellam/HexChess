@@ -31,7 +31,9 @@ export class Board {
                         color : (x % 2 == 0 ) ? 0x958ae6 : 0x958ae6,
                         flatShading: true,
                         roughness: 0.5,
-                        metalness: 0.9
+                        metalness: 0.5,
+                        //transparent: true,
+                        //opacity: 1.0
                     })
                 );
 

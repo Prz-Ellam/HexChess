@@ -15,63 +15,89 @@ export class Character {
 
     create(scene, model, position)
     {
-        const gltfLoader = new GLTFLoader();
-        // gltfLoader.setPath('models/');
-        let mixer;
-        let modelName;
-        gltfLoader.load(model, (gltf) =>
+        const texture = new THREE.TextureLoader()
+        .load('models/Knight/textures/Red.png');
+
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(model, object =>
         {
-            const model = gltf.scene;
-
-            model.traverse( function( node ) {
-
-                if ( node.isMesh ) { 
-                    node.castShadow = true; 
-                    node.receiveShadow = true;
+            object.traverse(function (child) {
+                if (child.isMesh)
+                {
+                    const oldMat = child.material;
+                    child.material = new THREE.MeshPhysicalMaterial({  
+                        //color: oldMat.color,
+                        map: oldMat.map,
+                        //emissive: new THREE.Color(0x964B00),
+                        skinning: true
+                    });
                 }
-        
-            } );
+                child.castShadow = true;
+            });
 
-            model.scale.setScalar(1);
-            //model.position.set(-6.0, 0.0, -6.0);
-            model.castShadow = true;
-            model.receiveShadow = true;
+            object.position.y = 1;
+            object.scale.set(.01, .01, .01);
+            object.castShadow = true;
+            object.receiveShadow = true;
 
             const hexagon = scene.getObjectByName(position);
 
-            model.position.x = hexagon.position.x;
-            model.position.y = hexagon.position.y + 0.5;
-            model.position.z = hexagon.position.z;
-            model.typeGame = 'Character';
-            model.cell = hexagon.name;
+            object.position.x = hexagon.position.x;
+            object.position.y = hexagon.position.y + 0.5;
+            object.position.z = hexagon.position.z;
+
+            //object.rotation.y = -45;
+
+            object.typeGame = 'Character';
+            object.cell = hexagon.name;
 
             var regex = new RegExp(/\((\d+), (\d+)\)/);
-            var values = regex.exec(model.cell);
+            var values = regex.exec(object.cell);
 
             if (values[2] < 5) {
-                model.team = 'A';
-                model.rotation.y = 135;
+                object.team = 'A';
+                object.rotation.y = THREE.Math.degToRad(180);
             }
             else
             {
-                model.team = 'B';
+                object.team = 'B';
             }
 
-            model.userData.isContainer = true;
-            model.findMoves = this.findMoves;
-            model.boardCount = this.boardCount;
+            //object.rotation.y = THREE.Math.degToRad(315);
 
-            //modelsNames.push(model.name);
-            const animLoader = new GLTFLoader();
-            animLoader.load('models/Peasant/Death.gltf', (animation) =>
+            object.userData.isContainer = true;
+            object.findMoves = this.findMoves;
+            object.boardCount = this.boardCount;
+            object.actions = {};
+
+            const animLoader = new FBXLoader();
+            animLoader.load('models/Knight/Idle.fbx', animation =>
             {
-                const mixer = new THREE.AnimationMixer(model);
+                object.mixer = new THREE.AnimationMixer(object);
+                //object.mixer = mixer;
+
                 // Buscamos la animacion y le damos play para que inicie
-                const idle = mixer.clipAction(animation.animations[0]);
+                const idle = object.mixer.clipAction(animation.animations[0]);
+                object.actions['idle'] = idle;
                 idle.play();
             });
 
-            scene.add(model);
+            animLoader.load('models/Knight/Walking.fbx', animation =>
+            {
+                const walking = object.mixer.clipAction(animation.animations[0]);
+                object.actions['walking'] = walking;
+            });
+
+            animLoader.load('models/Knight/Death.fbx', animation =>
+            {
+                const death = object.mixer.clipAction(animation.animations[0]);
+                death.setLoop(THREE.LoopOnce);
+                object.actions['death'] = death;
+            });
+
+        
+            object.onUpdate = this.onUpdate;
+            scene.add(object);
         });
 
     }
@@ -97,6 +123,14 @@ export class Character {
             return true;
         });
         return valids;
+    }
+
+    onUpdate(delta)
+    {
+        if (this.mixer)
+        {
+            this.mixer.update(delta);
+        }
     }
 
 }

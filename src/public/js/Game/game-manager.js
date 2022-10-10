@@ -1,4 +1,6 @@
 import { getObjectsByProperty } from '../Engine/helpers.js';
+import { TWEEN } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/libs/tween.module.min.js';
+
 export class GameManager
 {
     constructor(scene, io)
@@ -31,6 +33,13 @@ export class GameManager
                     cell: object.cell
                 }
             });
+        }
+
+        if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
+            && object.typeGame !== 'Character')
+        {
+            this.cleanCellsSelectable();
+            this.freeObject();
         }
 
         if (object.typeGame === 'Cell' && this.selected.status && object.selectable) {
@@ -88,6 +97,51 @@ export class GameManager
                 cell: null
             }
         };
+    }
+
+    moveCharacter(startPosition, startCell, targetPosition, targetCell)
+    {
+        let selectedObject = getObjectsByProperty(this.scene, 'cell', startCell);
+        if (selectedObject.length < 1) return;
+        selectedObject = selectedObject[0];
+
+        let angle = Math.atan2(
+            startPosition.z - targetPosition.z,
+            targetPosition.x - startPosition.x
+        );
+        angle += Math.PI / 2;
+
+        const tween = new TWEEN.Tween(
+            {
+                x: startPosition.x,
+                y: startPosition.y,
+                z: startPosition.z
+            }
+        ).to(
+            {
+                x: targetPosition.x,
+                y: startPosition.y,
+                z: targetPosition.z
+            }, 1000
+        ).onStart(() => {
+            selectedObject.actions['walking'].play();
+        })
+        .onUpdate(coords => {
+            selectedObject.rotation.y = angle;
+            selectedObject.position.set(coords.x, coords.y, coords.z);
+        }).onComplete(() => {
+            selectedObject.actions['walking'].stop();
+            selectedObject.actions['idle'].play();
+            //socket.emit('moveComplete', true);
+            //socket.on('changeTurn', () => {
+
+                selectedObject.cell = targetCell;
+                this.freeObject();
+                    
+            //});
+        });
+        
+        tween.start();
     }
 
     spawnItem()

@@ -4,7 +4,7 @@ export class BoardDirector
 {
     constructor() {
         this.board = [
-            [ 'Knight', 'Monk', 'Knight', 'Monk', 'Knight', 'Monk', 'Knight', 'Monk', 'Knight', 'Monk' ],
+            [ 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight' ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -13,7 +13,7 @@ export class BoardDirector
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 'Monk', 'Knight', 'Monk', 'Knight', 'Monk', 'Knight', 'Monk', 'Knight', 'Monk', 'Knight' ]
+            [ 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight' ]
         ];
     }
 

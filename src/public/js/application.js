@@ -69,7 +69,7 @@ class Application
         this.scene.background = cubemap;
 
         let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
+        light.position.set(20, 20, 10);
         light.target.position.set(0, 0, 0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
@@ -108,50 +108,6 @@ class Application
         1 / (window.innerHeight * pixelRatio));
         this.effectFXAA.renderToScreen = true;
         this.composer.addPass(this.effectFXAA);
-/*
-        var geometry = new THREE.Geometry(); 
-        geometry.vertices = [
-            new THREE.Vector3(-1.0, -1.0, 0.0),
-            new THREE.Vector3( 1.0, -1.0, 0.0),
-            new THREE.Vector3( 1.0,  1.0, 0.0),
-            new THREE.Vector3(-1.0,  1.0, 0.0)
-        ];
-        geometry.faces = [
-            new THREE.Face3(0, 1, 2),
-            new THREE.Face3(2, 3, 0)
-        ];
-
-        const vertex = `
-            void main()
-            {
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0f);
-            }
-        `;
-
-        const fragment = `
-            void main()
-            {
-                gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 0.7f);
-            }
-        `;
-
-        const cube = new THREE.Mesh(
-            geometry,
-            new THREE.ShaderMaterial({
-                uniforms: {},
-                vertexShader: vertex,
-                fragmentShader: fragment,
-                side: THREE.DoubleSide,
-                //blending: THREE.AdditiveBlending,
-                //depthTest: true,
-                //depthWrite: false,
-                transparent: true
-                //vertexColors: true
-            }
-        ));
-        cube.position.y = 2;
-        this.scene.add(cube);
-*/
 
         this.particleSystem = new ParticleSystem(this.scene, {
             position: new THREE.Vector3(0.0, 0.0, 0.0),
@@ -166,21 +122,161 @@ class Application
             lifetime: 1.0
         }, 1000);
 
+        const heightmap = new THREE.TextureLoader()
+            .setPath('../../images/')
+            .load('heightmap.jpg');
+
         const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 100, 10, 10),
+            new THREE.PlaneGeometry(128, 128, 128, 128),
             new THREE.MeshStandardMaterial({
-                color: 0xFFFFFF,
+                color: 0x538f31,
+                //map: heightmap,
+                displacementMap: heightmap,
+                displacementScale: 10,
+                flatShading: true
             }
         ));
-        plane.castShadow = false;
+        plane.castShadow = true;
         plane.receiveShadow = true;
+        plane.position.y = -5;
         plane.rotation.x = -Math.PI / 2;
         this.scene.add(plane);
+
+        async function init() {
+
+            let frag_shader = await (await fetch('../shaders/WaterVertex.glsl')).text();
+        
+            return frag_shader;
+        
+        
+        }
+
+        const vertex = `
+        #define PI 3.1415926
+
+        uniform float time;
+
+const float waveLength = 4.0;
+const float waveAmplitude = 0.4;
+
+float generateOffset(float x, float z)
+{
+    float radX = (x / waveLength + time) * 2.0f * PI;
+    float radZ = (z / waveLength + time) * 2.0f * PI;
+    return waveAmplitude * 0.5f * (sin(radZ) * cos(radX));
+}
+
+vec3 applyDistortion(vec3 vector)
+{
+    vec3 distortion;
+    distortion.x = generateOffset(vector.x, vector.z);
+    distortion.y = generateOffset(vector.x, vector.z);
+    distortion.z = generateOffset(vector.x, vector.z);
+    return vector + distortion;
+}
+
+void main()
+{
+    vec3 currentVertex = vec3(position.x, position.y, position.z);
+    currentVertex = applyDistortion(currentVertex);
+    //currentVertex.x += time;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(currentVertex, 1.0f);
+}
+        `;
+
+        const fragment = `
+            uniform vec4 color;
+
+            void main()
+            {
+                gl_FragColor = color;
+            }
+        `;
+
+        var uniforms = THREE.UniformsUtils.merge( [
+
+            THREE.UniformsLib[ "lights" ],
+            // ...
+        
+        ]);
+
+        var others = {
+            time: {
+                value: 0.0
+            },
+            color: {
+                value: new THREE.Vector4(0,0,1,1)
+            }
+        }
+
+        var prueba = Object.assign(others, uniforms);
+
+        this.water = new THREE.Mesh(
+            new THREE.PlaneGeometry(32, 32, 32, 32),
+            /*
+            new THREE.ShaderMaterial({
+                uniforms: prueba,
+                lights: true,
+                vertexShader: vertex,
+                fragmentShader: fragment,
+                //color: 0x7ca4ff,
+                //side: THREE.DoubleSide,
+                //wireframe: true
+            }
+            */
+            new THREE.MeshStandardMaterial({
+                color: 0x0000dd,
+                //map: heightmap,
+                //displacementMap: heightmap,
+                //displacementScale: 10,
+                flatShading: true,
+                opacity: 0.5,
+                transparent: true
+            }
+        ));
+        this.water.castShadow = true;
+        this.water.receiveShadow = true;
+        this.water.position.y = 4;
+        this.water.position.x = 5;
+        this.water.rotation.x = -Math.PI / 2;
+        //this.scene.add(this.water);
 
         const board = new Board(this.scene, new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector2(10, 10), 1.75);
 
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
+
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(
+            'models/Peasant/Peasant.fbx',
+            (object) => {
+                object.traverse(function (child) {
+                    if (child.isMesh)
+                    {
+                        const oldMat = child.material;
+                        child.material = new THREE.MeshPhysicalMaterial( {  
+                            color: oldMat.color,
+                            map: oldMat.map,
+                            skinning: true
+                        });
+                    }
+                    child.castShadow = true;
+                })
+                object.position.y = 1;
+                object.scale.set(.01, .01, .01);
+
+                const animLoader = new FBXLoader();
+                animLoader.load('models/Peasant/anim.fbx', (animation) =>
+                {
+                    this.mixer = new THREE.AnimationMixer(object);
+                    // Buscamos la animacion y le damos play para que inicie
+                    const idle = this.mixer.clipAction(animation.animations[0]);
+                    idle.play();
+                });
+
+                this.scene.add(object);
+            }
+        )
 
         this.clock = new THREE.Clock();
         socket = io();
@@ -210,42 +306,31 @@ class Application
             var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
             if (e.length !== 0) 
             {
+                e[0].actions['idle'].stop();
+                e[0].actions['death'].play();
                 const defeatedTeam = e[0].team;
-                this.scene.remove(e[0]);
+                // this.scene.remove(e[0]);
                 const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
                 if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
+                
+                setTimeout(() => { this.gameManager.moveCharacter(
+                    data.target.startPosition,
+                    data.target.startCell, 
+                    data.target.targetPosition, 
+                    data.target.targetCell
+                );
+                this.scene.remove(e[0]);
+                }, e[0].actions['death']._clip.duration * 1000);
+                return;
             }
-    
-            let selectedObject = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
-            if (selectedObject.length < 1) return;
-            selectedObject = selectedObject[0];
-    
-            const tween = new TWEEN.Tween(
-                {
-                    x: data.target.startPosition.x,
-                    y: data.target.startPosition.y,
-                    z: data.target.startPosition.z
-                }
-            ).to(
-                {
-                    x: data.target.targetPosition.x,
-                    y: data.target.startPosition.y,
-                    z: data.target.targetPosition.z
-                }, 1000
-            ).onUpdate(coords => {
-                selectedObject.position.set(coords.x, coords.y, coords.z);
-            }).onComplete(() => {
-                socket.emit('moveComplete', true);
-                socket.on('changeTurn', () => {
 
-                    selectedObject.cell = data.target.targetCell;
-                    this.gameManager.freeObject();
-                        
-                });
-            })
+            this.gameManager.moveCharacter(
+                data.target.startPosition,
+                data.target.startCell, 
+                data.target.targetPosition, 
+                data.target.targetCell
+            );
             
-            tween.start();
-    
         });
     }
 
@@ -306,6 +391,14 @@ class Application
         requestAnimationFrame(() => {
 
             var delta = this.clock.getDelta();
+            // this.uniforms.time += delta;
+            // this.water.material.uniforms.time.value += delta;
+
+            var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
+            for (let character of characters)
+            {
+                character.onUpdate(delta);
+            }
 
             if (this.mixer)
             {
@@ -323,6 +416,9 @@ class Application
         });
     }
 }
+
+
+
 
 var socket;
 var i = 0;
