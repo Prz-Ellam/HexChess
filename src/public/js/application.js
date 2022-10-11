@@ -20,15 +20,12 @@ import { OutlinePass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/j
 
 import { ParticleSystem } from './Engine/particle-system.js';
 
-class Application
-{
-    constructor()
-    {
+class Application {
+    constructor() {
         this.create();
     }
 
-    create()
-    {
+    create() {
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
             antialias: true
@@ -47,9 +44,9 @@ class Application
         this.bindEvents();
 
         this.camera = new THREE.PerspectiveCamera(
-            60.0, 
-            window.innerWidth / window.innerHeight, 
-            0.1, 
+            60.0,
+            window.innerWidth / window.innerHeight,
+            0.1,
             1000.0
         );
         this.camera.position.set(0.0, 8.0, 12.0);
@@ -104,8 +101,8 @@ class Application
 
         this.effectFXAA = new ShaderPass(FXAAShader);
         var pixelRatio = this.renderer.getPixelRatio();
-        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio), 
-        1 / (window.innerHeight * pixelRatio));
+        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio),
+            1 / (window.innerHeight * pixelRatio));
         this.effectFXAA.renderToScreen = true;
         this.composer.addPass(this.effectFXAA);
 
@@ -135,111 +132,12 @@ class Application
                 displacementScale: 10,
                 flatShading: true
             }
-        ));
+            ));
         plane.castShadow = true;
         plane.receiveShadow = true;
         plane.position.y = -5;
         plane.rotation.x = -Math.PI / 2;
         this.scene.add(plane);
-
-        async function init() {
-
-            let frag_shader = await (await fetch('../shaders/WaterVertex.glsl')).text();
-        
-            return frag_shader;
-        
-        
-        }
-
-        const vertex = `
-        #define PI 3.1415926
-
-        uniform float time;
-
-const float waveLength = 4.0;
-const float waveAmplitude = 0.4;
-
-float generateOffset(float x, float z)
-{
-    float radX = (x / waveLength + time) * 2.0f * PI;
-    float radZ = (z / waveLength + time) * 2.0f * PI;
-    return waveAmplitude * 0.5f * (sin(radZ) * cos(radX));
-}
-
-vec3 applyDistortion(vec3 vector)
-{
-    vec3 distortion;
-    distortion.x = generateOffset(vector.x, vector.z);
-    distortion.y = generateOffset(vector.x, vector.z);
-    distortion.z = generateOffset(vector.x, vector.z);
-    return vector + distortion;
-}
-
-void main()
-{
-    vec3 currentVertex = vec3(position.x, position.y, position.z);
-    currentVertex = applyDistortion(currentVertex);
-    //currentVertex.x += time;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(currentVertex, 1.0f);
-}
-        `;
-
-        const fragment = `
-            uniform vec4 color;
-
-            void main()
-            {
-                gl_FragColor = color;
-            }
-        `;
-
-        var uniforms = THREE.UniformsUtils.merge( [
-
-            THREE.UniformsLib[ "lights" ],
-            // ...
-        
-        ]);
-
-        var others = {
-            time: {
-                value: 0.0
-            },
-            color: {
-                value: new THREE.Vector4(0,0,1,1)
-            }
-        }
-
-        var prueba = Object.assign(others, uniforms);
-
-        this.water = new THREE.Mesh(
-            new THREE.PlaneGeometry(32, 32, 32, 32),
-            /*
-            new THREE.ShaderMaterial({
-                uniforms: prueba,
-                lights: true,
-                vertexShader: vertex,
-                fragmentShader: fragment,
-                //color: 0x7ca4ff,
-                //side: THREE.DoubleSide,
-                //wireframe: true
-            }
-            */
-            new THREE.MeshStandardMaterial({
-                color: 0x0000dd,
-                //map: heightmap,
-                //displacementMap: heightmap,
-                //displacementScale: 10,
-                flatShading: true,
-                opacity: 0.5,
-                transparent: true
-            }
-        ));
-        this.water.castShadow = true;
-        this.water.receiveShadow = true;
-        this.water.position.y = 4;
-        this.water.position.x = 5;
-        this.water.rotation.x = -Math.PI / 2;
-        //this.scene.add(this.water);
 
         const board = new Board(this.scene, new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector2(10, 10), 1.75);
 
@@ -249,12 +147,11 @@ void main()
         const fbxLoader = new FBXLoader();
         fbxLoader.load(
             'models/Peasant/Peasant.fbx',
-            (object) => {
+            object => {
                 object.traverse(function (child) {
-                    if (child.isMesh)
-                    {
+                    if (child.isMesh) {
                         const oldMat = child.material;
-                        child.material = new THREE.MeshPhysicalMaterial( {  
+                        child.material = new THREE.MeshPhysicalMaterial({
                             color: oldMat.color,
                             map: oldMat.map,
                             skinning: true
@@ -266,8 +163,7 @@ void main()
                 object.scale.set(.01, .01, .01);
 
                 const animLoader = new FBXLoader();
-                animLoader.load('models/Peasant/anim.fbx', (animation) =>
-                {
+                animLoader.load('models/Peasant/anim.fbx', (animation) => {
                     this.mixer = new THREE.AnimationMixer(object);
                     // Buscamos la animacion y le damos play para que inicie
                     const idle = this.mixer.clipAction(animation.animations[0]);
@@ -296,65 +192,47 @@ void main()
 
             this.gameManager.makeCellsSelectable(data.cells);
             this.gameManager.selectObject(data.target.position, data.target.cell);
-                
+
         });
-    
+
         this.move = socket.on('move', data => {
-    
+
             this.gameManager.cleanCellsSelectable();
 
             var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
-            if (e.length !== 0) 
-            {
-                e[0].actions['idle'].stop();
-                e[0].actions['death'].play();
-                const defeatedTeam = e[0].team;
-                // this.scene.remove(e[0]);
-                const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
-                if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
-                
-                setTimeout(() => { this.gameManager.moveCharacter(
-                    data.target.startPosition,
-                    data.target.startCell, 
-                    data.target.targetPosition, 
-                    data.target.targetCell
-                );
-                this.scene.remove(e[0]);
-                }, e[0].actions['death']._clip.duration * 1000);
+            if (e.length !== 0) {
+                this.gameManager.defeatCharacter(e[0], data);
                 return;
             }
 
             this.gameManager.moveCharacter(
                 data.target.startPosition,
-                data.target.startCell, 
-                data.target.targetPosition, 
+                data.target.startCell,
+                data.target.targetPosition,
                 data.target.targetCell
             );
-            
+
         });
     }
 
-    bindEvents()
-    {
+    bindEvents() {
         window.addEventListener('resize', () => { this.onWindowResizeEvent(); });
         window.addEventListener('dblclick', (event) => { this.onDoubleClickEvent(event) });
-        window.addEventListener('keydown', () => this.onKeyEvent() );
+        window.addEventListener('keydown', () => this.onKeyEvent());
     }
 
-    onWindowResizeEvent()
-    {
+    onWindowResizeEvent() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         this.composer.setSize(window.innerWidth, window.innerHeight);
         var pixelRatio = this.renderer.getPixelRatio();
-        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio), 
-        1 / (window.innerHeight * pixelRatio));
+        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio),
+            1 / (window.innerHeight * pixelRatio));
     }
 
-    onDoubleClickEvent(event)
-    {
+    onDoubleClickEvent(event) {
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 
@@ -365,8 +243,7 @@ void main()
 
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
-        if (intersects.length > 0)
-        {
+        if (intersects.length > 0) {
             var firstObject = intersects[0].object;
             var object = getContainerObjByChild(firstObject);
             if (object === null) object = firstObject;
@@ -375,19 +252,16 @@ void main()
         }
     }
 
-    onKeyEvent(event)
-    {
+    onKeyEvent(event) {
         this.particleSystem.emitParticles();
     }
 
-    run()
-    {
+    run() {
         this.render();
     }
 
-    render()
-    {
-        
+    render() {
+
         requestAnimationFrame(() => {
 
             var delta = this.clock.getDelta();
@@ -395,18 +269,16 @@ void main()
             // this.water.material.uniforms.time.value += delta;
 
             var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
-            for (let character of characters)
-            {
+            for (let character of characters) {
                 character.onUpdate(delta);
             }
 
-            if (this.mixer)
-            {
+            if (this.mixer) {
                 this.mixer.update(delta);
             }
 
             TWEEN.update();
-            
+
             this.particleSystem.onUpdate(delta);
             this.particleSystem.onRender();
 
@@ -421,7 +293,6 @@ void main()
 
 
 var socket;
-var i = 0;
 
 var app = null;
 

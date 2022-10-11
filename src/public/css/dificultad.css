@@ -16,7 +16,7 @@
     padding: 10px 30px;
     margin-bottom: 150px;
 }
-     
+
 #btn-facil span {
     z-index: 1;
 }
@@ -27,7 +27,7 @@
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-top:-150px;
+    margin-top: -150px;
     margin-bottom: 150px;
 }
 
@@ -45,6 +45,6 @@
     padding: 10px 30px;
 }
 
-#btn-return span{
+#btn-return span {
     z-index: 1;
 }

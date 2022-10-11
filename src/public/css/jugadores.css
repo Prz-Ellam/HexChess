@@ -4,22 +4,22 @@
     width: 100%;
 }
 
-body{
+body {
     transition: all .3s;
 }
 
-body::after{
+body::after {
     content: '';
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
     position: fixed;
     top: -100vw;
-    left:0;
+    left: 0;
     transition: all .3s;
 }
 
-.loading::after{
-    top:0 ;
+.loading::after {
+    top: 0;
 }
 
 .title::after {
@@ -37,11 +37,11 @@ body::after{
 
 /*Btn-MultiPlayer*/
 #btn-multiplayer {
-    position: relative; 
+    position: relative;
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-top:-150px;
+    margin-top: -150px;
     margin-bottom: 150px;
 }
 
@@ -54,7 +54,7 @@ body::after{
     letter-spacing: 0.1em;
     padding: 10px 30px;
 }
-    
-#btn-return span{
+
+#btn-return span {
     z-index: 1;
 }

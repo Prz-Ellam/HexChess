@@ -45,7 +45,8 @@ export class Board {
                 hexagon.castShadow = true;
                 hexagon.receiveShadow = true;
 
-                //let change = Math.random(0.5, 10);
+                let change = Math.random() * (3 - 1) + 1;
+                change = Math.round(change);
                 //hexagon.scale.y = change;
                 //hexagon.position.y += change / 2;
 

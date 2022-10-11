@@ -5,7 +5,6 @@ module.exports = async () => {
         useUnifiedTopology: true,
         useNewUrlParser: true
     })
-        .then(db => console.log('Database connected')
-        .catch(err => console.error(err))
-    );
+        .then(db => console.log('Database connected'))
+        .catch(err => console.error(err));
 }

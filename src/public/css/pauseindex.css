@@ -1,7 +1,7 @@
 #btn-pausa {
     position: absolute;
-    right:5%;
-    top:5%;
+    right: 5%;
+    top: 5%;
     background: #444;
     color: #fff;
     border-color: #fff;
@@ -10,7 +10,7 @@
     font-family: 'Silkscreen', cursive;
     transition: 0.5s;
     font-size: 40px;
-    width:60px;
+    width: 60px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -23,10 +23,7 @@
 }
 
 #btn-pausa:hover {
-    color:var(--clr);
+    color: var(--clr);
     border-color: var(--clr);
     box-shadow: 0 0 35px var(--clr);
 }
-
-
-

@@ -1,4 +1,3 @@
-
 /*Desierto*/
 .flex-container {
     display: flex;
@@ -40,7 +39,7 @@
 @media (max-width: 1000px) {
 
     body {
-        overflow:scroll
+        overflow: scroll
     }
 
     .flex-container {
@@ -53,7 +52,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg,#8521DD,#D121DD);
+    background: linear-gradient(45deg, #8521DD, #D121DD);
     opacity: 0;
     transition: all 500ms ease-out;
 }
@@ -76,7 +75,7 @@
     transition: all 500ms ease-out;
 }
 
-.capa:hover > h2 {
+.capa:hover>h2 {
     top: 10%;
 }
 
@@ -98,51 +97,51 @@
     margin-bottom: 150px;
 }
 
-#btn-return::before{
+#btn-return::before {
     content: '';
     inset: 2px;
     background: #27282c;
 }
-     
+
 #btn-return span {
     z-index: 1;
 }
-     
+
 #btn-return #regreso {
-    inset:0;
+    inset: 0;
     display: block;
 }
-     
+
 #btn-return #regreso::before {
-    content:'';
-    position:absolute;
-    top:-3%;
+    content: '';
+    position: absolute;
+    top: -3%;
     left: 93%;
     width: 10px;
     height: 5px;
     background: #2c2727;
     transform: translateX(-50%) skewX(325deg);
-    transition:0.5s;
+    transition: 0.5s;
 }
-     
-#btn-return:hover #regreso::before{
-    width:20px; 
-    left:20%;
+
+#btn-return:hover #regreso::before {
+    width: 20px;
+    left: 20%;
 }
-     
-#btn-return #regreso::after{
-    content:'';
-    position:absolute;
-    top:97%;
+
+#btn-return #regreso::after {
+    content: '';
+    position: absolute;
+    top: 97%;
     left: 30%;
     width: 10px;
     height: 5px;
     background: #2c2727;
     transform: translateX(-50%) skewX(325deg);
-    transition:0.5s;
+    transition: 0.5s;
 }
-     
-#btn-return:hover #regreso::after{
-    width:20px;
-    left:80%;
+
+#btn-return:hover #regreso::after {
+    width: 20px;
+    left: 80%;
 }

@@ -43,11 +43,10 @@ export class Character {
             const hexagon = scene.getObjectByName(position);
 
             object.position.x = hexagon.position.x;
-            object.position.y = hexagon.position.y + 0.5;
+            object.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
             object.position.z = hexagon.position.z;
 
-            //object.rotation.y = -45;
-
+            // TODO: Cada personaje tenga su propio name
             object.typeGame = 'Character';
             object.cell = hexagon.name;
 

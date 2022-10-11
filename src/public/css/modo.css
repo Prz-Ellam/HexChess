@@ -35,7 +35,7 @@
 }
 
 /*Btn-Return*/
-#btn-return{
+#btn-return {
     position: absolute;
     right: 2em;
     top: 2em;
@@ -45,12 +45,12 @@
     transition: 0.5s;
 }
 
-#btn-return::before{
+#btn-return::before {
     content: '';
     inset: 2px;
     background: #27282c;
 }
-     
+
 #btn-return span {
     z-index: 1;
 }

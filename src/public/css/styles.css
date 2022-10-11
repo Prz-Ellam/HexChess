@@ -1,17 +1,17 @@
 * {
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background:#0c192c !important;
+    background: #0c192c !important;
     overflow: hidden;
 }
 
 body::before {
     position: absolute;
     content: "";
-    background: linear-gradient(45deg,#CC2F64,#8A2FCC);
+    background: linear-gradient(45deg, #CC2F64, #8A2FCC);
     width: 100%;
     min-height: 100vh;
     top: 0;
@@ -22,11 +22,11 @@ body::before {
 
 h2 {
     font-family: 'Silkscreen', cursive;
-    color:#fff;
+    color: #fff;
     margin-top: 2em;
     margin-bottom: 2em;
     font-size: 42px;
-    text-shadow: 0 0 20px  #A29CD7;
+    text-shadow: 0 0 20px #A29CD7;
 }
 
 .button {
@@ -63,26 +63,26 @@ h2 {
     height: 5px;
     background: #2c2727;
     transform: skewX(325deg);
-    transition:0.5s;
+    transition: 0.5s;
 }
 
 .button-anim:hover .widget::before {
-    width: 20px; 
+    width: 20px;
     left: 80%;
 }
-     
+
 .button-anim .widget::after {
-    content:'';
-    position:absolute;
+    content: '';
+    position: absolute;
     top: 95%;
     left: 80%;
     width: 10px;
     height: 5px;
     background: #2c2727;
     transform: skewX(325deg);
-    transition:0.5s;
+    transition: 0.5s;
 }
-     
+
 .button-anim:hover .widget::after {
     width: 20px;
     left: 15%;

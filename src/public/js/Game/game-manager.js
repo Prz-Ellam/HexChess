@@ -99,6 +99,30 @@ export class GameManager
         };
     }
 
+    defeatCharacter(character, data)
+    {
+        character.actions['idle'].stop();
+        character.actions['death'].play();
+        const defeatedTeam = character.team;
+        // this.scene.remove(e[0]);
+        const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
+        if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
+                
+        setTimeout(() => { this.moveCharacter(
+            data.target.startPosition,
+            data.target.startCell, 
+            data.target.targetPosition, 
+            data.target.targetCell
+        );
+        this.scene.remove(character);
+        }, character.actions['death']._clip.duration * 1000);
+    }
+
+    changeCharacterTeam()
+    {
+
+    }
+
     moveCharacter(startPosition, startCell, targetPosition, targetCell)
     {
         let selectedObject = getObjectsByProperty(this.scene, 'cell', startCell);

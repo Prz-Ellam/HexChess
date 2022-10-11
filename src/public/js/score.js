@@ -1,3 +1,3 @@
-function regresar(){
-	location.href="playgame.html";
+function regresar() {
+	location.href = "playgame.html";
 }

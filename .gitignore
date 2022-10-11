@@ -1,6 +1,5 @@
 .vscode
 node_modules
-imagenes
 models
 textures
 .env
