@@ -7,13 +7,13 @@ import { getObjectsByProperty } from '../Engine/helpers.js';
 
 export class Character {
 
-    constructor(scene, board, model, position)
+    constructor(scene, board, model, position, animations)
     {
         this.boardCount = board.count;
-        this.name = this.create(scene, model, position);
+        this.name = this.create(scene, model, position, animations);
     }
 
-    create(scene, model, position)
+    create(scene, model, position, animations)
     {
         const texture = new THREE.TextureLoader()
         .load('models/Knight/textures/Red.png');

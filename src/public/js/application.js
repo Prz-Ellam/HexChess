@@ -2,7 +2,6 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import { TWEEN } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/libs/tween.module.min.js';
-import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 
 import { Board } from './Game/board.js';
 import { getObjectsByProperty, getContainerObjByChild } from './Engine/helpers.js';
@@ -86,18 +85,16 @@ class Application {
         this.scene.add(light);
 
         const controls = new OrbitControls(this.camera, this.renderer.domElement);
-        controls.minDistance = 10;
-        controls.maxDistance = 25;
+        controls.minDistance = 10.0;
+        controls.maxDistance = 25.0;
+        //controls.minPolarAngle = 0; // radians
+        controls.maxPolarAngle = THREE.Math.degToRad(80.0);
         controls.update();
 
         // Postprocessing Effects
         this.composer = new EffectComposer(this.renderer);
         this.renderPass = new RenderPass(this.scene, this.camera);
         this.composer.addPass(this.renderPass);
-        const unrealBloomPass = new UnrealBloomPass({ x: 1024, y: 1024 }, 1.0, 0.0, 0.75);
-        //composer.addPass(unrealBloomPass);
-        const glitchPass = new GlitchPass();
-        //composer.addPass(glitchPass);
 
         this.effectFXAA = new ShaderPass(FXAAShader);
         var pixelRatio = this.renderer.getPixelRatio();
@@ -111,9 +108,9 @@ class Application {
             rotationBegin: 0.0,
             rotationEnd: 0.0,
             rotationVariation: 0.0,
-            scaleBegin: new THREE.Vector3(0.0, 0.0, 0.0),
+            scaleBegin: new THREE.Vector3(1.0, 1.0, 1.0),
             scaleEnd: new THREE.Vector3(0.0, 0.0, 0.0),
-            scaleVariation: new THREE.Vector3(0.0, 0.0, 0.0),
+            scaleVariation: new THREE.Vector3(0.3, 0.3, 0.3),
             speed: new THREE.Vector3(0.0, 0.0, 0.0),
             speedVariation: new THREE.Vector3(5.0, 2.0, 0.0),
             lifetime: 1.0
@@ -132,7 +129,7 @@ class Application {
                 displacementScale: 10,
                 flatShading: true
             }
-            ));
+        ));
         plane.castShadow = true;
         plane.receiveShadow = true;
         plane.position.y = -5;
@@ -143,36 +140,6 @@ class Application {
 
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
-
-        const fbxLoader = new FBXLoader();
-        fbxLoader.load(
-            'models/Peasant/Peasant.fbx',
-            object => {
-                object.traverse(function (child) {
-                    if (child.isMesh) {
-                        const oldMat = child.material;
-                        child.material = new THREE.MeshPhysicalMaterial({
-                            color: oldMat.color,
-                            map: oldMat.map,
-                            skinning: true
-                        });
-                    }
-                    child.castShadow = true;
-                })
-                object.position.y = 1;
-                object.scale.set(.01, .01, .01);
-
-                const animLoader = new FBXLoader();
-                animLoader.load('models/Peasant/anim.fbx', (animation) => {
-                    this.mixer = new THREE.AnimationMixer(object);
-                    // Buscamos la animacion y le damos play para que inicie
-                    const idle = this.mixer.clipAction(animation.animations[0]);
-                    idle.play();
-                });
-
-                this.scene.add(object);
-            }
-        )
 
         this.clock = new THREE.Clock();
         socket = io();
@@ -201,7 +168,10 @@ class Application {
 
             var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
             if (e.length !== 0) {
-                this.gameManager.defeatCharacter(e[0], data);
+                //this.gameManager.defeatCharacter(e[0], data);
+
+                var a = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
+                this.gameManager.changeCharacterTeam(e[0], a[0]);
                 return;
             }
 
@@ -216,8 +186,8 @@ class Application {
     }
 
     bindEvents() {
-        window.addEventListener('resize', () => { this.onWindowResizeEvent(); });
-        window.addEventListener('dblclick', (event) => { this.onDoubleClickEvent(event) });
+        window.addEventListener('resize', () => this.onWindowResizeEvent());
+        window.addEventListener('dblclick', event => this.onDoubleClickEvent(event));
         window.addEventListener('keydown', () => this.onKeyEvent());
     }
 
@@ -265,16 +235,10 @@ class Application {
         requestAnimationFrame(() => {
 
             var delta = this.clock.getDelta();
-            // this.uniforms.time += delta;
-            // this.water.material.uniforms.time.value += delta;
 
             var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
             for (let character of characters) {
                 character.onUpdate(delta);
-            }
-
-            if (this.mixer) {
-                this.mixer.update(delta);
             }
 
             TWEEN.update();
@@ -289,11 +253,7 @@ class Application {
     }
 }
 
-
-
-
 var socket;
-
 var app = null;
 
 window.addEventListener('DOMContentLoaded', () => {

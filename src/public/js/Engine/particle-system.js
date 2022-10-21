@@ -19,29 +19,30 @@ export class ParticleSystem {
         })
         this.particleIndex = this.particles.length - 1;
 
-
         this.geometry = new THREE.BufferGeometry();
         this.geometry.setAttribute('position', new THREE.Float32BufferAttribute([], 3));
         this.geometry.setAttribute('a_Blend', new THREE.Float32BufferAttribute([], 1));
+        this.geometry.setAttribute('scale', new THREE.Float32BufferAttribute([], 1));
         this.geometry.setIndex([])
 
         const vertex = /*glsl*/`
             attribute float a_Blend;
+            attribute vec3 scale;
 
             varying float v_Blend;
             
             void main()
             {
                 mat4 modelViewTran = modelViewMatrix;
-                modelViewTran[0][0] = 1.0f;
+                modelViewTran[0][0] = scale.x;
                 modelViewTran[0][1] = 0.0f;
                 modelViewTran[0][2] = 0.0f;
                 modelViewTran[1][0] = 0.0f;
-                modelViewTran[1][1] = 1.0f;
+                modelViewTran[1][1] = scale.y;
                 modelViewTran[1][2] = 0.0f;
                 modelViewTran[2][0] = 0.0f;
                 modelViewTran[2][1] = 0.0f;
-                modelViewTran[2][2] = 1.0f;
+                modelViewTran[2][2] = scale.z;
             
                 gl_Position = projectionMatrix * modelViewTran * vec4(position, 1.0f);
                 v_Blend = a_Blend;
@@ -96,8 +97,6 @@ export class ParticleSystem {
 
         --this.particleIndex;
         if (this.particleIndex < 0) this.particleIndex = this.particles.length - 1;
-
-        console.log(particle.speed);
     }
 
     onUpdate(dt) {
@@ -107,7 +106,6 @@ export class ParticleSystem {
             }
 
             if (particle.lifeRemaining <= 0.0) {
-                console.log('death');
                 particle.active = false;
                 continue;
             }
@@ -120,20 +118,46 @@ export class ParticleSystem {
     }
 
     onRender() {
+
+        const lerp = function (value1, value2, amount) {
+            amount = amount < 0 ? 0 : amount;
+            amount = amount > 1 ? 1 : amount;
+            return value1 + (value2 - value1) * amount;
+        }
+
         var positions = [];
         var indices = [];
         var blends = [];
+        var scales = [];
         var i = 0;
         for (let particle of this.particles) {
             if (!particle.active) {
                 continue;
             }
 
+            const blend = particle.lifeRemaining / particle.lifetime;
+
             positions.push(-0.1 + particle.position.x, -0.1 + particle.position.y, particle.position.z);
             positions.push(0.1 + particle.position.x, -0.1 + particle.position.y, particle.position.z);
             positions.push(0.1 + particle.position.x, 0.1 + particle.position.y, particle.position.z);
             positions.push(-0.1 + particle.position.x, 0.1 + particle.position.y, particle.position.z);
 
+            scales.push(lerp(particle.scaleEnd.x, particle.scaleBegin.x, blend));
+            scales.push(lerp(particle.scaleEnd.y, particle.scaleBegin.y, blend));
+            scales.push(lerp(particle.scaleEnd.z, particle.scaleBegin.z, blend));
+            
+            scales.push(lerp(particle.scaleEnd.x, particle.scaleBegin.x, blend));
+            scales.push(lerp(particle.scaleEnd.y, particle.scaleBegin.y, blend));
+            scales.push(lerp(particle.scaleEnd.z, particle.scaleBegin.z, blend));
+
+            scales.push(lerp(particle.scaleEnd.x, particle.scaleBegin.x, blend));
+            scales.push(lerp(particle.scaleEnd.y, particle.scaleBegin.y, blend));
+            scales.push(lerp(particle.scaleEnd.z, particle.scaleBegin.z, blend));
+
+            scales.push(lerp(particle.scaleEnd.x, particle.scaleBegin.x, blend));
+            scales.push(lerp(particle.scaleEnd.y, particle.scaleBegin.y, blend));
+            scales.push(lerp(particle.scaleEnd.z, particle.scaleBegin.z, blend));
+            
             indices.push(
                 0 + i,
                 1 + i,
@@ -175,6 +199,7 @@ export class ParticleSystem {
 
         this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         this.geometry.setAttribute('a_Blend', new THREE.Float32BufferAttribute(blends, 1));
+        this.geometry.setAttribute('scale', new THREE.Float32BufferAttribute(scales, 3));
         this.geometry.setIndex(indices);
         this.geometry.attributes.position.needsUpdate = true;
         this.geometry.attributes.a_Blend.needsUpdate = true;

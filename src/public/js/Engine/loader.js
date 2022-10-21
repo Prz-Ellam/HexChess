@@ -4,10 +4,16 @@ const fbxLoader = path => {
     });
 }
 
+const textureLoader = path => {
+    return new Promise(resolve => {
+        (new THREE.FileLoader()).load(path, resolve)
+    });
+}
+
 const audioLoader = path => {
     return new Promise(resolve => {
         (new THREE.AudioLoader()).load(path, resolve)
     });
 }
 
-export { fbxLoader, audioLoader }
+export { fbxLoader, audioLoader, textureLoader }

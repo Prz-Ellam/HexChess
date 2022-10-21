@@ -1,10 +1,10 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+
 import { getObjectsByProperty } from '../Engine/helpers.js';
 import { TWEEN } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/libs/tween.module.min.js';
 
-export class GameManager
-{
-    constructor(scene, io)
-    {
+export class GameManager {
+    constructor(scene, io) {
         this.scene = scene;
         this.io = io;
         this.selected = {
@@ -14,11 +14,9 @@ export class GameManager
         };
     }
 
-    makeTurn(object)
-    {
+    makeTurn(object) {
         // No hay turno actualmente
-        if (object.typeGame === 'Character' && !this.selected.status)
-        {
+        if (object.typeGame === 'Character' && !this.selected.status) {
             const regex = new RegExp(/\((\d+), (\d+)\)/);
             const values = regex.exec(object.cell);
             const x = Number(values[1]);
@@ -36,8 +34,7 @@ export class GameManager
         }
 
         if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
-            && object.typeGame !== 'Character')
-        {
+            && object.typeGame !== 'Character') {
             this.cleanCellsSelectable();
             this.freeObject();
         }
@@ -53,23 +50,20 @@ export class GameManager
                 }
             });
         }
-        
+
     }
 
-    makeCellsSelectable(cells)
-    {
+    makeCellsSelectable(cells) {
         cells.forEach((coords) => {
             const cell = this.scene.getObjectByName(coords, true);
-            if (cell !== undefined)
-            {
+            if (cell !== undefined) {
                 cell.material.color.setHex(0xa7bad0);
                 cell.selectable = true;
             }
         });
     }
 
-    cleanCellsSelectable()
-    {
+    cleanCellsSelectable() {
         const validCells = getObjectsByProperty(this.scene, 'selectable', true);
         validCells.forEach(cell => {
             cell.selectable = false;
@@ -77,8 +71,7 @@ export class GameManager
         });
     }
 
-    selectObject(position, cell)
-    {
+    selectObject(position, cell) {
         this.selected = {
             status: true,
             object: {
@@ -88,8 +81,7 @@ export class GameManager
         };
     }
 
-    freeObject()
-    {
+    freeObject() {
         this.selected = {
             status: false,
             object: {
@@ -99,32 +91,63 @@ export class GameManager
         };
     }
 
-    defeatCharacter(character, data)
-    {
+    defeatCharacter(character, data) {
         character.actions['idle'].stop();
         character.actions['death'].play();
         const defeatedTeam = character.team;
         // this.scene.remove(e[0]);
         const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
         if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
-                
-        setTimeout(() => { this.moveCharacter(
-            data.target.startPosition,
-            data.target.startCell, 
-            data.target.targetPosition, 
-            data.target.targetCell
-        );
-        this.scene.remove(character);
+
+        setTimeout(() => {
+            this.moveCharacter(
+                data.target.startPosition,
+                data.target.startCell,
+                data.target.targetPosition,
+                data.target.targetCell
+            );
+            this.scene.remove(character);
         }, character.actions['death']._clip.duration * 1000);
     }
 
-    changeCharacterTeam()
-    {
+    changeCharacterTeam(character, recruiter) {
+        let recruiterMap;
+        recruiter.traverse(child => {
+            if (child.isMesh) {
+                recruiterMap = child.material;
+                return;
+            }
+        });
 
+        character.traverse(child => {
+            if (child.isMesh) {
+                child.material = recruiterMap.clone();
+                character.team = recruiter.team;
+            }
+        });
+
+        this.freeObject();
     }
 
-    moveCharacter(startPosition, startCell, targetPosition, targetCell)
-    {
+    moveCharacter(startPosition, startCell, targetPosition, targetCell) {
+
+        function fadeToAction(previousAction, activeAction, duration) {
+
+            if (previousAction !== activeAction) {
+
+                previousAction.fadeOut( duration );
+
+            }
+
+            activeAction
+                .reset()
+                .setEffectiveTimeScale(1)
+                .setEffectiveWeight(1)
+                .fadeIn(duration)
+                .play();
+
+        }
+
         let selectedObject = getObjectsByProperty(this.scene, 'cell', startCell);
         if (selectedObject.length < 1) return;
         selectedObject = selectedObject[0];
@@ -148,38 +171,47 @@ export class GameManager
                 z: targetPosition.z
             }, 1000
         ).onStart(() => {
-            selectedObject.actions['walking'].play();
-        })
-        .onUpdate(coords => {
+            fadeToAction(selectedObject.actions['idle'],
+            selectedObject.actions['walking'], 0.2);
+            //selectedObject.actions['walking'].play();
+        }).onUpdate(coords => {
             selectedObject.rotation.y = angle;
             selectedObject.position.set(coords.x, coords.y, coords.z);
         }).onComplete(() => {
-            selectedObject.actions['walking'].stop();
-            selectedObject.actions['idle'].play();
+            fadeToAction(selectedObject.actions['walking'],
+            selectedObject.actions['idle'], 0.2)
+            //selectedObject.actions['walking'].stop();
+            //selectedObject.actions['idle'].play();
             //socket.emit('moveComplete', true);
             //socket.on('changeTurn', () => {
 
-                selectedObject.cell = targetCell;
-                this.freeObject();
-                    
+            selectedObject.cell = targetCell;
+            this.freeObject();
+
             //});
         });
-        
+
         tween.start();
     }
 
-    spawnItem()
-    {
-        
+    spawnItem() {
+
+        const charactersCount = getObjectsByProperty(this.scene, 'typeGame', 'Character').length;
+        const percentage = -Math.log(charactersCount) * 3 + 30;
+        const random = Math.random() * 100;
+
+        if (random < percentage)
+        {
+            // Si
+        }
+
     }
 
-    gameOver()
-    {
+    gameOver() {
 
     }
 
-    scoring()
-    {
+    scoring() {
 
     }
 }

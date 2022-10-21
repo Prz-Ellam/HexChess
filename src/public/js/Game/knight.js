@@ -3,13 +3,13 @@ import { Character } from "./character.js";
 
 export class Knight extends Character
 {
-    constructor(scene, board, position)
+    constructor(scene, board, position, animations)
     {
         const modelpath = 
         (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ? 
         'models/Knight/RedKnight.fbx' : 
         'models/Knight/GreenKnight.fbx';
-        super(scene, board, modelpath, position);
+        super(scene, board, modelpath, position, animations);
     }
 
     findMoves(scene, x, z)
