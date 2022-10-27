@@ -27,7 +27,7 @@ export class DesertMap{
              object.castShadow = true;
              object.receiveShadow = true;
 
-             this.scene.add(object);
+             scene.add(object);
 
          }
      )
