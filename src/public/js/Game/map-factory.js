@@ -1,6 +1,6 @@
-import { ForestMap } from './Game/forest-map.js';
-import { DesertMap } from './Game/desert-map.js';
-import { SnowMap } from './Game/snow-map.js';
+import { ForestMap } from './forest-map.js';
+import { DesertMap } from './desert-map.js';
+import { SnowMap } from './snow-map.js';
 
 export class MapFactory
 {
