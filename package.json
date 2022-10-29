@@ -7,11 +7,14 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node src/app.js",
 		"dev": "nodemon src/app.js",
-		"webpack": "webpack --mode development --watch"
+		"webpack": "webpack --mode development --watch",
+		"build": "webpack"
 	},
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"bootstrap": "^5.0.0",
+		"boxicons": "^2.1.4",
 		"dotenv": "^16.0.3",
 		"ejs": "^3.1.8",
 		"express": "^4.18.1",
@@ -21,9 +24,21 @@
 		"passport": "^0.6.0",
 		"passport-facebook": "^3.0.0",
 		"socket.io": "^4.5.2",
+		"socket.io-client": "^4.5.3",
 		"three": "^0.145.0"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.20"
+		"@babel/core": "^7.19.6",
+		"@babel/preset-env": "^7.19.4",
+		"babel-loader": "^9.0.0",
+		"css-loader": "^6.7.1",
+		"html-loader": "^4.2.0",
+		"html-webpack-plugin": "^5.5.0",
+		"mini-css-extract-plugin": "^2.6.1",
+		"nodemon": "^2.0.20",
+		"style-loader": "^3.3.1",
+		"to-string-loader": "^1.2.0",
+		"webpack": "^5.74.0",
+		"webpack-cli": "^4.10.0"
 	}
 }

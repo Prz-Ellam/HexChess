@@ -3,3 +3,4 @@ node_modules
 models
 textures
 .env
+dist

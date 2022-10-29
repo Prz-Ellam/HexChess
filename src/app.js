@@ -65,11 +65,11 @@ app.get('/facebook/callback', passport.authenticate('facebook', {
 
 
 
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../dist'));
 app.engine('html', require('ejs').renderFile);
 
 app.get('/', (req, res) => {
-    res.render('play.html');
+    res.render('index.html');
 });
 
 app.get('/game', (req, res) => {
@@ -77,31 +77,31 @@ app.get('/game', (req, res) => {
 });
 
 app.get('/scenario', (req, res) => {
-    res.render('escenarios.html');
+    res.render('index.html');
 });
 
 app.get('/mode', (req, res) => {
-    res.render('modojuego.html');
+    res.render('index.html');
 })
 
 app.get('/configuration', (req, res) => {
-    res.render('configuracion.html');
+    res.render('index.html');
 });
 
 app.get('/players', (req, res) => {
-    res.render('jugadores.html');
+    res.render('index.html');
 });
 
 app.get('/dificulty', (req, res) => {
-    res.render('dificultad.html');
+    res.render('index.html');
 })
 
 app.get('/score', (req, res) => {
-    res.render('score.html');
+    res.render('index.html');
 });
 
 app.get('/pause', (req, res) => {
-    res.render('pausa.html');
+    res.render('index.html');
 })
 
 
@@ -131,7 +131,7 @@ app.get('/api/v1/scores', async (req, res) => {
 
     user.save();
 */ 
-    await User.find({email: 'eliam@correo.com'}, (err, users) => { res.json(users) });
+    await User.find({ email: 'eliam@correo.com' }, (err, users) => { res.json(users) });
 
     //res.json({});
 });
@@ -142,7 +142,7 @@ app.get('/api/v1/scores', async (req, res) => {
 app.set('port', process.env.PORT || 3000);
 
 // Static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../dist')));
 
 server.listen(app.get('port'), () => {
     console.log(`Server started on port ${app.get('port')}`);
