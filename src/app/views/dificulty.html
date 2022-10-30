@@ -4,26 +4,34 @@
 
     <!--Btn facil-->
     <div id="contain-facil">
-        <button class="button button-anim" type="submit" id="btn-facil" style="--clr:#8A7DFD" onclick="dificultad()">
+        <a class="button button-anim" 
+            id="btn-easy" 
+            style="--clr:#8A7DFD" 
+            href="/scenarios"
+            value="Easy">
             <span>MODO FÁCIL</span>
             <i class="widget"></i>
-        </button>
+        </a>
     </div>
 
     <!--Btn dificil-->
     <div id="contain-dificil">
-        <button class="button button-anim" type="submit" id="btn-dificil" style="--clr:#8A7DFD" onclick="dificultad()">
+        <a class="button button-anim" 
+            id="btn-hard" 
+            style="--clr:#8A7DFD" 
+            href="/scenarios"
+            value="Hard">
             <span>MODO DÍFICIL</span>
             <i class="widget"></i>
-        </button>
+        </a>
     </div>
 </div>
 
 <!--Btn Return-->
 <div>
-    <button class="button" type="submit" onclick="regresarM();" id="btn-return" style="--clr:#8A7DFD">
+    <a class="button" type="submit" href="/mode" id="btn-return" style="--clr:#8A7DFD">
         <span></span>
-        <i id="#regreso"></i>
+        <i id="regreso"></i>
         <i class="bx bx-undo"></i>
-    </button>
+    </a>
 </div>

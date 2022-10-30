@@ -3,11 +3,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
-
 import { Board } from '../game/board/board';
 import { getObjectsByProperty, getContainerObjByChild } from './helpers';
 import { BoardDirector } from '../game/board/board-director';
@@ -22,25 +17,11 @@ export class Application {
 
     socket = null;
 
-    mode = null;
-    dificulty = null;
-    scenario = null;
-
     configuration = {};
 
     constructor() {
-
-        this.router = new Router();
-        const path = this.router.resolve();
-
-        document.body.addEventListener('click', e => {
-            if (e.target.matches('a')) {
-                e.preventDefault();
-                this.router.routing(e);
-            }
-        });
-
-        //this.create();
+        this.router = new Router(this);
+        this.router.resolve();
     }
 
     create() {
@@ -71,7 +52,7 @@ export class Application {
         this.camera.lookAt(0.0, 1.0, 0.0);
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(106 / 255, 168 / 255, 174 / 255);
+        this.scene.background = new THREE.Color(0.4156, 0.6588, 0.6823);
 
         let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
         light.position.set(20, 20, 10);
@@ -100,18 +81,6 @@ export class Application {
         controls.maxPolarAngle = THREE.MathUtils.degToRad(80.0);
         controls.update();
 
-        // Postprocessing Effects
-        this.composer = new EffectComposer(this.renderer);
-        this.renderPass = new RenderPass(this.scene, this.camera);
-        this.composer.addPass(this.renderPass);
-
-        this.effectFXAA = new ShaderPass(FXAAShader);
-        var pixelRatio = this.renderer.getPixelRatio();
-        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio),
-            1 / (window.innerHeight * pixelRatio));
-        this.effectFXAA.renderToScreen = true;
-        this.composer.addPass(this.effectFXAA);
-
         this.particleSystem = new ParticleSystem(this.scene, {
             position: new THREE.Vector3(0.0, 0.0, 0.0),
             rotationBegin: 0.0,
@@ -125,9 +94,13 @@ export class Application {
             lifetime: 1.0
         }, 1000);
 
-        const mapScene = new MapFactory(this.scene, 'Forest');
-        
-        const board = new Board(this.scene, new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector2(10, 10), 1.75);
+        const mapScene = new MapFactory(this.scene, this.configuration.scenario);
+
+        const board = new Board(this.scene, 
+            new THREE.Vector3(0.0, 0.0, 0.0), 
+            new THREE.Vector2(10, 10), 
+            1.75,
+            this.configuration.dificulty);
 
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
@@ -137,7 +110,6 @@ export class Application {
         this.socket.on('connect', () => {
             this.id = this.socket.id;
         });
-        console.log(this.id);
 
         this.socket.emit('hostGame', {
             scenario: 'Forest',
@@ -160,10 +132,10 @@ export class Application {
 
             var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
             if (e.length !== 0) {
-                //this.gameManager.defeatCharacter(e[0], data);
+                this.gameManager.defeatCharacter(e[0], data);
 
-                var a = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
-                this.gameManager.changeCharacterTeam(e[0], a[0]);
+                //var a = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
+                //this.gameManager.changeCharacterTeam(e[0], a[0]);
                 return;
             }
 
@@ -187,11 +159,6 @@ export class Application {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-        this.composer.setSize(window.innerWidth, window.innerHeight);
-        var pixelRatio = this.renderer.getPixelRatio();
-        this.effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * pixelRatio),
-            1 / (window.innerHeight * pixelRatio));
     }
 
     onDoubleClickEvent(event) {
@@ -204,7 +171,6 @@ export class Application {
         raycaster.setFromCamera(mouse, this.camera);
 
         const intersects = raycaster.intersectObjects(this.scene.children, true);
-
         if (intersects.length > 0) {
             var firstObject = intersects[0].object;
             var object = getContainerObjByChild(firstObject);
@@ -237,7 +203,6 @@ export class Application {
             this.particleSystem.onRender();
 
             this.renderer.render(this.scene, this.camera);
-            //this.composer.render();
             this.render();
         });
     }

@@ -2,8 +2,9 @@ import { routes } from "./routes";
 
 export class Router {
 
-    constructor() {
+    constructor(application) {
 
+        this.application = application;
         window.onpopstate = this.resolve;
         window.route = this.routing;
 
@@ -12,17 +13,21 @@ export class Router {
     routing(event) {
         event = event || window.event;
         event.preventDefault();
-        window.history.pushState({}, "", event.target.href);
+        window.history.pushState(null, null, event.currentTarget.href);
         this.resolve();
-    } 
+    }
 
     resolve() {
 
         const path = window.location.pathname;
         const route = routes[path] || routes['404'];
+        const controller = new route(this.application);
 
-        
-        const controller = new route();
+        const a = document.body.querySelectorAll('a');
+        a.forEach(a => {
+            a.addEventListener('click', e => this.routing(e));
+        });
+
 
     }
 

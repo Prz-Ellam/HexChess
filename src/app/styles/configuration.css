@@ -247,7 +247,6 @@ h2 {
 }
 
 /*Btn-Controles*/
-
 #btn-controles {
     position: absolute;
     right: 64.3%;
@@ -309,7 +308,6 @@ h2 {
 }
 
 /*Btn-Return*/
-
 #btn-return {
     position: absolute;
     right: 30%;
@@ -331,12 +329,12 @@ h2 {
     z-index: 1;
 }
 
-#btn-return #regreso {
+#regreso {
     inset: 0;
     display: block;
 }
 
-#btn-return #regreso::before {
+#regreso::before {
     content: '';
     position: absolute;
     top: -3%;
@@ -348,12 +346,12 @@ h2 {
     transition: 0.5s;
 }
 
-#btn-return:hover #regreso::before {
+#regreso::before {
     width: 20px;
     left: 20%;
 }
 
-#btn-return #regreso::after {
+#regreso::after {
     content: '';
     position: absolute;
     top: 97%;
@@ -365,13 +363,12 @@ h2 {
     transition: 0.5s;
 }
 
-#btn-return:hover #regreso::after {
+#regreso::after {
     width: 20px;
     left: 80%;
 }
 
 /*Btn-Aceptar*/
-
 #btn-aceptar {
     position: absolute;
     right: 48%;
@@ -433,7 +430,6 @@ h2 {
 }
 
 /*Btn-Cancelar*/
-
 #btn-cancel {
     position: absolute;
     right: 29%;
@@ -661,7 +657,6 @@ input:checked[type="checkbox"]::after {
 }
 
 /*--------------------------------------------------------------------------------*/
-
 #brillo-range {
     height: 80px;
     width: 15%;

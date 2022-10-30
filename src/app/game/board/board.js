@@ -2,15 +2,15 @@ import * as THREE from 'three';
 
 export class Board {
 
-    constructor(scene, position, count, space) {
+    constructor(scene, position, count, space, dificulty) {
         this.position = position;
         this.count = count;
         this.space = space;
-        this.create(scene);
+        this.create(scene, dificulty);
     }
 
     // TODO: Dificulty - Easy or Hard
-    create(scene) {
+    create(scene, dificulty) {
 
         const startX = Math.round(this.position.x - (this.count.x / 2));
         const startZ = Math.round(this.position.y - (this.count.y / 2));
@@ -45,10 +45,12 @@ export class Board {
                 hexagon.castShadow = true;
                 hexagon.receiveShadow = true;
 
-                let change = Math.random() * (3 - 1) + 1;
-                change = Math.round(change);
-                //hexagon.scale.y = change;
-                //hexagon.position.y += change / 2;
+                if (dificulty === 'Hard') {
+                    let change = Math.random() * (3 - 1) + 1;
+                    change = Math.round(change);
+                    hexagon.scale.y = change;
+                    hexagon.position.y += change / 2;
+                }
 
                 const xCoord = (x - startX) + 1;
                 const zCoord = (z * -1) - startZ;

@@ -1,16 +1,24 @@
 import { ConfigurationController } from '../controllers/configuration.controller'
 import { HomeController } from '../controllers/home.controller'
 import { ScoreController } from '../controllers/score.controller'
+import { PauseController } from '../controllers/pause.controller'
+import { DificultyController } from '../controllers/dificulty.controller'
+import { ScenarioController } from '../controllers/scenario.controller'
+import { PlayersController } from '../controllers/players.controller'
+import { ModeController } from '../controllers/mode.controller'
+import { GameController } from '../controllers/game.controller'
 
 const routes = {
     '404': '-1',
     '/': HomeController,
     '/configuration': ConfigurationController,
-    '/dificulty': '5',
-    '/pause': '4',
-    '/scenarios': '6',
+    '/dificulty': DificultyController,
+    '/mode': ModeController,
+    '/pause': PauseController,
+    '/scenarios': ScenarioController,
     '/score': ScoreController,
-    '/game': '2'
+    '/players': PlayersController,
+    '/game': GameController
 }
 
 export { routes }

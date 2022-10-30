@@ -1,3 +1,5 @@
+// VOBO
+
 let canvas, ctx, w, h, snows, snows2;
 
 function init() {

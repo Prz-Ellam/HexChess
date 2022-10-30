@@ -1,3 +1,4 @@
+// VOBO 50/50
 
 function regresar() {
 	location.href = "playgame.html";

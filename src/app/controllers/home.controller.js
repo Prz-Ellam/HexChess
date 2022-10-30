@@ -6,7 +6,8 @@ export class HomeController {
         
         import('../styles/home.css');
         import('../styles/styles.css');
-        import('boxicons/css/boxicons.min.css');
+
+        console.log('Hola');
 
         const root = document.getElementById('root');
         root.innerHTML = view;

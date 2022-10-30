@@ -5,7 +5,7 @@
 
     <!--Btn Home-->
     <div style="display: inline; margin-right: 8px">
-        <button class="button" type="submit" onclick="irhome()" id="btn-home" style="--clr:#8A7DFD"
+        <button class="button" href="/" id="btn-home" style="--clr:#8A7DFD"
             class='btn btn-primary btn-lg'>
             <span></span>
             <i id="home"></i>
@@ -15,29 +15,30 @@
 
     <!--Btn Reiniciar-->
     <div style="display: inline; margin-right: 16px">
-        <button class="button" type="submit" id="btn-reiniciar" style="--clr:#8A7DFD" class='btn btn-primary btn-lg'>
+        <a class="button" type="submit" id="btn-reiniciar" style="--clr:#8A7DFD" 
+        class="btn btn-primary btn-lg">
             <span></span>
             <i id="restart"></i>
             <i class="bx bx-redo"></i>
-        </button>
+        </a>
     </div>
 
     <!--Btn Exit-->
     <div style="display: inline; margin-right: 8px">
-        <button class="button" type="submit" id="btn-exit" onclick="location.href = 'configuracion.html'"
-            style="--clr:#8A7DFD" class='btn btn-primary btn-lg'>
+        <a class="button" id="btn-exit" href="/configuration"
+            style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
             <span></span>
             <i id="salir"></i>
             <i class="bx bx-cog"></i>
-        </button>
+        </a>
     </div>
 
     <!--Btn Reanudar-->
     <div>
-        <button class="button button-anim" type="submit" id="btn-reanudar" onclick="irjuego()" style="--clr:#8A7DFD"
-            class='btn btn-primary btn-lg'>
+        <a class="button button-anim" id="btn-reanudar" href="/game" style="--clr:#8A7DFD"
+            class="btn btn-primary btn-lg">
             <span>REANUDAR</span>
             <i class="widget"></i>
-        </button>
+        </a>
     </div>
 </div>
