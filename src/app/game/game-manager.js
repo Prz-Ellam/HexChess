@@ -1,75 +1,126 @@
-
-import { getObjectsByProperty } from '../core/helpers';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
+import * as THREE from 'three';
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
+import { codeToVector, getObjectsByProperty } from '../core/helpers';
 
 export class GameManager {
-    constructor(scene, io) {
+    constructor(scene, board, team, io) {
+        this.team = team;
+        this.currentTeam = 'A';
         this.scene = scene;
+        this.board = board;
         this.io = io;
         this.selected = {
             status: false,
             position: null,
             object: null
         };
+
+        // Only multiplayer
+        this.io.on('select', data => { this.select(data) });
+        this.io.on('move', data => { this.move(data) });
     }
 
-    makeTurn(object) {
+    /**
+     * Prepara un turno para un jugador
+     * 
+     * @param {Group} object 
+     * @returns
+     */
+    processAction(object) {
         // No hay turno actualmente
-        if (object.typeGame === 'Character' && !this.selected.status) {
-            const regex = new RegExp(/\((\d+), (\d+)\)/);
-            const values = regex.exec(object.cell);
-            const x = Number(values[1]);
-            const z = Number(values[2]);
+        // this.selected.status dice si ya hay un objeto seleccionado (true) o no (false)
+        if (object.typeGame === 'Character' && !this.selected.status &&
+            object.team === this.currentTeam && object.team === this.team) {
 
-            var moves = object.findMoves(this.scene, x, z);
-
-            this.io.emit('select', {
+            const position = codeToVector(object.cell);
+            const moves = object.findMoves(this.scene, position);
+            const data = {
                 cells: moves,
-                target: {
+                character: {
                     position: object.position,
                     cell: object.cell
                 }
-            });
+            }
+
+            /*
+            if (singleplayer) {
+                this.select(data);
+            }
+            else {
+                this.io.emit('select', data);
+            }
+            */
+
+            //this.select(data);
+            this.io.emit('select', data);
         }
 
+        // Hay turno actualmente y se selecciona un objeto no valido
         if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
             && object.typeGame !== 'Character') {
-            this.cleanCellsSelectable();
-            this.freeObject();
+            this.deselect();
         }
 
+        // Hay turno actualmente y se selecciona un elemento valido
         if (object.typeGame === 'Cell' && this.selected.status && object.selectable) {
+            const data = {
+                startPosition: this.selected.object.position,
+                targetPosition: object.position,
+                startCell: this.selected.object.cell,
+                targetCell: object.name
+            }
 
-            this.io.emit('move', {
-                target: {
-                    startPosition: this.selected.object.position,
-                    targetPosition: object.position,
-                    startCell: this.selected.object.cell,
-                    targetCell: object.name
-                }
-            });
+            //this.move(data);
+            this.io.emit('move', data)
+        }
+    }
+
+    makeIaTurn() {
+
+    }
+
+    /**
+     * 
+     * @param {cells: Array<string>, target: {position: THREE.Vector3, cell: string}} data 
+     */
+    select(data) {
+        this.board.makeSelectableCells(data.cells);
+        this.selectObject(data.character.position, data.character.cell);
+    }
+
+    deselect() {
+        this.board.cleanSelectableCells();
+        this.deselectObject();
+    }
+
+    move(data) {
+        this.board.cleanSelectableCells();
+
+        let targetCharacter = this.scene.getObjectByProperty('cell', data.targetCell);
+        if (targetCharacter !== undefined) {
+            // Checkmate
+            this.defeatCharacter(targetCharacter, data);
+
+            // Coldwar
+            //var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
+            //this.changeCharacterTeam(targetCharacter, recruiterCharacter);
+            return;
         }
 
+        this.moveCharacter(
+            data.startPosition,
+            data.startCell,
+            data.targetPosition,
+            data.targetCell
+        );
     }
 
-    makeCellsSelectable(cells) {
-        cells.forEach((coords) => {
-            const cell = this.scene.getObjectByName(coords, true);
-            if (cell !== undefined) {
-                cell.material.color.setHex(0xa7bad0);
-                cell.selectable = true;
-            }
-        });
-    }
-
-    cleanCellsSelectable() {
-        const validCells = getObjectsByProperty(this.scene, 'selectable', true);
-        validCells.forEach(cell => {
-            cell.selectable = false;
-            cell.material.color.setHex(0x958ae6);
-        });
-    }
-
+    /**
+     * Selecciona un personaje
+     * 
+     * @param {THREE.Vector3} position 
+     * @param {String} cell 
+     */
     selectObject(position, cell) {
         this.selected = {
             status: true,
@@ -80,7 +131,10 @@ export class GameManager {
         };
     }
 
-    freeObject() {
+    /**
+     * Deselecciona un personaje
+     */
+    deselectObject() {
         this.selected = {
             status: false,
             object: {
@@ -93,20 +147,21 @@ export class GameManager {
     defeatCharacter(character, data) {
         character.actions['idle'].stop();
         character.actions['death'].play();
-        const defeatedTeam = character.team;
-        // this.scene.remove(e[0]);
-        const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
-        if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
 
         setTimeout(() => {
             this.moveCharacter(
-                data.target.startPosition,
-                data.target.startCell,
-                data.target.targetPosition,
-                data.target.targetCell
+                data.startPosition,
+                data.startCell,
+                data.targetPosition,
+                data.targetCell
             );
+            const defeatedTeam = character.team;
             this.scene.remove(character);
-        }, character.actions['death']._clip.duration * 1000);
+
+            const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
+            if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
+
+        }, character.actions['death']._clip.duration * 1000 - 10);
     }
 
     changeCharacterTeam(character, recruiter) {
@@ -125,17 +180,14 @@ export class GameManager {
             }
         });
 
-        this.freeObject();
+        this.deselectObject();
     }
 
     moveCharacter(startPosition, startCell, targetPosition, targetCell) {
-
+        // Transición entre animaciones fluida
         function fadeToAction(previousAction, activeAction, duration) {
-
             if (previousAction !== activeAction) {
-
-                previousAction.fadeOut( duration );
-
+                previousAction.fadeOut(duration);
             }
 
             activeAction
@@ -144,12 +196,10 @@ export class GameManager {
                 .setEffectiveWeight(1)
                 .fadeIn(duration)
                 .play();
-
         }
 
-        let selectedObject = getObjectsByProperty(this.scene, 'cell', startCell);
-        if (selectedObject.length < 1) return;
-        selectedObject = selectedObject[0];
+        let selectedObject = this.scene.getObjectByProperty('cell', startCell);
+        if (selectedObject === undefined) return;
 
         let angle = Math.atan2(
             startPosition.z - targetPosition.z,
@@ -170,22 +220,37 @@ export class GameManager {
                 z: targetPosition.z
             }, 1000
         ).onStart(() => {
-            fadeToAction(selectedObject.actions['idle'],
-            selectedObject.actions['walking'], 0.2);
+            fadeToAction(
+                selectedObject.actions['idle'],
+                selectedObject.actions['walking'], 0.2);
             //selectedObject.actions['walking'].play();
         }).onUpdate(coords => {
             selectedObject.rotation.y = angle;
             selectedObject.position.set(coords.x, coords.y, coords.z);
         }).onComplete(() => {
-            fadeToAction(selectedObject.actions['walking'],
-            selectedObject.actions['idle'], 0.2)
+            fadeToAction(
+                selectedObject.actions['walking'],
+                selectedObject.actions['idle'], 0.2)
+            
             //selectedObject.actions['walking'].stop();
             //selectedObject.actions['idle'].play();
             //socket.emit('moveComplete', true);
             //socket.on('changeTurn', () => {
 
             selectedObject.cell = targetCell;
-            this.freeObject();
+            this.deselectObject();
+
+            this.currentTeam = (this.currentTeam === 'A') ? 'B' : 'A';
+            this.spawnItem();
+
+            // Si es contra IA
+            // if (this.currentTeam === 'B') {
+                //alert('JAJAJA');
+                
+                //this.makeIaTurn();
+
+                //this.currentTeam = 'A';
+            //}
 
             //});
         });
@@ -199,9 +264,39 @@ export class GameManager {
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.random() * 100;
 
-        if (random < percentage)
-        {
-            // Si
+        if (random < percentage) {
+            const ocupiedCells = [];
+            this.scene.traverse(child => {
+                if (child.cell) {
+                    ocupiedCells.push(child.cell);
+                }
+            });
+
+            const freeCells = [];
+            for (let i = 0; i < this.board.count.x; i++) {
+                for (let j = 0; j < this.board.count.y; j++) {
+                    if (!ocupiedCells.includes(`(${i + 1}, ${j + 1})`)) {
+                        freeCells.push(`(${i + 1}, ${j + 1})`);
+                    }
+                }
+            }
+
+            const chosenCellIndex = parseInt(Math.random() * freeCells.length);
+            const chosenCell = freeCells[chosenCellIndex];
+            const hexagon = this.scene.getObjectByName(chosenCell);
+
+            // Add an item to the scene
+            const cube = new THREE.Mesh(
+                new THREE.BoxGeometry(1.0, 1.0, 1.0), 
+                new THREE.MeshStandardMaterial({ color : 0xC62F2F })
+            );
+
+            cube.position.x = hexagon.position.x;
+            cube.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
+            cube.position.z = hexagon.position.z;
+
+            this.scene.add(cube);
+
         }
 
     }

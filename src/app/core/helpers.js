@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export function getContainerObjByChild(obj) {
   
     if (obj.userData.isContainer)
@@ -21,4 +23,12 @@ export function getObjectsByProperty(object, property, value, result = [])
     }
    
     return result;
+}
+
+export function codeToVector(code) {
+    const regex = new RegExp(/\((\d+), (\d+)\)/);
+    const values = regex.exec(code);
+    const x = Number(values[1]);
+    const z = Number(values[2]);
+    return new THREE.Vector2(x, z);
 }

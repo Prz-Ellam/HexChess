@@ -5,72 +5,67 @@ module.exports = function (io) {
     var clients = {};
     var games = {};
 
-    let clientsCount = 0;
     let gamesReady = {};
 
     io.on('connection', socket => {
 
-        console.log(Math.floor(clientsCount / 2.0));
-        socket.join(clientsCount++);
-
-        console.log(`New user with id: ${socket.id}`);
+        console.log(`New user with id: ${socket.id} joined the server`);
         clients[socket.id] = {};
-        clients[socket.id].game = 1;
-
-
-        socket.on('send', message => {
-
-            // Este es para todos los clientes
-            io.emit('receive', message);
-
-            // Este es para todos excepto
-            // io.broadcast.emit();
-
-        });
 
         socket.on('disconnect', () => {
 
             console.log(`The user with id: ${socket.id} disconnected from server`);
+            
+            for (const [ id, value ] of Object.entries(games)) {
+                if (value.playerA === socket.id || value.playerB === socket.id) {
+                    delete games[id];
+                    io.to(id).emit('terminateGame');
+                    io.in(id).socketsLeave(id);
+                }
+            }
+            
             delete clients[socket.id];
-            clientsCount--;
-            //io.broadcast.emit('send', 'Se fue');
-        });
-
-        socket.on('hostGame', () => {
-
-            const id = nanoid(12);
-            games[id] = [];
-            games[id].push(socket.id);
-
-            console.log(id);
-            console.log(games);
+            console.log(clients);
 
         });
 
-        socket.on('joinGame', data => {
+        socket.on('joinGame', configuration => {
 
-            let found = false;
-            // Find id
-            const id = data.id;
-            if (id in games) {
-                if (games[id].length < 2) {
-                    games[id].push(socket.id);
-                    found = true;
+            for (const [id, value] of Object.entries(games)) {
+                if (JSON.stringify(value.configuration) === JSON.stringify(configuration)
+                    && !value.playerB) {
+                    
+                    games[id].playerB = socket.id;
+                    socket.join(id);
+
+                    //io.to(id).emit('found');
+                    io.to(games[id].playerA).emit('found', { team: 'A' });
+                    io.to(games[id].playerB).emit('found', { team: 'B' });
+
+                    
+                    return;
                 }
             }
 
-            console.log(games);
+            const id = nanoid(12);
+            games[id] = {};
+            games[id].configuration = configuration;
+            games[id].playerA = socket.id;
+            games[id].playerB = null;
+            socket.join(id);
+
         });
 
-        socket.on('select', (data) => {
-            //console.log(data);
+        socket.on('select', data => {
             // Devuelvesela a todos los clientes
-            io.emit('select', data);
+            const room = Array.from(socket.rooms)[1];
+            io.to(room).emit('select', data);
 
         });
 
         socket.on('move', data => {
-            io.emit('move', data);
+            const room = Array.from(socket.rooms)[1];
+            io.to(room).emit('move', data);
         });
 
         socket.on('moveComplete', status => {

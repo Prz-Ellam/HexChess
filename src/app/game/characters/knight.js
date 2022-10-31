@@ -1,22 +1,22 @@
 import * as THREE from 'three';
-import { Character } from "./character.js";
+import { Character } from './character';
 
 import redKnight from '../../assets/models/Knight/RedKnight.fbx';
 import greenKnight from '../../assets/models/Knight/GreenKnight.fbx';
 
-export class Knight extends Character
-{
-    constructor(scene, board, position, animations)
-    {
-        const modelpath = 
-        (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ? 
-        redKnight : 
-        greenKnight;
+export class Knight extends Character {
+    constructor(scene, board, position, animations) {
+        const modelpath =
+            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+                redKnight :
+                greenKnight;
         super(scene, board, modelpath, position, animations);
     }
 
-    findMoves(scene, x, z)
-    {
+    findMoves(scene, position) {
+        const x = position.x;
+        const z = position.y;
+
         let coords = [];
         coords.push(new THREE.Vector2(x - 1, z));
         coords.push(new THREE.Vector2(x + 1, z));

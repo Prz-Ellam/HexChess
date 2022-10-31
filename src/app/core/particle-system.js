@@ -34,6 +34,7 @@ export class ParticleSystem {
             void main()
             {
                 mat4 modelViewTran = modelViewMatrix;
+                
                 modelViewTran[0][0] = scale.x;
                 modelViewTran[0][1] = 0.0f;
                 modelViewTran[0][2] = 0.0f;
@@ -43,6 +44,8 @@ export class ParticleSystem {
                 modelViewTran[2][0] = 0.0f;
                 modelViewTran[2][1] = 0.0f;
                 modelViewTran[2][2] = scale.z;
+
+                
             
                 gl_Position = projectionMatrix * modelViewTran * vec4(position, 1.0f);
                 v_Blend = a_Blend;

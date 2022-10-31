@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Character } from "./character.js";
+import { Character } from './character';
 
 //import modelPath from 'models/Monk/scene.gltf'
 
@@ -11,8 +11,10 @@ export class Monk extends Character
         super(scene, board, modelpath, position);
     }
 
-    findMoves(scene, x, z)
-    {
+    findMoves(scene, posiiton) {
+        const x = position.x;
+        const z = position.y;
+
         let coords = [];
         coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z - 1));
         coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z + 1));

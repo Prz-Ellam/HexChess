@@ -16,15 +16,33 @@ import { Router } from '../routes/router';
 export class Application {
 
     socket = null;
-
     configuration = {};
 
     constructor() {
+        this.socket = io();
+        this.socket.on('connect', () => {
+            this.id = this.socket.id;
+            console.log(this.id);
+        });
+
         this.router = new Router(this);
         this.router.resolve();
     }
 
     create() {
+        //this.createScene('B');
+        this.multiplayer();
+    }
+
+    multiplayer() {
+        this.socket.emit('joinGame', this.configuration);
+        this.socket.on('found', data => { this.createScene(data.team) });
+    }
+
+    createScene(team) {
+
+        this.socket.on('terminateGame', () => { alert('Todo murio') });
+
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
             antialias: true
@@ -38,6 +56,7 @@ export class Application {
         //this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         //this.renderer.toneMappingExposure = 1.8;
         const root = document.getElementById('root');
+        root.innerHTML = '';
         root.appendChild(this.renderer.domElement);
 
         this.bindEvents();
@@ -48,13 +67,18 @@ export class Application {
             0.1,
             1000.0
         );
-        this.camera.position.set(0.0, 8.0, 12.0);
+        // 12
+        const z = (team === 'A') ? 12.0 : -14.0;
+        this.camera.position.set(0.0, 8.0, z);
         this.camera.lookAt(0.0, 1.0, 0.0);
 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0.4156, 0.6588, 0.6823);
 
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        let light = new THREE.AmbientLight(0x303030);
+        this.scene.add(light);
+
+        light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
         light.position.set(20, 20, 10);
         light.target.position.set(0, 0, 0);
         light.castShadow = true;
@@ -71,13 +95,9 @@ export class Application {
         light.shadow.camera.bottom = -20.0;
         this.scene.add(light);
 
-        light = new THREE.AmbientLight(0x303030);
-        this.scene.add(light);
-
         const controls = new OrbitControls(this.camera, this.renderer.domElement);
         controls.minDistance = 10.0;
         controls.maxDistance = 25.0;
-        //controls.minPolarAngle = 0; // radians
         controls.maxPolarAngle = THREE.MathUtils.degToRad(80.0);
         controls.update();
 
@@ -96,57 +116,21 @@ export class Application {
 
         const mapScene = new MapFactory(this.scene, this.configuration.scenario);
 
-        const board = new Board(this.scene, 
-            new THREE.Vector3(0.0, 0.0, 0.0), 
-            new THREE.Vector2(10, 10), 
+        const board = new Board(this.scene,
+            new THREE.Vector3(0.0, 0.0, 0.0),
+            new THREE.Vector2(10, 10),
             1.75,
-            this.configuration.dificulty);
+            this.configuration.dificulty
+        );
 
         const boardDirector = new BoardDirector();
         boardDirector.create(this.scene, board);
 
         this.clock = new THREE.Clock();
-        this.socket = io();
-        this.socket.on('connect', () => {
-            this.id = this.socket.id;
-        });
+        
+        this.gameManager = new GameManager(this.scene, board, team, this.socket);
 
-        this.socket.emit('hostGame', {
-            scenario: 'Forest',
-            mode: 'Checkmate',
-            dificulty: 'Easy',
-        });
-
-        this.gameManager = new GameManager(this.scene, this.socket);
-
-        this.select = this.socket.on('select', data => {
-
-            this.gameManager.makeCellsSelectable(data.cells);
-            this.gameManager.selectObject(data.target.position, data.target.cell);
-
-        });
-
-        this.move = this.socket.on('move', data => {
-
-            this.gameManager.cleanCellsSelectable();
-
-            var e = getObjectsByProperty(this.scene, 'cell', data.target.targetCell);
-            if (e.length !== 0) {
-                this.gameManager.defeatCharacter(e[0], data);
-
-                //var a = getObjectsByProperty(this.scene, 'cell', data.target.startCell);
-                //this.gameManager.changeCharacterTeam(e[0], a[0]);
-                return;
-            }
-
-            this.gameManager.moveCharacter(
-                data.target.startPosition,
-                data.target.startCell,
-                data.target.targetPosition,
-                data.target.targetCell
-            );
-
-        });
+        this.run();
     }
 
     bindEvents() {
@@ -172,11 +156,11 @@ export class Application {
 
         const intersects = raycaster.intersectObjects(this.scene.children, true);
         if (intersects.length > 0) {
-            var firstObject = intersects[0].object;
-            var object = getContainerObjByChild(firstObject);
-            if (object === null) object = firstObject;
+            let object = intersects[0].object;
+            let currentObject = getContainerObjByChild(object);
+            if (currentObject === null) currentObject = object;
 
-            this.gameManager.makeTurn(object);
+            this.gameManager.processAction(currentObject);
         }
     }
 
@@ -190,20 +174,18 @@ export class Application {
 
     render() {
 
-        requestAnimationFrame(() => {
+        requestAnimationFrame(() => this.render());
 
-            var delta = this.clock.getDelta();
+        var delta = this.clock.getDelta();
 
-            var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
-            characters.forEach(character => character.onUpdate(delta));
+        var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
+        characters.forEach(character => character.onUpdate(delta));
 
-            TWEEN.update();
+        TWEEN.update();
 
-            this.particleSystem.onUpdate(delta);
-            this.particleSystem.onRender();
+        this.particleSystem.onUpdate(delta);
+        this.particleSystem.onRender();
 
-            this.renderer.render(this.scene, this.camera);
-            this.render();
-        });
+        this.renderer.render(this.scene, this.camera);
     }
 }

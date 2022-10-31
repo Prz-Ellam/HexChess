@@ -1,16 +1,22 @@
 import * as THREE from 'three';
+import { getObjectsByProperty } from '../../core/helpers';
 
 export class Board {
 
     constructor(scene, position, count, space, dificulty) {
+        this.scene = scene;
         this.position = position;
         this.count = count;
         this.space = space;
-        this.create(scene, dificulty);
+        this.create(dificulty);
     }
 
-    // TODO: Dificulty - Easy or Hard
-    create(scene, dificulty) {
+    /**
+     * @autor Prz-Ellam
+     * @date 2022-30-10
+     * @param {string} dificulty - Especifica la dificultad del juego, puede ser 'Easy' o 'Hard'
+     */
+    create(dificulty) {
 
         const startX = Math.round(this.position.x - (this.count.x / 2));
         const startZ = Math.round(this.position.y - (this.count.y / 2));
@@ -62,11 +68,38 @@ export class Board {
             }
         }
 
-        board.name = "Board";
-
-        scene.add(board);
+        board.name = 'Board';
+        this.scene.add(board);
         this.size = new THREE.Vector2(endX - startX, endZ - startZ);
 
+    }
+
+    /**
+     * @autor Prz-Ellam
+     * @date 2022-10-30
+     * @param {Array<string>} cells - Arreglo con los codigos de todas las celdas que serán seleccionables
+     */
+    makeSelectableCells(cells) {
+        cells.forEach(coords => {
+            const cell = this.scene.getObjectByName(coords, true);
+            if (cell !== undefined) {
+                cell.material.color.setHex(0xa7bad0);
+                cell.selectable = true;
+            }
+        });
+    }
+
+    /**
+     * @autor Prz-Ellam
+     * @date 2022-10-30
+     * @return {void} void
+     */
+    cleanSelectableCells() {
+        const selectableCells = getObjectsByProperty(this.scene, 'selectable', true);
+        selectableCells.forEach(cell => {
+            cell.selectable = false;
+            cell.material.color.setHex(0x958ae6);
+        });
     }
 
 }

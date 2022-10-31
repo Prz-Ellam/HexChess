@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
-import { getObjectsByProperty } from '../../core/helpers.js';
+import { getObjectsByProperty } from '../../core/helpers';
 
 import idle from '../../assets/models/Knight/Idle.fbx'
 import walking from '../../assets/models/Knight/Walking.fbx';
@@ -10,29 +10,30 @@ import death from '../../assets/models/Knight/Death.fbx'
 
 export class Character {
 
-    constructor(scene, board, model, position, animations)
-    {
+    constructor(scene, board, model, position, animations) {
         this.boardCount = board.count;
         this.name = this.create(scene, model, position, animations);
     }
 
-    create(scene, model, position, animations)
-    {
-        const texture = new THREE.TextureLoader()
-        .load('models/Knight/textures/Red.png');
+    static model = null;
+
+    create(scene, model, position, animations) {
+        //const texture = new THREE.TextureLoader()
+        //    .load('models/Knight/textures/Red.png');
+
+        if (Character.model) 
+            return Character.model.clone();
 
         const fbxLoader = new FBXLoader();
-        fbxLoader.load(model, object =>
-        {
+        fbxLoader.load(model, object => {
             object.traverse(function (child) {
-                if (child.isMesh)
-                {
+                if (child.isMesh) {
                     const oldMat = child.material;
-                    child.material = new THREE.MeshPhysicalMaterial({  
+                    child.material = new THREE.MeshPhysicalMaterial({
                         //color: oldMat.color,
                         map: oldMat.map,
                         //emissive: new THREE.Color(0x964B00),
-                        skinning: true
+                        //skinning: true
                     });
                 }
                 child.castShadow = true;
@@ -60,8 +61,7 @@ export class Character {
                 object.team = 'A';
                 object.rotation.y = THREE.MathUtils.degToRad(180);
             }
-            else
-            {
+            else {
                 object.team = 'B';
             }
 
@@ -73,8 +73,7 @@ export class Character {
             object.actions = {};
 
             const animLoader = new FBXLoader();
-            animLoader.load(idle, animation =>
-            {
+            animLoader.load(idle, animation => {
                 object.mixer = new THREE.AnimationMixer(object);
                 //object.mixer = mixer;
 
@@ -84,38 +83,34 @@ export class Character {
                 idle.play();
             });
 
-            animLoader.load(walking, animation =>
-            {
+            animLoader.load(walking, animation => {
                 const walking = object.mixer.clipAction(animation.animations[0]);
                 object.actions['walking'] = walking;
             });
 
-            animLoader.load(death, animation =>
-            {
+            animLoader.load(death, animation => {
                 const death = object.mixer.clipAction(animation.animations[0]);
                 death.setLoop(THREE.LoopOnce);
                 object.actions['death'] = death;
             });
 
-        
+
             object.onUpdate = this.onUpdate;
             scene.add(object);
 
-            this.model = object;
+            Character.model = object;
         });
 
     }
 
-    findMoves(scene, x, z)
-    {
-        
+    findMoves(scene, position) {
+
     }
 
-    discardCells(scene, coords)
-    {
+    discardCells(scene, coords) {
         const valids = [];
         coords = coords.filter(coord => {
-            if (coord.x < 1 && coord.x > this.boardCount.x && 
+            if (coord.x < 1 && coord.x > this.boardCount.x &&
                 coord.y < 1 && coord.y > this.boardCount.y) return false;
 
             const anotherObject = getObjectsByProperty(scene, 'cell', `(${coord.x}, ${coord.y})`);
@@ -129,10 +124,8 @@ export class Character {
         return valids;
     }
 
-    onUpdate(delta)
-    {
-        if (this.mixer)
-        {
+    onUpdate(delta) {
+        if (this.mixer) {
             this.mixer.update(delta);
         }
     }

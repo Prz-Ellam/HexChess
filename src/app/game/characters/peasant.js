@@ -9,8 +9,10 @@ export class Peasant extends Character
         super(scene, board, modelpath, position);
     }
 
-    findMoves(scene, x, z)
-    {
+    findMoves(scene, position) {
+        const x = position.x;
+        const z = position.y;
+
         const valids = [];
 
         let coords = [];
