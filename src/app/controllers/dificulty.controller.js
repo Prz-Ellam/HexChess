@@ -19,6 +19,7 @@ export class DificultyController {
             app.configuration.dificulty = e.currentTarget.getAttribute('value');
         });
         
+        localStorage.setItem('path', '/dificulty');
     }
 
 }

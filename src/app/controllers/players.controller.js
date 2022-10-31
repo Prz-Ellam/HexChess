@@ -18,6 +18,8 @@ export class PlayersController {
         document.getElementById('btn-multiplayer').addEventListener('click', function(e) {
             app.configuration.players = e.currentTarget.getAttribute('value');
         });
+
+        localStorage.setItem('path', '/players');
         
     }
 

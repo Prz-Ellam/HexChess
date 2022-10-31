@@ -23,6 +23,7 @@ export class ScenarioController {
             app.configuration.scenario = e.currentTarget.getAttribute('value');
         })
         
+        localStorage.setItem('path', '/scenarios');
     }
 
 }

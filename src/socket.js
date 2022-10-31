@@ -63,6 +63,11 @@ module.exports = function (io) {
 
         });
 
+        socket.on('deselect', data => {
+            const room = Array.from(socket.rooms)[1];
+            io.to(room).emit('deselect', data);
+        });
+
         socket.on('move', data => {
             const room = Array.from(socket.rooms)[1];
             io.to(room).emit('move', data);

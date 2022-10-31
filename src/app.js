@@ -73,39 +73,37 @@ app.get('/', (req, res) => {
 });
 
 app.get('/game', (req, res) => {
+    //res.redirect('/');
     res.render('index.html');
 });
 
-app.get('/scenario', (req, res) => {
-    res.render('index.html');
+app.get('/scenarios', (req, res) => {
+    res.redirect('/');
 });
 
 app.get('/mode', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 })
 
 app.get('/configuration', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 });
 
 app.get('/players', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 });
 
 app.get('/dificulty', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 })
 
 app.get('/score', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 });
 
 app.get('/pause', (req, res) => {
-    res.render('index.html');
+    res.redirect('/');
 })
-
-
-
 
 
 app.get('/profile', (req, res) => {
@@ -135,8 +133,6 @@ app.get('/api/v1/scores', async (req, res) => {
 
     //res.json({});
 });
-
-
 
 
 app.set('port', process.env.PORT || 3000);

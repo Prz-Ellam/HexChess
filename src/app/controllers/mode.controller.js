@@ -19,6 +19,7 @@ export class ModeController {
             app.configuration.mode = e.currentTarget.getAttribute('value');
         });
         
+        localStorage.setItem('path', '/mode');
     }
 
 }

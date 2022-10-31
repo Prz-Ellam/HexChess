@@ -128,7 +128,7 @@ export class Application {
 
         this.clock = new THREE.Clock();
         
-        this.gameManager = new GameManager(this.scene, board, team, this.socket);
+        this.gameManager = new GameManager(this.scene, board, team, this.socket, this.configuration);
 
         this.run();
     }

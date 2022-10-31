@@ -3,11 +3,12 @@ import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { codeToVector, getObjectsByProperty } from '../core/helpers';
 
 export class GameManager {
-    constructor(scene, board, team, io) {
+    constructor(scene, board, team, io, configuration) {
         this.team = team;
         this.currentTeam = 'A';
         this.scene = scene;
         this.board = board;
+        this.configuration = configuration;
         this.io = io;
         this.selected = {
             status: false,
@@ -18,6 +19,7 @@ export class GameManager {
         // Only multiplayer
         this.io.on('select', data => { this.select(data) });
         this.io.on('move', data => { this.move(data) });
+        this.io.on('deselect', () => { this.deselect() });
     }
 
     /**
@@ -58,7 +60,9 @@ export class GameManager {
         // Hay turno actualmente y se selecciona un objeto no valido
         if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
             && object.typeGame !== 'Character') {
-            this.deselect();
+
+            this.io.emit('deselect');
+            //this.deselect();
         }
 
         // Hay turno actualmente y se selecciona un elemento valido
@@ -99,11 +103,13 @@ export class GameManager {
         let targetCharacter = this.scene.getObjectByProperty('cell', data.targetCell);
         if (targetCharacter !== undefined) {
             // Checkmate
-            this.defeatCharacter(targetCharacter, data);
-
+            if (this.configuration.mode === 'checkmate')
+                this.defeatCharacter(targetCharacter, data);
+            else if (this.configuration.mode === 'coldwar') {
             // Coldwar
-            //var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
-            //this.changeCharacterTeam(targetCharacter, recruiterCharacter);
+                var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
+                this.changeCharacterTeam(targetCharacter, recruiterCharacter);
+            }
             return;
         }
 
