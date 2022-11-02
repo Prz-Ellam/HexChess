@@ -1,12 +1,6 @@
 import * as THREE from 'three';
-
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-
 import { getObjectsByProperty } from '../../core/helpers';
-
-import idle from '../../assets/models/Knight/Idle.fbx'
-import walking from '../../assets/models/Knight/Walking.fbx';
-import death from '../../assets/models/Knight/Death.fbx'
 
 export class Character {
 
@@ -73,7 +67,7 @@ export class Character {
             object.actions = {};
 
             const animLoader = new FBXLoader();
-            animLoader.load(idle, animation => {
+            animLoader.load(animations[0], animation => {
                 object.mixer = new THREE.AnimationMixer(object);
                 //object.mixer = mixer;
 
@@ -83,12 +77,12 @@ export class Character {
                 idle.play();
             });
 
-            animLoader.load(walking, animation => {
+            animLoader.load(animations[1], animation => {
                 const walking = object.mixer.clipAction(animation.animations[0]);
                 object.actions['walking'] = walking;
             });
 
-            animLoader.load(death, animation => {
+            animLoader.load(animations[2], animation => {
                 const death = object.mixer.clipAction(animation.animations[0]);
                 death.setLoop(THREE.LoopOnce);
                 object.actions['death'] = death;
@@ -113,10 +107,10 @@ export class Character {
             if (coord.x < 1 && coord.x > this.boardCount.x &&
                 coord.y < 1 && coord.y > this.boardCount.y) return false;
 
-            const anotherObject = getObjectsByProperty(scene, 'cell', `(${coord.x}, ${coord.y})`);
+            const anotherObject = scene.getObjectByProperty('cell', `(${coord.x}, ${coord.y})`);
 
-            if (anotherObject.length !== 0)
-                if (anotherObject[0].team === this.team) return false;
+            if (anotherObject !== undefined)
+                if (anotherObject.team === this.team) return false;
 
             valids.push(`(${coord.x}, ${coord.y})`);
             return true;

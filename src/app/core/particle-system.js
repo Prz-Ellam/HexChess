@@ -44,8 +44,6 @@ export class ParticleSystem {
                 modelViewTran[2][0] = 0.0f;
                 modelViewTran[2][1] = 0.0f;
                 modelViewTran[2][2] = scale.z;
-
-                
             
                 gl_Position = projectionMatrix * modelViewTran * vec4(position, 1.0f);
                 v_Blend = a_Blend;

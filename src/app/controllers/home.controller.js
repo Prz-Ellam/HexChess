@@ -1,13 +1,11 @@
-import view from '../views/home.html';
+import view from '@views/home.html';
 
 export class HomeController {
 
     constructor() {
         
-        import('../styles/home.css');
-        import('../styles/styles.css');
-
-        console.log('Hola');
+        import('@styles/home.css');
+        import('@styles/styles.css');
 
         const root = document.getElementById('root');
         root.innerHTML = view;

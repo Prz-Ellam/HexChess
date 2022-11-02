@@ -31,15 +31,36 @@ export class Board {
 
                 const hexagon = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.0, 1.0, 1.0, 6, 1, false),
-                    new THREE.MeshPhysicalMaterial({ 
-                        clearcoat: 1.0,
-                        clearcoatRoughness: 0.1,
+                    new THREE.MeshPhongMaterial({ 
+                        //clearcoat: 1.0,
+                        //clearcoatRoughness: 0.1,
                         color : (x % 2 == 0 ) ? 0x958ae6 : 0x958ae6,
-                        flatShading: true,
-                        roughness: 0.5,
-                        metalness: 0.5,
+                        ////flatShading: true,
+                        //roughness: 0.5,
+                        //metalness: 1.0,
                         //transparent: true,
                         //opacity: 1.0
+                        ////specular: 0x4737a0,
+                        //uuid: "0DD2D112-EA1F-3781-A46D-55B79A64DD19",
+                        //vertexColors: 0,
+                        //color: 16777215,
+                        //depthWrite: true,
+                        ////shininess: 32,
+                        //depthTest: true,
+
+
+                        specular: 0x5854ff,
+                        flatShading: true,
+                        vertexColors: 0,
+                        //color: 0x632ecf,
+                        depthWrite: true,
+                       
+                        shininess: 50,
+                       
+                        depthTest: true,
+                        emissive: 0
+                       
+                        
                     })
                 );
 

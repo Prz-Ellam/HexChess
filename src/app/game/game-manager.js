@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { codeToVector, getObjectsByProperty } from '../core/helpers';
+import { Potion } from './items/potion';
 
 export class GameManager {
     constructor(scene, board, team, io, configuration) {
@@ -15,11 +16,14 @@ export class GameManager {
             position: null,
             object: null
         };
+        this.items = [];
 
         // Only multiplayer
-        this.io.on('select', data => { this.select(data) });
-        this.io.on('move', data => { this.move(data) });
-        this.io.on('deselect', () => { this.deselect() });
+        if (this.configuration.players === 'multiplayer') {
+            this.io.on('select', data => { this.select(data) });
+            this.io.on('move', data => { this.move(data) });
+            this.io.on('deselect', () => { this.deselect() });
+        }
     }
 
     /**
@@ -44,24 +48,29 @@ export class GameManager {
                 }
             }
 
-            /*
-            if (singleplayer) {
+            if (this.configuration.players === 'singleplayer') {
                 this.select(data);
             }
-            else {
+            else if (this.configuration.players === 'multiplayer') {
                 this.io.emit('select', data);
             }
-            */
 
             //this.select(data);
-            this.io.emit('select', data);
+            //this.io.emit('select', data);
         }
 
         // Hay turno actualmente y se selecciona un objeto no valido
         if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
             && object.typeGame !== 'Character') {
 
-            this.io.emit('deselect');
+            if (this.configuration.players === 'singleplayer') {
+                this.deselect();
+            }
+            else if (this.configuration.players === 'multiplayer') {
+                this.io.emit('deselect');
+            }
+
+            //this.io.emit('deselect');
             //this.deselect();
         }
 
@@ -74,8 +83,15 @@ export class GameManager {
                 targetCell: object.name
             }
 
+            if (this.configuration.players === 'singleplayer') {
+                this.move(data);
+            }
+            else if (this.configuration.players === 'multiplayer') {
+                this.io.emit('move', data);
+            }
+
             //this.move(data);
-            this.io.emit('move', data)
+            //this.io.emit('move', data)
         }
     }
 
@@ -213,6 +229,14 @@ export class GameManager {
         );
         angle += Math.PI / 2;
 
+        const startCoords = codeToVector(startCell);
+        const targetCoords = codeToVector(targetCell);
+
+        let distance = Math.sqrt(
+            Math.pow(targetCoords.y - startCoords.y, 2) +
+            Math.pow(targetCoords.x - startCoords.x, 2));
+        console.log(distance);
+
         const tween = new TWEEN.Tween(
             {
                 x: startPosition.x,
@@ -224,7 +248,7 @@ export class GameManager {
                 x: targetPosition.x,
                 y: startPosition.y,
                 z: targetPosition.z
-            }, 1000
+            }, 1000 //distance * 1000
         ).onStart(() => {
             fadeToAction(
                 selectedObject.actions['idle'],
@@ -266,11 +290,15 @@ export class GameManager {
 
     spawnItem() {
 
+        if (this.items.length >= 3) {
+            return;
+        }
+
         const charactersCount = getObjectsByProperty(this.scene, 'typeGame', 'Character').length;
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.random() * 100;
 
-        if (random < percentage) {
+        if (true) {
             const ocupiedCells = [];
             this.scene.traverse(child => {
                 if (child.cell) {
@@ -289,19 +317,8 @@ export class GameManager {
 
             const chosenCellIndex = parseInt(Math.random() * freeCells.length);
             const chosenCell = freeCells[chosenCellIndex];
-            const hexagon = this.scene.getObjectByName(chosenCell);
 
-            // Add an item to the scene
-            const cube = new THREE.Mesh(
-                new THREE.BoxGeometry(1.0, 1.0, 1.0), 
-                new THREE.MeshStandardMaterial({ color : 0xC62F2F })
-            );
-
-            cube.position.x = hexagon.position.x;
-            cube.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
-            cube.position.z = hexagon.position.z;
-
-            this.scene.add(cube);
+            const potion = new Potion(this.scene, chosenCell);
 
         }
 

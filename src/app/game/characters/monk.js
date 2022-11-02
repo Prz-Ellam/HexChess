@@ -1,17 +1,24 @@
 import * as THREE from 'three';
 import { Character } from './character';
 
-//import modelPath from 'models/Monk/scene.gltf'
+import red from '@models/Monk/Red.fbx';
+import green from '@models/Monk/Green.fbx';
+import idle from '@models/Monk/Idle.fbx'
+import walking from '@models/Monk/Walking.fbx';
+import death from '@models/Monk/Death.fbx';
 
 export class Monk extends Character
 {
     constructor(scene, board, position)
     {
-        const modelpath = 'models/Monk/scene.gltf';
-        super(scene, board, modelpath, position);
+        const modelpath =
+            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+                red :
+                green;
+        super(scene, board, modelpath, position, [ idle, walking, death ]);
     }
 
-    findMoves(scene, posiiton) {
+    findMoves(scene, position) {
         const x = position.x;
         const z = position.y;
 

@@ -64,48 +64,22 @@ app.get('/facebook/callback', passport.authenticate('facebook', {
 
 
 
+// Esta ruta debia morir para que jalara el proyecto
+//app.set('views', path.join(__dirname, '../dist'));
 
-app.set('views', path.join(__dirname, '../dist'));
+// Static files
+app.use(express.static(path.join(__dirname, '../dist')));
 app.engine('html', require('ejs').renderFile);
 
 app.get('/', (req, res) => {
     res.render('index.html');
 });
 
-app.get('/game', (req, res) => {
-    //res.redirect('/');
-    res.render('index.html');
-});
-
-app.get('/scenarios', (req, res) => {
-    res.redirect('/');
-});
-
-app.get('/mode', (req, res) => {
+app.get('*', (req, res, next) => {
     res.redirect('/');
 })
 
-app.get('/configuration', (req, res) => {
-    res.redirect('/');
-});
-
-app.get('/players', (req, res) => {
-    res.redirect('/');
-});
-
-app.get('/dificulty', (req, res) => {
-    res.redirect('/');
-})
-
-app.get('/score', (req, res) => {
-    res.redirect('/');
-});
-
-app.get('/pause', (req, res) => {
-    res.redirect('/');
-})
-
-
+/*
 app.get('/profile', (req, res) => {
     res.send('You are a valid user');
 })
@@ -114,7 +88,10 @@ app.get('/failed', (req, res) => {
     res.send('You are NOT a valid user');
 })
 
-
+app.get('/boxicons.min.css', function(req, res) {
+    res.sendFile(__dirname + '/../.env');
+});
+*/
 
 app.get('/api/v1/scores', async (req, res) => {
 
@@ -137,8 +114,7 @@ app.get('/api/v1/scores', async (req, res) => {
 
 app.set('port', process.env.PORT || 3000);
 
-// Static files
-app.use(express.static(path.join(__dirname, '../dist')));
+
 
 server.listen(app.get('port'), () => {
     console.log(`Server started on port ${app.get('port')}`);

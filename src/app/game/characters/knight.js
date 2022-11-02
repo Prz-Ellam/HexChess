@@ -1,8 +1,11 @@
 import * as THREE from 'three';
 import { Character } from './character';
 
-import redKnight from '../../assets/models/Knight/RedKnight.fbx';
-import greenKnight from '../../assets/models/Knight/GreenKnight.fbx';
+import redKnight from '@models/Knight/RedKnight.fbx';
+import greenKnight from '@models/Knight/GreenKnight.fbx';
+import idle from '@models/Knight/Idle.fbx'
+import walking from '@models/Knight/Walking.fbx';
+import death from '@models/Knight/Death.fbx'
 
 export class Knight extends Character {
     constructor(scene, board, position, animations) {
@@ -10,7 +13,7 @@ export class Knight extends Character {
             (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
                 redKnight :
                 greenKnight;
-        super(scene, board, modelpath, position, animations);
+        super(scene, board, modelpath, position, [ idle, walking, death ]);
     }
 
     findMoves(scene, position) {

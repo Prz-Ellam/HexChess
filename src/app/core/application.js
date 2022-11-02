@@ -12,6 +12,7 @@ import { MapFactory } from '../game/maps/map-factory';
 
 import { io } from 'socket.io-client'
 import { Router } from '../routes/router';
+import { AudioManager } from './audio';
 
 export class Application {
 
@@ -30,8 +31,17 @@ export class Application {
     }
 
     create() {
-        //this.createScene('B');
-        this.multiplayer();
+
+        if (this.configuration.players === 'singleplayer') {
+            this.createScene('A');
+        }
+        else if (this.configuration.players === 'multiplayer') {
+            this.multiplayer();
+        }
+        else {
+            alert('Mal');
+        }
+
     }
 
     multiplayer() {
@@ -57,7 +67,7 @@ export class Application {
         //this.renderer.toneMappingExposure = 1.8;
         const root = document.getElementById('root');
         root.innerHTML = '';
-        root.appendChild(this.renderer.domElement);
+        root.append(this.renderer.domElement);
 
         this.bindEvents();
 
@@ -74,6 +84,8 @@ export class Application {
 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0.4156, 0.6588, 0.6823);
+
+        this.audio = new AudioManager(this.camera);
 
         let light = new THREE.AmbientLight(0x303030);
         this.scene.add(light);
@@ -160,6 +172,8 @@ export class Application {
             let currentObject = getContainerObjByChild(object);
             if (currentObject === null) currentObject = object;
 
+            console.log(currentObject.name);
+
             this.gameManager.processAction(currentObject);
         }
     }
@@ -180,6 +194,9 @@ export class Application {
 
         var characters = getObjectsByProperty(this.scene, 'typeGame', 'Character');
         characters.forEach(character => character.onUpdate(delta));
+
+        var items = getObjectsByProperty(this.scene, 'typeGame', 'Item');
+        items.forEach(item => item.onUpdate(delta));
 
         TWEEN.update();
 

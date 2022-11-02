@@ -1,12 +1,12 @@
-import view from '../views/dificulty.html';
+import view from '@views/dificulty.html';
 
 export class DificultyController {
 
     constructor(app) {
 
-        import('../styles/bubbles.css');
-        import('../styles/styles.css');
-        import('../styles/dificulty.css');
+        import('@styles/bubbles.css');
+        import('@styles/styles.css');
+        import('@styles/dificulty.css');
 
         const root = document.getElementById('root');
         root.innerHTML = view;

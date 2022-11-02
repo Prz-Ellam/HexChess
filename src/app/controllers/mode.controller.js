@@ -1,12 +1,12 @@
-import view from '../views/mode.html';
+import view from '@views/mode.html';
 
 export class ModeController {
 
     constructor(app) {
 
-        import('../styles/bubbles.css');
-        import('../styles/styles.css');
-        import('../styles/mode.css');
+        import('@styles/bubbles.css');
+        import('@styles/styles.css');
+        import('@styles/mode.css');
 
         const root = document.getElementById('root');
         root.innerHTML = view;

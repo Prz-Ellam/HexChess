@@ -1,11 +1,11 @@
-import view from '../views/score.html';
+import view from '@views/score.html';
 
 export class ScoreController {
 
     constructor() {
 
-        import('../styles/score.css');
-        import('../styles/stars.css');
+        import('@styles/score.css');
+        import('@styles/stars.css');
 
         const root = document.getElementById('root');
         root.innerHTML = view;

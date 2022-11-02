@@ -411,7 +411,7 @@ body::after {
 
 /*Btn usuario*/
 
-#btn-usuario {
+#btn-user {
     position: relative;
 
     padding: 10px 20px;
@@ -420,22 +420,22 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-usuario::before {
+#btn-user::before {
     content: '';
     inset: 2px;
     background: #27282c;
 }
 
-#btn-usuario span {
+#btn-user span {
     z-index: 1;
 }
 
-#btn-usuario #movu {
+#btn-user #movu {
     inset: 0;
     display: block;
 }
 
-#btn-usuario #movu::before {
+#btn-user #movu::before {
     content: '';
     position: absolute;
     top: -3%;
@@ -447,12 +447,12 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-usuario:hover #movu::before {
+#btn-user:hover #movu::before {
     width: 20px;
     left: 20%;
 }
 
-#btn-usuario #movu::after {
+#btn-user #movu::after {
     content: '';
     position: absolute;
     top: 97%;
@@ -464,7 +464,7 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-usuario:hover #movu::after {
+#btn-user:hover #movu::after {
     width: 20px;
     left: 80%;
 }
