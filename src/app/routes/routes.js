@@ -7,6 +7,7 @@ import { ScenarioController } from '@controllers/scenario.controller'
 import { PlayersController } from '@controllers/players.controller'
 import { ModeController } from '@controllers/mode.controller'
 import { GameController } from '@controllers/game.controller'
+import { SignupController } from '../controllers/signup.controller'
 
 const routes = {
     '/': HomeController,
@@ -17,7 +18,8 @@ const routes = {
     '/scenarios': ScenarioController,
     '/score': ScoreController,
     '/players': PlayersController,
-    '/game': GameController
+    '/game': GameController,
+    '/signup': SignupController
 }
 
 export { routes }

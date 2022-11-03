@@ -1,37 +1,33 @@
-<div class="bubbles-circle"></div>
-<div class="container-box">
-    <h2 class="title"></h2>
 
-    <!--Btn facil-->
-    <div id="contain-facil">
-        <a class="button button-anim" 
-            id="btn-easy" 
-            style="--clr:#8A7DFD" 
-            href="/scenarios"
-            value="Easy">
-            <span>MODO FÁCIL</span>
-            <i class="widget"></i>
-        </a>
+<div class="container">
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="text-center">
+            <h2 id="dificulty-title"></h2>
+
+            <!--Btn facil-->
+            <div>
+                <a class="btn button button-anim" id="btn-easy" style="--clr:#8A7DFD" href="/scenarios" value="Easy">
+                    <span>MODO FÁCIL</span>
+                    <i class="widget"></i>
+                </a>
+            </div>
+
+            <!--Btn dificil-->
+            <div>
+                <a class="btn button button-anim" id="btn-hard" style="--clr:#8A7DFD" href="/scenarios" value="Hard">
+                    <span>MODO DÍFICIL</span>
+                    <i class="widget"></i>
+                </a>
+            </div>
+
+            <!--Btn Return-->
+            <div>
+                <a class="button" type="submit" href="/mode" id="btn-return" style="--clr:#8A7DFD">
+                    <span></span>
+                    <i id="regreso"></i>
+                    <i class="bx bx-undo"></i>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <!--Btn dificil-->
-    <div id="contain-dificil">
-        <a class="button button-anim" 
-            id="btn-hard" 
-            style="--clr:#8A7DFD" 
-            href="/scenarios"
-            value="Hard">
-            <span>MODO DÍFICIL</span>
-            <i class="widget"></i>
-        </a>
-    </div>
-</div>
-
-<!--Btn Return-->
-<div>
-    <a class="button" type="submit" href="/mode" id="btn-return" style="--clr:#8A7DFD">
-        <span></span>
-        <i id="regreso"></i>
-        <i class="bx bx-undo"></i>
-    </a>
 </div>

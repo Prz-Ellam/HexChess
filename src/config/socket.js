@@ -9,12 +9,12 @@ module.exports = function (io) {
 
     io.on('connection', socket => {
 
-        console.log(`New user with id: ${socket.id} joined the server`);
+        console.log(`New client with id: ${socket.id} joined the server`);
         clients[socket.id] = {};
 
         socket.on('disconnect', () => {
 
-            console.log(`The user with id: ${socket.id} disconnected from server`);
+            console.log(`The client with id: ${socket.id} disconnected from server`);
             
             for (const [ id, value ] of Object.entries(games)) {
                 if (value.playerA === socket.id || value.playerB === socket.id) {

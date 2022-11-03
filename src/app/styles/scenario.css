@@ -7,7 +7,7 @@
     justify-content: center;
     margin-left: 1em;
     margin-right: 1em;
-    height: 500px;
+    height: 400px;
     margin-top: 70px;
 }
 
@@ -16,6 +16,14 @@
     flex: 33%;
     background-image: url('../assets/images/desierto.jpg');
     cursor: pointer;
+}
+
+#desert {
+    background-image: url('../assets/images/desierto.jpg')
+}
+
+#forest {
+    background-image: url('../assets/images/bosque3.jpg');
 }
 
 .flex-item-forest {
@@ -32,8 +40,8 @@
     cursor: pointer;
 }
 
-.title::after {
-    content: "ESCOGE TU DESTINO";
+#scenario-title::after {
+    content: "ESCOGE TU MAPA";
 }
 
 @media (max-width: 1000px) {
@@ -75,7 +83,7 @@
     transition: all 500ms ease-out;
 }
 
-.capa:hover > h2 {
+.capa:hover>h2 {
     top: 10%;
 }
 
@@ -95,53 +103,4 @@
     letter-spacing: 0.1em;
     padding: 10px 30px;
     margin-bottom: 150px;
-}
-
-#btn-return::before {
-    content: '';
-    inset: 2px;
-    background: #27282c;
-}
-
-#btn-return span {
-    z-index: 1;
-}
-
-#btn-return #regreso {
-    inset: 0;
-    display: block;
-}
-
-#btn-return #regreso::before {
-    content: '';
-    position: absolute;
-    top: -3%;
-    left: 93%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-return:hover #regreso::before {
-    width: 20px;
-    left: 20%;
-}
-
-#btn-return #regreso::after {
-    content: '';
-    position: absolute;
-    top: 97%;
-    left: 30%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-return:hover #regreso::after {
-    width: 20px;
-    left: 80%;
 }

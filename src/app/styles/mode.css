@@ -1,6 +1,4 @@
-
-
-.title::after {
+#mode-title::after {
     content: "SELECCIONA EL MODO DE JUEGO";
 }
 
@@ -10,26 +8,26 @@
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 150px;
+    margin-bottom: 100px;
 }
-
+/*
 #btn-checkmate span {
     z-index: 1;
 }
-
+*/
 /*Btn-Jaque Mate*/
 #btn-coldwar {
     position: relative;
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 150px;
+    margin-bottom: 100px;
 }
-
+/*
 #btn-coldwar span {
     z-index: 1;
 }
-
+*/
 /*Btn-Return*/
 #btn-return {
     position: absolute;
@@ -40,7 +38,7 @@
     padding: 10px 30px;
     transition: 0.5s;
 }
-
+/*
 #btn-return::before {
     content: '';
     inset: 2px;
@@ -50,3 +48,4 @@
 #btn-return span {
     z-index: 1;
 }
+*/

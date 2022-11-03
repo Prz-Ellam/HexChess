@@ -1,10 +1,12 @@
+/*
 .container-box {
     position: absolute;
     text-align: center;
     width: 100%;
 }
+*/
 
-.title::after {
+#dificulty-title::after {
     content: "DIFICULTAD";
 }
 
@@ -14,27 +16,26 @@
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 150px;
+    margin-bottom: 100px;
 }
-
+/*
 #btn-easy span {
     z-index: 1;
 }
-
+*/
 /*Btn-Dificil*/
 #btn-hard {
     position: relative;
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-top: -150px;
-    margin-bottom: 150px;
+    margin-bottom: 100px;
 }
-
+/*
 #btn-hard span {
     z-index: 1;
 }
-
+*/
 /*Btn-Return*/
 #btn-return {
     position: absolute;
@@ -44,7 +45,8 @@
     letter-spacing: 0.1em;
     padding: 10px 30px;
 }
-
+/*
 #btn-return span {
     z-index: 1;
 }
+*/

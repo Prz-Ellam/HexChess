@@ -9,7 +9,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: '[name].bundle.js',
         clean: true,
         assetModuleFilename: 'assets/[name][ext]'
     },
@@ -43,7 +43,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(tff|eot|woff|woff2)$/i,
+                test: /\.(ttf|eot|woff|woff2)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'assets/fonts/[hash][ext][query]'
@@ -65,6 +65,7 @@ module.exports = {
             }
         ]
     },
+    target: ['web', 'es5'],
     resolve: {
         roots: [
             path.resolve(__dirname, 'node_modules')
@@ -89,6 +90,8 @@ module.exports = {
             filename: 'index.html',
             template: 'src/app/index.html'
         }),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin({
+            filename: 'main.bundle.css'
+        })
     ]
 };

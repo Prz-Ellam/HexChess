@@ -1,41 +1,55 @@
+
+
+
+
+require('./config/env');
+
 const http = require('http');
 const express = require('express');
 const path = require('path');
 const socketio = require('socket.io');
-const dotenv = require('dotenv');
 
-// Settings or Config
-
-
-// Middlewares
-// morgan
-// app.use(morgan('dev'))
-// app.use(express.json())
-
-// Routes
-
-// Static
-
-
-dotenv.config();
 const app = express();
 const server = http.createServer(app);
+
+
 const io = socketio(server);
 
-const socket = require('./socket');
+const socket = require('./config/socket');
 socket(io);
 
-database = require('./database');
+database = require('./config/database');
 database();
 
 const session = require('express-session');
 const passport = require('passport');
+const { hashPwd } = require('./utils/crypto');
 const FacebookStrategy = require('passport-facebook').Strategy;
 
+
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
+    secretOrKey: process.env.SECRET_JWT
+}
+
+passport.use(new JwtStrategy(opts, (decoded, done) => {
+    return done(null, false);
+}))
+
+// Middlewares
+// morgan
+// app.use(morgan('dev'))
+app.use(express.json());
 app.use(session({ secret: 'SECRET' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Routes
+
+// Static
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -62,8 +76,6 @@ app.get('/facebook/callback', passport.authenticate('facebook', {
     failureRedirect: '/failed'
 }));
 
-
-
 // Esta ruta debia morir para que jalara el proyecto
 //app.set('views', path.join(__dirname, '../dist'));
 
@@ -75,23 +87,37 @@ app.get('/', (req, res) => {
     res.render('index.html');
 });
 
+app.post('/api/v1/users', (req, res) => {
+
+    User = require('./models/user.model');
+
+    hashPwd(req.body.password, (err, res) => {
+        const user = new User({
+            username: req.body.username,
+            password: res
+        });
+    
+        user.save();
+    });
+
+    res.json([ req.body ]);
+});
+
+app.get('/api/v1/users/:id', (req, res) => {
+
+});
+
+app.post('/api/v1/login', (req, res) => {
+
+});
+
+app.post('/api/v1/scores', (req, res) => {
+    
+});
+
 app.get('*', (req, res, next) => {
     res.redirect('/');
-})
-
-/*
-app.get('/profile', (req, res) => {
-    res.send('You are a valid user');
-})
-
-app.get('/failed', (req, res) => {
-    res.send('You are NOT a valid user');
-})
-
-app.get('/boxicons.min.css', function(req, res) {
-    res.sendFile(__dirname + '/../.env');
 });
-*/
 
 app.get('/api/v1/scores', async (req, res) => {
 
@@ -113,8 +139,6 @@ app.get('/api/v1/scores', async (req, res) => {
 
 
 app.set('port', process.env.PORT || 3000);
-
-
 
 server.listen(app.get('port'), () => {
     console.log(`Server started on port ${app.get('port')}`);
