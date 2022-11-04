@@ -22,12 +22,12 @@ export class Potion {
                 object.receiveShadow = true;
 
                 const hexagon = scene.getObjectByName(position);
-
                 object.position.x = hexagon.position.x;
                 object.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
                 object.staticPosition = object.position.y;
                 object.position.z = hexagon.position.z;
 
+                object.type = 'Potion';
                 object.typeGame = 'Item';
                 object.cell = hexagon.name;
 

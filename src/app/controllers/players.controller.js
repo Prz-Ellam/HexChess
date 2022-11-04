@@ -21,7 +21,7 @@ export class PlayersController {
 
         localStorage.setItem('path', '/players');
 
-        setInterval(this.square, 150);
+        //setInterval(this.square, 150);
         
     }
 

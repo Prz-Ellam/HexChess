@@ -14,6 +14,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@fontsource/silkscreen": "^4.5.0",
+		"ajv-errors": "^3.0.0",
 		"bcrypt": "^5.1.0",
 		"bootstrap": "^5.0.0",
 		"boxicons": "^2.1.4",

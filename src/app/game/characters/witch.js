@@ -13,10 +13,10 @@ export class Witch extends Character {
             (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
                 red :
                 green;
-        super(scene, board, modelpath, position, [ idle, walking, death ]);
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Witch');
     }
 
-    findMoves(scene, position) {
+    findMoves(scene, position, changeSide) {
         const x = position.x;
         const z = position.y;
 
@@ -93,7 +93,11 @@ export class Witch extends Character {
             zCopy -= 2;
         }
 
-        const valids = super.discardCells(scene, coords);
+        const valids = super.discardCells(scene, coords, changeSide);
         return valids;
+    }
+
+    setPowerup(item) {
+        
     }
 }

@@ -8,7 +8,7 @@ module.exports = {
         main: './src/app/main.js' 
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'src', 'public'),
         filename: '[name].bundle.js',
         clean: true,
         assetModuleFilename: 'assets/[name][ext]'

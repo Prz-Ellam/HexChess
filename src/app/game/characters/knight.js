@@ -13,14 +13,14 @@ export class Knight extends Character {
             (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
                 redKnight :
                 greenKnight;
-        super(scene, board, modelpath, position, [ idle, walking, death ]);
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Knight');
     }
 
-    findMoves(scene, position) {
+    findMoves(scene, position, changeSide) {
         const x = position.x;
         const z = position.y;
 
-        let coords = [];
+        const coords = [];
         coords.push(new THREE.Vector2(x - 1, z));
         coords.push(new THREE.Vector2(x + 1, z));
         coords.push(new THREE.Vector2(x + (1 - z % 2), z - 1));
@@ -28,7 +28,23 @@ export class Knight extends Character {
         coords.push(new THREE.Vector2(x - (z % 2), z - 1));
         coords.push(new THREE.Vector2(x - (z % 2), z + 1));
 
-        const valids = super.discardCells(scene, coords);
+        const valids = super.discardCells(scene, coords, changeSide);
         return valids;
+    }
+
+    setPowerup(item) {
+
+        switch (item) {
+            case 'Potion': {
+                this.traverse(child => {
+                    if (child.isMesh) {
+                        //child.material = recruiterMap.clone();
+                        child.material.emissive = new THREE.Color(0x964B00); 
+                    }
+                });
+                break;
+            }
+        }
+        
     }
 }

@@ -4,14 +4,17 @@ import { getObjectsByProperty } from '../../core/helpers';
 
 export class Character {
 
-    constructor(scene, board, model, position, animations) {
+    constructor(scene, board, model, position, animations, character) {
         this.boardCount = board.count;
-        this.name = this.create(scene, model, position, animations);
+        this.name = this.create(scene, model, position, animations, character);
     }
 
-    static model = null;
+    static maps = {
+        'A': {},
+        'B': {}
+    };
 
-    create(scene, model, position, animations) {
+    create(scene, model, position, animations, character) {
         //const texture = new THREE.TextureLoader()
         //    .load('models/Knight/textures/Red.png');
 
@@ -20,15 +23,31 @@ export class Character {
 
         const fbxLoader = new FBXLoader();
         fbxLoader.load(model, object => {
-            object.traverse(function (child) {
+            object.traverse(child => {
                 if (child.isMesh) {
                     const oldMat = child.material;
-                    child.material = new THREE.MeshPhysicalMaterial({
+
+                    const newMaterial = new THREE.MeshPhysicalMaterial({
                         //color: oldMat.color,
                         map: oldMat.map,
+
+                        //transparent: true,
+                        //opacity: 0.2
+
                         //emissive: new THREE.Color(0x964B00),
+
+                        
                         //skinning: true
                     });
+
+                    child.material = newMaterial;
+                    const p = (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5)
+                    if (p) {
+                        Character.maps['A'][character] = newMaterial;
+                    }
+                    else {
+                        Character.maps['B'][character] = newMaterial;
+                    }
                 }
                 child.castShadow = true;
             });
@@ -45,6 +64,7 @@ export class Character {
             object.position.z = hexagon.position.z;
 
             // TODO: Cada personaje tenga su propio name
+            object.character = character;
             object.typeGame = 'Character';
             object.cell = hexagon.name;
 
@@ -64,6 +84,7 @@ export class Character {
             object.userData.isContainer = true;
             object.findMoves = this.findMoves;
             object.boardCount = this.boardCount;
+            object.setPowerup = this.setPowerup;
             object.actions = {};
 
             const animLoader = new FBXLoader();
@@ -88,11 +109,9 @@ export class Character {
                 object.actions['death'] = death;
             });
 
-
             object.onUpdate = this.onUpdate;
             scene.add(object);
 
-            Character.model = object;
         });
 
     }
@@ -101,7 +120,7 @@ export class Character {
 
     }
 
-    discardCells(scene, coords) {
+    discardCells(scene, coords, changeSide) {
         const valids = [];
         coords = coords.filter(coord => {
             if (coord.x < 1 && coord.x > this.boardCount.x &&
@@ -109,13 +128,31 @@ export class Character {
 
             const anotherObject = scene.getObjectByProperty('cell', `(${coord.x}, ${coord.y})`);
 
-            if (anotherObject !== undefined)
+            if (anotherObject !== undefined) {
                 if (anotherObject.team === this.team) return false;
+                if (anotherObject.team !== this.team && changeSide) return false;
+            }
 
             valids.push(`(${coord.x}, ${coord.y})`);
             return true;
         });
         return valids;
+    }
+
+    setPowerup(item) {
+
+        switch (item) {
+            case 'Potion': {
+                this.traverse(child => {
+                    if (child.isMesh) {
+                        //child.material = recruiterMap.clone();
+                        child.material.emissive = new THREE.Color(0x964B00); 
+                    }
+                });
+                break;
+            }
+        }
+        
     }
 
     onUpdate(delta) {

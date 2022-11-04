@@ -1,6 +1,14 @@
 const { nanoid } = require('nanoid');
 
-module.exports = function (io) {
+Clients = require('../models/client.model');
+Game = require('../models/game.model');
+
+const Ajv = require('ajv');
+
+module.exports = async function (io) {
+
+    console.log('Hi');
+    await Clients.deleteMany({});
 
     var clients = {};
     var games = {};
@@ -10,9 +18,11 @@ module.exports = function (io) {
     io.on('connection', socket => {
 
         console.log(`New client with id: ${socket.id} joined the server`);
+        var client = new Clients({ _id: socket.id });
+        client.save()
         clients[socket.id] = {};
 
-        socket.on('disconnect', () => {
+        socket.on('disconnect', async () => {
 
             console.log(`The client with id: ${socket.id} disconnected from server`);
             
@@ -25,7 +35,55 @@ module.exports = function (io) {
             }
             
             delete clients[socket.id];
-            console.log(clients);
+            await Clients.deleteOne({ _id: socket.id });
+
+            // console.log(clients);
+
+        });
+
+        socket.on('hostGame', async config => {
+
+            const schema = {
+                type: 'object',
+                properties: {
+                    mode: {
+                        type: 'string',
+                        pattern: '^(CHECKMATE|COLDWAR)$'
+                    },
+                    dificulty: {
+                        type: 'string',
+                        pattern: '^(NORMAL|HARD)$'
+                    },
+                    scenario: {
+                        type: 'string',
+                        pattern: '^(FOREST|DESERT|SNOW)$'
+                    }
+                },
+                required: [ 'mode', 'dificulty', 'scenario' ]
+            }
+
+            const ajv = new Ajv();
+            const valid = ajv.validate(schema, config);
+
+            if (!valid)
+                return socket.emit('hostGame', {
+                    'status': false,
+                    'message': 'Parameters are not correct'
+                });
+
+            console.log(config);
+
+            const code = nanoid(12);
+            const game = new Game({
+                code: code,
+                redPlayer: socket.id,
+                greenPlyaer: null,
+                configuration: config
+            });
+
+            await game.save();
+
+            socket.emit('hostGame', code);
 
         });
 
@@ -90,8 +148,9 @@ module.exports = function (io) {
             console.log('Complete: ' + new Date());
         });
 
-        // socket.join
-        // socket.to
+        
+        var i = 0;
+        setInterval(() => socket.emit('time', i++), 1000);
 
     });
 

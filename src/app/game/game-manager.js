@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { codeToVector, getObjectsByProperty } from '../core/helpers';
+import { Character } from './characters/character';
 import { Potion } from './items/potion';
 
 export class GameManager {
@@ -10,6 +11,7 @@ export class GameManager {
         this.scene = scene;
         this.board = board;
         this.configuration = configuration;
+        this.changeSide = false;
         this.io = io;
         this.selected = {
             status: false,
@@ -39,7 +41,9 @@ export class GameManager {
             object.team === this.currentTeam && object.team === this.team) {
 
             const position = codeToVector(object.cell);
-            const moves = object.findMoves(this.scene, position);
+            const moves = object.findMoves(this.scene, position, this.changeSide);
+
+
             const data = {
                 cells: moves,
                 character: {
@@ -116,17 +120,24 @@ export class GameManager {
     move(data) {
         this.board.cleanSelectableCells();
 
-        let targetCharacter = this.scene.getObjectByProperty('cell', data.targetCell);
-        if (targetCharacter !== undefined) {
-            // Checkmate
-            if (this.configuration.mode === 'checkmate')
-                this.defeatCharacter(targetCharacter, data);
-            else if (this.configuration.mode === 'coldwar') {
-            // Coldwar
-                var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
-                this.changeCharacterTeam(targetCharacter, recruiterCharacter);
+        let targetObject = this.scene.getObjectByProperty('cell', data.targetCell);
+        if (targetObject !== undefined) {
+            if (targetObject.typeGame === 'Character') {
+                // Checkmate
+                if (this.configuration.mode === 'checkmate')
+                    this.defeatCharacter(targetObject, data);
+                else if (this.configuration.mode === 'coldwar') {
+                // Coldwar
+                    var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
+                    this.changeCharacterTeam(targetObject, recruiterCharacter);
+                }
+                return;
             }
-            return;
+            else if (targetObject.typeGame === 'Item') {
+                // Item
+                var character = this.scene.getObjectByProperty('cell', data.startCell);
+                this.getItem(character, targetObject);
+            }
         }
 
         this.moveCharacter(
@@ -187,22 +198,23 @@ export class GameManager {
     }
 
     changeCharacterTeam(character, recruiter) {
-        let recruiterMap;
-        recruiter.traverse(child => {
-            if (child.isMesh) {
-                recruiterMap = child.material;
-                return;
-            }
-        });
+        console.log(Character.maps);
+        
+        const team = recruiter.team;
+        console.log(team);
 
         character.traverse(child => {
             if (child.isMesh) {
-                child.material = recruiterMap.clone();
+                //child.material = recruiterMap.clone();
+                child.material = Character.maps[team][character.character].clone();
                 character.team = recruiter.team;
             }
         });
 
+        this.changeSide = true;
         this.deselectObject();
+        //this.currentTeam = (this.currentTeam === 'A') ? 'B' : 'A';
+        this.spawnItem();
     }
 
     moveCharacter(startPosition, startCell, targetPosition, targetCell) {
@@ -260,7 +272,7 @@ export class GameManager {
         }).onComplete(() => {
             fadeToAction(
                 selectedObject.actions['walking'],
-                selectedObject.actions['idle'], 0.2)
+                selectedObject.actions['idle'], 0.2);
             
             //selectedObject.actions['walking'].stop();
             //selectedObject.actions['idle'].play();
@@ -268,10 +280,16 @@ export class GameManager {
             //socket.on('changeTurn', () => {
 
             selectedObject.cell = targetCell;
+            this.changeSide = false;
             this.deselectObject();
+
+            
 
             this.currentTeam = (this.currentTeam === 'A') ? 'B' : 'A';
             this.spawnItem();
+
+            if (this.configuration.dificulty === 'Hard')
+                this.board.sizeVariation();
 
             // Si es contra IA
             // if (this.currentTeam === 'B') {
@@ -298,7 +316,7 @@ export class GameManager {
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.random() * 100;
 
-        if (true) {
+        if (random > percentage) {
             const ocupiedCells = [];
             this.scene.traverse(child => {
                 if (child.cell) {
@@ -321,6 +339,14 @@ export class GameManager {
             const potion = new Potion(this.scene, chosenCell);
 
         }
+
+    }
+
+    getItem(character, item) {
+
+        //character.powerup = item.type;
+        character.setPowerup(item.type);
+        this.scene.remove(item);
 
     }
 

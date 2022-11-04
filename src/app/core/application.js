@@ -26,6 +26,15 @@ export class Application {
             console.log(this.id);
         });
 
+        this.socket.emit('hostGame', {
+            mode: 'CHECKMATE',
+            dificulty: 'NORMAL',
+            scenario: 'FOREST'
+        });
+        this.socket.on('hostGame', data => {
+            console.log(data);
+        });
+
         this.router = new Router(this);
         this.router.resolve();
     }
@@ -50,8 +59,19 @@ export class Application {
     }
 
     createScene(team) {
+        /*
+        let startTime = 0;
+        setInterval(() => {
+            startTime++;
+            console.log(startTime);
+        }, 1000);
+        */
+
+
+
 
         this.socket.on('terminateGame', () => { alert('Todo murio') });
+        this.socket.on('time', time => console.log(time));
 
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -114,7 +134,7 @@ export class Application {
         controls.update();
 
         this.particleSystem = new ParticleSystem(this.scene, {
-            position: new THREE.Vector3(0.0, 0.0, 0.0),
+            position: new THREE.Vector3(1.0, -1.0, 0.0),
             rotationBegin: 0.0,
             rotationEnd: 0.0,
             rotationVariation: 0.0,
@@ -122,7 +142,7 @@ export class Application {
             scaleEnd: new THREE.Vector3(0.0, 0.0, 0.0),
             scaleVariation: new THREE.Vector3(0.3, 0.3, 0.3),
             speed: new THREE.Vector3(0.0, 0.0, 0.0),
-            speedVariation: new THREE.Vector3(5.0, 2.0, 0.0),
+            speedVariation: new THREE.Vector3(0.0, 5.0, 0.0),
             lifetime: 1.0
         }, 1000);
 

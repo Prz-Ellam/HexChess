@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { getObjectsByProperty } from '../../core/helpers';
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
+import { getObjectsByProperty } from '@core/helpers';
 
 export class Board {
 
@@ -34,7 +35,7 @@ export class Board {
                     new THREE.MeshPhongMaterial({ 
                         //clearcoat: 1.0,
                         //clearcoatRoughness: 0.1,
-                        color : (x % 2 == 0 ) ? 0x958ae6 : 0x958ae6,
+                        color : 0x958ae6,
                         ////flatShading: true,
                         //roughness: 0.5,
                         //metalness: 1.0,
@@ -59,8 +60,6 @@ export class Board {
                        
                         depthTest: true,
                         emissive: 0
-                       
-                        
                     })
                 );
 
@@ -73,10 +72,10 @@ export class Board {
                 hexagon.receiveShadow = true;
 
                 if (dificulty === 'Hard') {
-                    let change = Math.random() * (3 - 1) + 1;
+                    let change = Math.random() * (2 - 1) + 1;
                     change = Math.round(change);
                     hexagon.scale.y = change;
-                    hexagon.position.y += change / 2;
+                    hexagon.position.y = change / 2;
                 }
 
                 const xCoord = (x - startX) + 1;
@@ -120,6 +119,33 @@ export class Board {
         selectableCells.forEach(cell => {
             cell.selectable = false;
             cell.material.color.setHex(0x958ae6);
+        });
+    }
+
+    sizeVariation() {
+        const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
+        cells.forEach(cell => {
+            let change = Math.random() * (2 - 1) + 1;
+
+            const element = this.scene.getObjectByProperty('cell', cell.name);
+
+            change = Math.round(change);
+            //cell.scale.y = change;
+            //cell.position.y += change / 2;
+
+            const tween = new TWEEN.Tween({ position: cell.position.y, scale: cell.scale.y })
+            .to({ position: change / 2, scale: change  }, 1000)
+            .onStart(() => {
+            })
+            .onUpdate(status => {
+                cell.scale.y = status.scale;
+                cell.position.y = status.position;
+                if (element !== undefined) {
+                    element.position.y = status.position + (status.scale / 2.0);
+                }
+            });
+
+            tween.start();
         });
     }
 

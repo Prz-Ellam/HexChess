@@ -15,10 +15,10 @@ export class Monk extends Character
             (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
                 red :
                 green;
-        super(scene, board, modelpath, position, [ idle, walking, death ]);
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Monk');
     }
 
-    findMoves(scene, position) {
+    findMoves(scene, position, changeSide) {
         const x = position.x;
         const z = position.y;
 
@@ -28,7 +28,11 @@ export class Monk extends Character
         coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z - 1));
         coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z + 1));
 
-        const valids = super.discardCells(scene, coords);
+        const valids = super.discardCells(scene, coords, changeSide);
         return valids;
+    }
+
+    setPowerup(item) {
+        
     }
 }
