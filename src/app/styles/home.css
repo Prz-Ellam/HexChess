@@ -301,9 +301,9 @@ body::after {
 }
 
 /*--------------------------------------------------------------------------------------*/
-/*Btn config*/
+/*Btn config, Btn Score, Btn user*/
 
-#btn-config {
+#btn-config,#btn-score,#btn-usuario {
     position: relative;
 
     padding: 10px 20px;
@@ -312,16 +312,16 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-config span {
+#btn-config span, #btn-score span,#btn-usuario span {
     z-index: 1;
 }
 
-#btn-config #mov {
+#btn-config #mov, #btn-score #mov, #btn-usuario #movu {
     inset: 0;
     display: block;
 }
 
-#btn-config #mov::before {
+#btn-config #mov::before, #btn-score #mov::before, #btn-usuario #movu::before {
     content: '';
     position: absolute;
     top: -3%;
@@ -333,12 +333,12 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-config:hover #mov::before {
+#btn-config:hover #mov::before, #btn-score:hover #mov::before,#btn-usuario:hover #movu::before {
     width: 20px;
     left: 20%;
 }
 
-#btn-config #mov::after {
+#btn-config #mov::after,#btn-score #mov::after, #btn-usuario #movu::after  {
     content: '';
     position: absolute;
     top: 97%;
@@ -350,123 +350,7 @@ body::after {
     transition: 0.5s;
 }
 
-#btn-config:hover #mov::after {
-    width: 20px;
-    left: 80%;
-}
-
-/*--------------------------------------------------------------------------------------*/
-
-/*Btn score*/
-
-#btn-score {
-    position: relative;
-    padding: 10px 20px;
-    font-size: 1.5em;
-    letter-spacing: 0.1em;
-}
-
-#btn-score span {
-    z-index: 1;
-}
-
-#btn-score #mov {
-    inset: 0;
-    display: block;
-}
-
-#btn-score #mov::before {
-    content: '';
-    position: absolute;
-    top: -3%;
-    left: 93%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-score:hover #mov::before {
-    width: 20px;
-    left: 20%;
-}
-
-#btn-score #mov::after {
-    content: '';
-    position: absolute;
-    top: 97%;
-    left: 30%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-score:hover #mov::after {
-    width: 20px;
-    left: 80%;
-}
-
-/*--------------------------------------------------------------------------------------*/
-
-/*Btn usuario*/
-
-#btn-user {
-    position: relative;
-
-    padding: 10px 20px;
-    font-size: 1.5em;
-    letter-spacing: 0.1em;
-    transition: 0.5s;
-}
-
-#btn-user::before {
-    content: '';
-    inset: 2px;
-    background: #27282c;
-}
-
-#btn-user span {
-    z-index: 1;
-}
-
-#btn-user #movu {
-    inset: 0;
-    display: block;
-}
-
-#btn-user #movu::before {
-    content: '';
-    position: absolute;
-    top: -3%;
-    left: 93%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-user:hover #movu::before {
-    width: 20px;
-    left: 20%;
-}
-
-#btn-user #movu::after {
-    content: '';
-    position: absolute;
-    top: 97%;
-    left: 30%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-user:hover #movu::after {
+#btn-config:hover #mov::after, #btn-score:hover #mov::after, #btn-usuario:hover #movu::after {
     width: 20px;
     left: 80%;
 }

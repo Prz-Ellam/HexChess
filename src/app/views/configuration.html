@@ -24,103 +24,74 @@
     </div>
 </div>
 
+<h2 class="config-title">CONFIGURACIONES</h2>
+  <!--Particulas-->
+  <div class="bubbles-circle"></div>
+
 <div class="content">
-    <h2>CONFIGURACIONES</h2>
-
-    <!--Particulas-->
-    <div class="bubbles-circle"></div>
-
-    <!--Cuadro-->
-    <div class="cuadro-config"></div>
-
-    <!--Btn Brillo-->
-    <div class="mx-5 py-5">
-        <button class="button" type="submit" id="btn-brillo" style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
-            <span> BRILLO </span>
-            <i></i>
-        </button>
+    <div class="menus">
+        <nav>
+            <a class="button button-anim" style="--clr:#8A7DFD" id="btn-graficos">
+                <span>GRÁFICOS</span>
+              
+            </a>
+        </nav>
+        <nav>
+            <a class="button button-anim" style="--clr:#8A7DFD" id="btn-audio">
+                <span>AUDIO</span>
+              
+            </a>
+        </nav>
+        <nav>
+            <a class="button button-anim" style="--clr:#8A7DFD" id="btn-controles">
+                <span>CONTROLES</span>
+              
+            </a>
+        </nav>
     </div>
-
-    <!--Btn Sonido-->
-    <div class="mx-5 py-5">
-        <button class="button" type="submit" id="btn-sonido" style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
-            <span> SONIDO </span>
-            <i></i>
-        </button>
-    </div>
-
-    <!--Btn Controles-->
-    <div class="mx-5 py-5">
-        <button class="button" 
-            type="submit" 
-            id="btn-controles" 
-            style="--clr:#8A7DFD" 
-            class="btn btn-primary btn-lg">
-            <span> CONTROLES </span>
-            <i></i>
-        </button>
-    </div>
-
-    <!--Btn Return-->
-    <div class="mx-5 py-5">
-        <a class="button" type="submit" href="/" id="btn-return" style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
-            <span></span>
-            <i id="#regreso"></i>
-            <i class="bx bx-undo"></i>
-        </a>
-    </div>
-
-    <!--Btn Aceptar-->
-    <div class="mx-5 py-5">
-        <a class="button" type="submit" id="btn-aceptar" href="/" style="--clr:#8A7DFD"
-            class="btn btn-primary btn-lg">
-            <span> ACEPTAR </span>
-            <i></i>
-        </a>
-    </div>
-
-    <!--Btn Cancelar-->
-    <div class="mx-5 py-5">
-        <a class="button" type="submit" id="btn-cancel" href="/" style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
-            <span> CANCELAR </span>
-            <i></i>
-        </a>
-    </div>
-
-    <!--Titulo-->
-    <h5 id="activate_id" hidden>Activar/Desactivar</h5>
-    <h5 id="volumensb_id" hidden>Volumen</h5>
-    <h5 id="aumentar-brillo">Nivel de Brillo</h5>
-
-    <!--Atributo Sonido-->
-    <div class="center" hidden id="checbox-act-des">
-        <input type="checkbox" name="audio_name">
-    </div>
-    <div class="range" hidden id="volume-range">
-        <div class="sliderValue">
-
+    <div class="ajustes">
+        <div class="graficos" id="graficos-vista">
+            <form id="form-graficos">
+                <label for="fov-id" class="form-label">FOV</label>
+                <input type="range" class="form-range" id="fov-id" name="fov_name" min="0" max="100"><br><br><br>
+                <label for="sombras-id" class="form-label">SOMBRAS</label>
+                <input type="checkbox" class="form-check" id="sombras-id" name="sombras_name"><br><br><br>
+                <label class="form-label">OUTPUT ENCODING</label> <br><br><br>
+                <label for="srgb-id" class="form-label">SRGBENCODING</label>
+                <input type="checkbox" class="form-check" id="srgb-id" name="srgb_name"> &nbsp;&nbsp;
+                <label for="dllas-id" class="form-label">NA DLLAS</label>
+                <input type="checkbox" class="form-check" id="dllas-id" name="dllas_name"><br><br>
+                <label for="none-id" class="form-label">NINGUNA</label>
+                <input type="checkbox" class="form-check" id="none-id" name="none_name"> &nbsp;&nbsp;
+                <label for="linear-id" class="form-label">LINEAR ENCODING</label>
+                <input type="checkbox" class="form-check" id="linear-id" name="linear_name"><br><br><br><br>
+                <label for="antialias-id" class="form-label">ANTIALIAS</label>
+                <input type="checkbox" class="form-check" id="antialias-id" name="antialias_name"><br>
+                <button type="submit" class="btn button button-anim" id="aceptar-graficos" value="aceptar"
+                    style="--clr:#8A7DFD">
+                    <span>ACEPTAR</span>
+                </button>
+            </form>
         </div>
-        <div class="field">
-            <div class="value left">
-                0
-            </div>
-            <input type="range" id="volume_id" class="volume_class" name="volume-name" min="0" max="100" value="50"
-                steps="1">
-            <div class="value right">100</div>
+        <div class="audio" id="audio-vista" hidden>
+            <form id="form-audio">
+                <label for="sonido-id" class="form-label">HABILITAR/DESHABILITAR</label>
+                <input type="checkbox" class="form-check" id="sonido-id" name="sonido_name"><br><br><br>
+                <label for="volume-id" class="form-label">VOLUMEN</label>
+                <input type="range" class="form-range" id="volume-id" name="volume_name" min="0" max="100"><br>
+                <button type="submit" class="btn button button-anim" id="aceptar-audio" value="aceptar"
+                    style="--clr:#8A7DFD">
+                    <span>ACEPTAR</span>
+                </button>
+            </form>
         </div>
     </div>
-
-    <div class="range" id="brillo-range">
-        <div class="sliderValue">
-
-        </div>
-        <div class="field">
-            <div class="value left">
-                0
-            </div>
-            <input type="range" id="brillora_id" class="brillo_class" name="brillo-name" min="0" max="100" value="50"
-                steps="1">
-            <div class="value right">100</div>
-        </div>
-    </div>
+ <!--Btn Return-->
+ <div>
+    <a class="button" href="/" id="btn-return" style="--clr:#8A7DFD">
+        <span></span>
+        <i id="regreso"></i>
+        <i class="bx bx-undo"></i>
+    </a>
+</div>
 </div>
