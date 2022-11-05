@@ -67,9 +67,6 @@ export class Application {
         }, 1000);
         */
 
-
-
-
         this.socket.on('terminateGame', () => { alert('Todo murio') });
         this.socket.on('time', time => console.log(time));
 

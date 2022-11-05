@@ -10,7 +10,12 @@ const socketio = require('socket.io');
 // El servidor se crea
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+});
 
 database = require('./config/database');
 database();
@@ -41,6 +46,9 @@ passport.use(new JwtStrategy(opts, (decoded, done) => {
 
 
 // Middlewares
+const cors = require('cors');
+
+//app.use(cors());
 app.use(express.json());
 app.use(session({ secret: 'SECRET' }));
 app.use(passport.initialize());
@@ -189,6 +197,21 @@ app.get('/api/v1/scores', async (req, res) => {
     res.json(scores);
 
 });
+
+Game = require('./models/game.model');
+
+app.get('/api/v1/test', async (req, res) => {
+    // Si no encuentre uno devuelve null
+    const game = await Game.findOne({ $and: [ { greenPlayer: null }, { configuration: {
+        mode: 'CHECKMATE',
+        dificulty: 'NORMAL',
+        scenario: 'FOREST'
+    } } ] });
+            
+            
+    console.log(game);
+    res.json(game);
+})
 
 app.get('*', (req, res, next) => {
     res.redirect('/');

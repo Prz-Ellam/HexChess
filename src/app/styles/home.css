@@ -303,7 +303,7 @@ body::after {
 /*--------------------------------------------------------------------------------------*/
 /*Btn config, Btn Score, Btn user*/
 
-#btn-config,#btn-score,#btn-usuario {
+#btn-config,#btn-score,#btn-user {
     position: relative;
 
     padding: 10px 20px;

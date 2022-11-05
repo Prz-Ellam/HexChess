@@ -7,11 +7,8 @@ const Ajv = require('ajv');
 
 module.exports = async function (io) {
 
-    console.log('Hi');
     await Clients.deleteMany({});
-
-    var clients = {};
-    var games = {};
+    await Game.deleteMany({});
 
     let gamesReady = {};
 
@@ -19,29 +16,18 @@ module.exports = async function (io) {
 
         console.log(`New client with id: ${socket.id} joined the server`);
         var client = new Clients({ _id: socket.id });
-        client.save()
-        clients[socket.id] = {};
+        client.save();
 
         socket.on('disconnect', async () => {
 
             console.log(`The client with id: ${socket.id} disconnected from server`);
-            
-            for (const [ id, value ] of Object.entries(games)) {
-                if (value.playerA === socket.id || value.playerB === socket.id) {
-                    delete games[id];
-                    io.to(id).emit('terminateGame');
-                    io.in(id).socketsLeave(id);
-                }
-            }
-            
-            delete clients[socket.id];
+     
+            await Game.deleteMany({ $or: [ { redPlayer: socket.id }, { greenPlayer: socket.id } ] });
             await Clients.deleteOne({ _id: socket.id });
-
-            // console.log(clients);
 
         });
 
-        socket.on('hostGame', async config => {
+        socket.on('hostGame', async configuration => {
 
             const schema = {
                 type: 'object',
@@ -63,7 +49,7 @@ module.exports = async function (io) {
             }
 
             const ajv = new Ajv();
-            const valid = ajv.validate(schema, config);
+            const valid = ajv.validate(schema, configuration);
 
             if (!valid)
                 return socket.emit('hostGame', {
@@ -71,47 +57,130 @@ module.exports = async function (io) {
                     'message': 'Parameters are not correct'
                 });
 
-            console.log(config);
-
             const code = nanoid(12);
             const game = new Game({
                 code: code,
                 redPlayer: socket.id,
                 greenPlyaer: null,
-                configuration: config
+                configuration: configuration
             });
 
             await game.save();
+            socket.join(code);
 
             socket.emit('hostGame', code);
 
         });
 
-        socket.on('joinGame', configuration => {
+        socket.on('joinGame', async code => {
 
-            for (const [id, value] of Object.entries(games)) {
-                if (JSON.stringify(value.configuration) === JSON.stringify(configuration)
-                    && !value.playerB) {
-                    
-                    games[id].playerB = socket.id;
-                    socket.join(id);
+            const game = await Game.findOne({ code: code });
+            if (!game)
+                return socket.emit('joinGame', {
+                    status: false,
+                    message: "The game doesn't exists"
+                });
 
-                    //io.to(id).emit('found');
-                    io.to(games[id].playerA).emit('found', { team: 'A' });
-                    io.to(games[id].playerB).emit('found', { team: 'B' });
+            if (game.redPlayer === socket.id)
+                return socket.emit('joinGame', {
+                    status: false,
+                    message: "You are already in the game"
+                });
 
-                    
-                    return;
+            const newGame = await Game.findOneAndUpdate({ code: code }, 
+            { greenPlayer: socket.id }, { new: true });
+            socket.join(game.code);
+
+            socket.emit('joinGame', {
+                status: true,
+                message: 'You joined the game successfully'
+            });
+
+            io.to(game.code).emit('startGame', newGame);
+
+        });
+
+        socket.on('findGame', async configuration => {
+
+            const game = await Game.findOne({ $and: [ { greenPlayer: null }, { configuration: configuration } ] });
+            
+            if (!game)
+            {
+                const schema = {
+                    type: 'object',
+                    properties: {
+                        mode: {
+                            type: 'string',
+                            pattern: '^(CHECKMATE|COLDWAR)$'
+                        },
+                        dificulty: {
+                            type: 'string',
+                            pattern: '^(NORMAL|HARD)$'
+                        },
+                        scenario: {
+                            type: 'string',
+                            pattern: '^(FOREST|DESERT|SNOW)$'
+                        }
+                    },
+                    required: [ 'mode', 'dificulty', 'scenario' ]
                 }
+    
+                const ajv = new Ajv();
+                const valid = ajv.validate(schema, configuration);
+    
+                if (!valid)
+                    return socket.emit('hostGame', {
+                        'status': false,
+                        'message': 'Parameters are not correct'
+                    });
+    
+                const code = nanoid(12);
+                const game = new Game({
+                    code: code,
+                    redPlayer: socket.id,
+                    greenPlyaer: null,
+                    configuration: configuration
+                });
+    
+                await game.save();
+                socket.join(code);
+    
+                socket.emit('hostGame', code);
             }
+            else
+            {
+                if (!game)
+                    return socket.emit('joinGame', {
+                        status: false,
+                        message: "The game doesn't exists"
+                    });
 
-            const id = nanoid(12);
-            games[id] = {};
-            games[id].configuration = configuration;
-            games[id].playerA = socket.id;
-            games[id].playerB = null;
-            socket.join(id);
+                if (game.redPlayer === socket.id)
+                    return socket.emit('joinGame', {
+                        status: false,
+                        message: "You are already in the game"
+                    });
 
+                const newGame = await Game.findOneAndUpdate({ code: game.code }, 
+                { greenPlayer: socket.id }, { new: true });
+                socket.join(game.code);
+
+                socket.emit('joinGame', {
+                    status: true,
+                    message: 'You joined the game successfully'
+                });
+
+                //io.to(game.code).emit('startGame', newGame);
+                io.to(newGame.redPlayer).emit('startGame', {
+                    team: 'RED',
+                    configuration: newGame.configuration
+                });
+                io.to(newGame.greenPlayer).emit('startGame', {
+                    team: 'GREEN',
+                    configuration: newGame.configuration
+                })
+            }
+            
         });
 
         socket.on('select', data => {
