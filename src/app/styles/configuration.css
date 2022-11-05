@@ -32,7 +32,7 @@
     position: absolute;
 }
 
-nav a {
+nav button {
     list-style: none;
     font-size: 1.6em;
     padding: 15px;
