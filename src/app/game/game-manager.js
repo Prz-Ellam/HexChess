@@ -213,6 +213,9 @@ export class GameManager {
             const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
             if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
 
+            document.body.innerHTML = 
+            '<div class="red-win-desert" style="width: 100vw; height: 100vh;"></div>';
+
         }, character.actions['death']._clip.duration * 1000 - 10);
     }
 

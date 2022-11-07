@@ -94,3 +94,21 @@ h2 {
     width: 100%;
 }
 */
+
+.red-win-desert {
+    background-image: url('../assets/images/JRojo-win-desert.png');
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+
+.red-win-forest {
+    background-image: url('../assets/images/JRojo-win-forest.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.red-win-snow {
+    background-image: url('../assets/images/JRojo-win-snow.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}

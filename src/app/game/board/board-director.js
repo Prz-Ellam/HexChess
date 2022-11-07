@@ -3,7 +3,7 @@ import { CharacterFactory } from '@characters/character-factory';
 export class BoardDirector
 {
     constructor() {
-        
+        /*
         this.board = [
             [ 'Monk', 'Monk', 'Imp', 'Peasant', 'Witch', 'Lady', 'Peasant', 'Imp', 'Monk', 'Monk' ],
             [ 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight' ],
@@ -16,8 +16,8 @@ export class BoardDirector
             [ 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight', 'Knight' ],
             [ 'Monk', 'Monk', 'Imp', 'Peasant', 'Lady', 'Witch', 'Peasant', 'Imp', 'Monk', 'Monk' ]
         ];
+        */
         
-        /*
         this.board = [
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -30,7 +30,7 @@ export class BoardDirector
             [ 0, 'Lady', 0, 'Imp', 'Imp', 0, 'Peasant', 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
         ];
-        */
+        
     }
 
     async create(scene, board) {
