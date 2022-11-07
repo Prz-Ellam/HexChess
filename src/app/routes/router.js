@@ -19,6 +19,11 @@ export class Router {
         this.resolve();
     }
 
+    redirect(uri) {
+        window.history.pushState({}, '', uri);
+        this.resolve();
+    }
+
     resolve() {
 
         const path = window.location.pathname;

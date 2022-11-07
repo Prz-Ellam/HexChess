@@ -7,7 +7,7 @@ import { Potion } from './items/potion';
 export class GameManager {
     constructor(scene, board, team, io, configuration) {
         this.team = team;
-        this.currentTeam = 'A';
+        this.currentTeam = 'RED';
         this.scene = scene;
         this.board = board;
         this.configuration = configuration;
@@ -20,12 +20,31 @@ export class GameManager {
         };
         this.items = [];
 
+        window.addEventListener('focus', () => {
+            const items = getObjectsByProperty(this.scene, 'typeGame', 'Item');
+            items.forEach(item => {
+                const hexagon = this.scene.getObjectByProperty('name', item.cell);
+                item.staticPosition = hexagon.position.y + (hexagon.scale.y / 2.0);
+            })
+        })
+
         // Only multiplayer
-        if (this.configuration.players === 'multiplayer') {
-            this.io.on('select', data => { this.select(data) });
-            this.io.on('move', data => { this.move(data) });
-            this.io.on('deselect', () => { this.deselect() });
+        if (this.configuration.players === 'MULTIPLAYER') {
+            this.io.on('select', data => this.select(data));
+            this.io.on('move', data => this.move(data));
+            this.io.on('deselect', () => this.deselect());
+            this.io.on('setItem', data => { setTimeout(this.setItem(data), 1000) });
+            this.io.on('setVariations', variations => this.board.setSizeVariations(variations));
+            //this.io.on('moveComplete', data => {
+            //    if (!data.status) console.log(data);
+            //});
+            //this.io.on('beginTurn', data => { this.changeTurn(data) });
+            //this.io.on('setTurn', team => { this.currentTeam = team; console.log(team) });
         }
+    }
+
+    changeTurn(data) {
+        this.currentTeam = data.team;
     }
 
     /**
@@ -52,10 +71,10 @@ export class GameManager {
                 }
             }
 
-            if (this.configuration.players === 'singleplayer') {
+            if (this.configuration.players === 'SINGLEPLAYER') {
                 this.select(data);
             }
-            else if (this.configuration.players === 'multiplayer') {
+            else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('select', data);
             }
 
@@ -67,10 +86,10 @@ export class GameManager {
         if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
             && object.typeGame !== 'Character') {
 
-            if (this.configuration.players === 'singleplayer') {
+            if (this.configuration.players === 'SINGLEPLAYER') {
                 this.deselect();
             }
-            else if (this.configuration.players === 'multiplayer') {
+            else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('deselect');
             }
 
@@ -87,10 +106,10 @@ export class GameManager {
                 targetCell: object.name
             }
 
-            if (this.configuration.players === 'singleplayer') {
+            if (this.configuration.players === 'SINGLEPLAYER') {
                 this.move(data);
             }
-            else if (this.configuration.players === 'multiplayer') {
+            else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('move', data);
             }
 
@@ -124,9 +143,9 @@ export class GameManager {
         if (targetObject !== undefined) {
             if (targetObject.typeGame === 'Character') {
                 // Checkmate
-                if (this.configuration.mode === 'checkmate')
+                if (this.configuration.mode === 'CHECKMATE')
                     this.defeatCharacter(targetObject, data);
-                else if (this.configuration.mode === 'coldwar') {
+                else if (this.configuration.mode === 'COLDWAR') {
                 // Coldwar
                     var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
                     this.changeCharacterTeam(targetObject, recruiterCharacter);
@@ -249,6 +268,8 @@ export class GameManager {
             Math.pow(targetCoords.x - startCoords.x, 2));
         console.log(distance);
 
+        selectedObject.cell = targetCell;
+        //alert('CHECK');
         const tween = new TWEEN.Tween(
             {
                 x: startPosition.x,
@@ -262,6 +283,7 @@ export class GameManager {
                 z: targetPosition.z
             }, 1000 //distance * 1000
         ).onStart(() => {
+            // No
             fadeToAction(
                 selectedObject.actions['idle'],
                 selectedObject.actions['walking'], 0.2);
@@ -270,26 +292,41 @@ export class GameManager {
             selectedObject.rotation.y = angle;
             selectedObject.position.set(coords.x, coords.y, coords.z);
         }).onComplete(() => {
+
+            //alert('CHECK');
+
             fadeToAction(
                 selectedObject.actions['walking'],
                 selectedObject.actions['idle'], 0.2);
             
-            //selectedObject.actions['walking'].stop();
-            //selectedObject.actions['idle'].play();
-            //socket.emit('moveComplete', true);
-            //socket.on('changeTurn', () => {
-
-            selectedObject.cell = targetCell;
             this.changeSide = false;
             this.deselectObject();
 
-            
+            if (this.configuration.dificulty === 'HARD' && this.currentTeam === this.team) {
+                const variations = this.board.createSizeVariations();
 
-            this.currentTeam = (this.currentTeam === 'A') ? 'B' : 'A';
-            this.spawnItem();
+                if (this.configuration.players === 'SINGLEPLAYER') {
+                    this.board.setSizeVariations(variations);
+                }
+                else if (this.configuration.players === 'MULTIPLAYER') {
+                    this.io.emit('setVariations', variations);
+                }
+            }
 
-            if (this.configuration.dificulty === 'Hard')
-                this.board.sizeVariation();
+            if (this.configuration.dificulty === 'NORMAL') {
+                if (this.currentTeam === this.team)
+                    this.spawnItem();
+                    
+                this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+            }
+            else {
+                setTimeout(() => {
+                    if (this.currentTeam === this.team) {
+                        this.spawnItem();
+                    }
+                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                }, 1000);
+            }
 
             // Si es contra IA
             // if (this.currentTeam === 'B') {
@@ -306,6 +343,8 @@ export class GameManager {
         tween.start();
     }
 
+
+
     spawnItem() {
 
         if (this.items.length >= 3) {
@@ -316,7 +355,7 @@ export class GameManager {
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.random() * 100;
 
-        if (random > percentage) {
+        if (true /*random > percentage*/) {
             const ocupiedCells = [];
             this.scene.traverse(child => {
                 if (child.cell) {
@@ -336,10 +375,12 @@ export class GameManager {
             const chosenCellIndex = parseInt(Math.random() * freeCells.length);
             const chosenCell = freeCells[chosenCellIndex];
 
-            const potion = new Potion(this.scene, chosenCell);
-
+            this.io.emit('setItem', chosenCell);
         }
+    }
 
+    setItem(chosenCell) {
+        const potion = new Potion(this.scene, chosenCell);
     }
 
     getItem(character, item) {

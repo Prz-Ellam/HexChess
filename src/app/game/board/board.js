@@ -122,26 +122,37 @@ export class Board {
         });
     }
 
-    sizeVariation() {
+    createSizeVariations() {
         const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
+        const cellsVariations = [];
         cells.forEach(cell => {
             let change = Math.random() * (2 - 1) + 1;
+            change = Math.round(change);
+            cellsVariations.push(change);
+        });
+        return cellsVariations;
+    }
 
+    setSizeVariations(cellsVariations) {
+        const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
+
+        cells.forEach((cell, i) => {
             const element = this.scene.getObjectByProperty('cell', cell.name);
 
-            change = Math.round(change);
-            //cell.scale.y = change;
-            //cell.position.y += change / 2;
-
             const tween = new TWEEN.Tween({ position: cell.position.y, scale: cell.scale.y })
-            .to({ position: change / 2, scale: change  }, 1000)
+            .to({ position: cellsVariations[i] / 2, scale: cellsVariations[i]  }, 1000)
             .onStart(() => {
             })
             .onUpdate(status => {
                 cell.scale.y = status.scale;
                 cell.position.y = status.position;
                 if (element !== undefined) {
-                    element.position.y = status.position + (status.scale / 2.0);
+                    if (element.typeGame === 'Item') {
+                        element.staticPosition = status.position + (status.scale / 2.0);
+                    }
+                    else {
+                        element.position.y = status.position + (status.scale / 2.0);
+                    }
                 }
             });
 

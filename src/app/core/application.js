@@ -26,25 +26,16 @@ export class Application {
             console.log(this.id);
         });
 
-        this.socket.emit('hostGame', {
-            mode: 'CHECKMATE',
-            dificulty: 'NORMAL',
-            scenario: 'FOREST'
-        });
-        this.socket.on('hostGame', data => {
-            console.log(data);
-        });
-
         this.router = new Router(this);
         this.router.resolve();
     }
 
     create() {
 
-        if (this.configuration.players === 'singleplayer') {
-            this.createScene('A');
+        if (this.configuration.players === 'SINGLEPLAYER') {
+            this.createScene('RED');
         }
-        else if (this.configuration.players === 'multiplayer') {
+        else if (this.configuration.players === 'MULTIPLAYER') {
             this.multiplayer();
         }
         else {
@@ -54,8 +45,11 @@ export class Application {
     }
 
     multiplayer() {
-        this.socket.emit('joinGame', this.configuration);
-        this.socket.on('found', data => { this.createScene(data.team) });
+        this.socket.on('findGame', data => {
+            if (!data.status) this.router.redirect('/')
+        });
+        this.socket.emit('findGame', this.configuration);
+        this.socket.on('startGame', data => { this.createScene(data.team) });
     }
 
     createScene(team) {
@@ -67,8 +61,12 @@ export class Application {
         }, 1000);
         */
 
-        this.socket.on('terminateGame', () => { alert('Todo murio') });
+        this.socket.on('finishGame', () => { 
+            alert('Se perdio la conexión con tu rival');
+            this.router.redirect('/');
+        });
         this.socket.on('time', time => console.log(time));
+        //this.socket.emit('ready');
 
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -95,7 +93,7 @@ export class Application {
             1000.0
         );
         // 12
-        const z = (team === 'A') ? 12.0 : -14.0;
+        const z = (team === 'RED') ? 12.0 : -14.0;
         this.camera.position.set(0.0, 8.0, z);
         this.camera.lookAt(0.0, 1.0, 0.0);
 

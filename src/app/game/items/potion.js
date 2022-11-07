@@ -11,31 +11,31 @@ export class Potion {
     create(scene, position) {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(potion, object => {
-                object.traverse(child => {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                })
+            object.traverse(child => {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            })
 
-                object.position.y = 0;
-                object.scale.set(.0015, .0015, .0015);
-                object.castShadow = true;
-                object.receiveShadow = true;
+            object.position.y = 0;
+            object.scale.set(.0015, .0015, .0015);
+            object.castShadow = true;
+            object.receiveShadow = true;
 
-                const hexagon = scene.getObjectByName(position);
-                object.position.x = hexagon.position.x;
-                object.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
-                object.staticPosition = object.position.y;
-                object.position.z = hexagon.position.z;
+            const hexagon = scene.getObjectByName(position);
+            object.position.x = hexagon.position.x;
+            object.position.y = hexagon.position.y + (hexagon.scale.y / 2.0);
+            object.staticPosition = object.position.y;
+            object.position.z = hexagon.position.z;
 
-                object.type = 'Potion';
-                object.typeGame = 'Item';
-                object.cell = hexagon.name;
+            object.type = 'Potion';
+            object.typeGame = 'Item';
+            object.cell = hexagon.name;
 
-                object.onUpdate = this.onUpdate;
-                object.angle = 0.0;
+            object.onUpdate = this.onUpdate;
+            object.angle = 0.0;
 
-                scene.add(object);
-            }
+            scene.add(object);
+        }
         )
     }
 
@@ -44,5 +44,5 @@ export class Potion {
         this.rotation.y += delta;
         this.position.y = this.staticPosition + (0.1 * Math.sin(THREE.MathUtils.degToRad(this.angle)));
     }
-    
+
 }

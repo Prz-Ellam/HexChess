@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { getObjectsByProperty } from '../../core/helpers';
-
+//import fbxLoader from '../../core/loaders';
 export class Character {
 
     constructor(scene, board, model, position, animations, character) {
@@ -9,19 +8,29 @@ export class Character {
         this.name = this.create(scene, model, position, animations, character);
     }
 
+    static models = {
+        'RED': {},
+        'GREEN': {}
+    }
+
     static maps = {
-        'A': {},
-        'B': {}
+        'RED': {},
+        'GREEN': {}
     };
 
-    create(scene, model, position, animations, character) {
+    async create(scene, model, position, animations, character) {
         //const texture = new THREE.TextureLoader()
         //    .load('models/Knight/textures/Red.png');
 
-        if (Character.model) 
-            return Character.model.clone();
+        const cell = (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ? 'RED' : 'GREEN';
+        if (Character.models[cell][character]) {
+            return Character.models[cell][character].clone();
+        }
 
+       // const object = await fbxLoader(model);
         const fbxLoader = new FBXLoader();
+        //const object = await fbxLoader.loadAsync(model);
+
         fbxLoader.load(model, object => {
             object.traverse(child => {
                 if (child.isMesh) {
@@ -43,10 +52,10 @@ export class Character {
                     child.material = newMaterial;
                     const p = (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5)
                     if (p) {
-                        Character.maps['A'][character] = newMaterial;
+                        Character.maps['RED'][character] = newMaterial;
                     }
                     else {
-                        Character.maps['B'][character] = newMaterial;
+                        Character.maps['GREEN'][character] = newMaterial;
                     }
                 }
                 child.castShadow = true;
@@ -72,11 +81,11 @@ export class Character {
             var values = regex.exec(object.cell);
 
             if (values[2] < 5) {
-                object.team = 'A';
+                object.team = 'RED';
                 object.rotation.y = THREE.MathUtils.degToRad(180);
             }
             else {
-                object.team = 'B';
+                object.team = 'GREEN';
             }
 
             //object.rotation.y = THREE.Math.degToRad(315);
@@ -111,6 +120,14 @@ export class Character {
 
             object.onUpdate = this.onUpdate;
             scene.add(object);
+
+            const p = (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5)
+            if (p) {
+                Character.models['RED'][character] = object;
+            }
+            else {
+                Character.models['GREEN'][character] = object;
+            }
 
         });
 
