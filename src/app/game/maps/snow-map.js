@@ -22,8 +22,8 @@ export class SnowMap{
                     child.receiveShadow = true;
                 })
                 object.position.y = 1;
-                object.position.z = 5;
-               object.position.x = 2;
+                object.position.z = 11;
+                object.position.x = 2;
                 object.scale.set(.01, .01, .01);
                 object.castShadow = true;
                 object.receiveShadow = true;

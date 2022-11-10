@@ -17,7 +17,7 @@ export class Potion {
             })
 
             object.position.y = 0;
-            object.scale.set(.0015, .0015, .0015);
+            object.scale.set(.001, .001, .001);
             object.castShadow = true;
             object.receiveShadow = true;
 
@@ -35,8 +35,7 @@ export class Potion {
             object.angle = 0.0;
 
             scene.add(object);
-        }
-        )
+        });
     }
 
     onUpdate(delta) {

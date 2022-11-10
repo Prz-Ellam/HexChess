@@ -1,19 +1,20 @@
 import * as THREE from 'three';
 import { Character } from './character';
 
-import redKnight from '@models/Knight/RedKnight.fbx';
-import greenKnight from '@models/Knight/GreenKnight.fbx';
+import red from '@models/Knight/RedKnight.fbx';
+import green from '@models/Knight/GreenKnight.fbx';
 import idle from '@models/Knight/Idle.fbx'
 import walking from '@models/Knight/Walking.fbx';
 import death from '@models/Knight/Death.fbx'
 
 export class Knight extends Character {
-    constructor(scene, board, position, animations) {
-        const modelpath =
-            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-                redKnight :
-                greenKnight;
-        super(scene, board, modelpath, position, [ idle, walking, death ], 'Knight');
+    constructor(scene, board, position, team) {
+        //const modelpath =
+        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+        //        red :
+        //        green;
+        const modelpath = (team === 'RED') ? red : green;
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Knight', team);
     }
 
     findMoves(scene, position, changeSide) {
@@ -30,21 +31,5 @@ export class Knight extends Character {
 
         const valids = super.discardCells(scene, coords, changeSide);
         return valids;
-    }
-
-    setPowerup(item) {
-
-        switch (item) {
-            case 'Potion': {
-                this.traverse(child => {
-                    if (child.isMesh) {
-                        //child.material = recruiterMap.clone();
-                        child.material.emissive = new THREE.Color(0x964B00); 
-                    }
-                });
-                break;
-            }
-        }
-        
     }
 }

@@ -3,9 +3,9 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 //import fbxLoader from '../../core/loaders';
 export class Character {
 
-    constructor(scene, board, model, position, animations, character) {
+    constructor(scene, board, model, position, animations, character, team) {
         this.boardCount = board.count;
-        this.name = this.create(scene, model, position, animations, character);
+        this.name = this.create(scene, model, position, animations, character, team);
     }
 
     static models = {
@@ -18,35 +18,16 @@ export class Character {
         'GREEN': {}
     };
 
-    async create(scene, model, position, animations, character) {
-        //const texture = new THREE.TextureLoader()
-        //    .load('models/Knight/textures/Red.png');
+    async create(scene, model, position, animations, character, team) {
 
-        const cell = (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ? 'RED' : 'GREEN';
-        if (Character.models[cell][character]) {
-            return Character.models[cell][character].clone();
-        }
-
-       // const object = await fbxLoader(model);
         const fbxLoader = new FBXLoader();
-        //const object = await fbxLoader.loadAsync(model);
-
         fbxLoader.load(model, object => {
             object.traverse(child => {
                 if (child.isMesh) {
                     const oldMat = child.material;
 
                     const newMaterial = new THREE.MeshPhysicalMaterial({
-                        //color: oldMat.color,
-                        map: oldMat.map,
-
-                        //transparent: true,
-                        //opacity: 0.2
-
-                        //emissive: new THREE.Color(0x964B00),
-
-                        
-                        //skinning: true
+                        map: oldMat.map
                     });
 
                     child.material = newMaterial;
@@ -77,15 +58,13 @@ export class Character {
             object.typeGame = 'Character';
             object.cell = hexagon.name;
 
+            object.team = team;
+
             var regex = new RegExp(/\((\d+), (\d+)\)/);
             var values = regex.exec(object.cell);
 
             if (values[2] < 5) {
-                object.team = 'RED';
                 object.rotation.y = THREE.MathUtils.degToRad(180);
-            }
-            else {
-                object.team = 'GREEN';
             }
 
             //object.rotation.y = THREE.Math.degToRad(315);
@@ -94,11 +73,12 @@ export class Character {
             object.findMoves = this.findMoves;
             object.boardCount = this.boardCount;
             object.setPowerup = this.setPowerup;
+            object.removePowerup = this.removePowerup;
             object.actions = {};
 
             const animLoader = new FBXLoader();
+            object.mixer = new THREE.AnimationMixer(object);
             animLoader.load(animations[0], animation => {
-                object.mixer = new THREE.AnimationMixer(object);
                 //object.mixer = mixer;
 
                 // Buscamos la animacion y le damos play para que inicie
@@ -163,13 +143,46 @@ export class Character {
                 this.traverse(child => {
                     if (child.isMesh) {
                         //child.material = recruiterMap.clone();
-                        child.material.emissive = new THREE.Color(0x964B00); 
+                        child.material.emissive = new THREE.Color(0x964B00);
                     }
                 });
+                this.powerup = item;
+                break;
+            }
+            case 'Ghost': {
+                this.traverse(child => {
+                    if (child.isMesh) {
+                        const oldMat = child.material;
+
+                        const newMaterial = new THREE.MeshPhysicalMaterial({
+                            map: oldMat.map,
+                            transparent: true,
+                            opacity: 0.2
+                        });
+
+                        child.material = newMaterial;
+                    }
+                });
+                this.powerup = item;
                 break;
             }
         }
-        
+
+        this.powerupTurns = 3;
+
+    }
+
+    removePowerup() {
+        this.traverse(child => {
+            if (child.isMesh) {
+                const oldMat = child.material;
+                const newMaterial = new THREE.MeshPhysicalMaterial({
+                    map: oldMat.map,
+                });
+                child.material = newMaterial;
+            }
+        });
+        this.powerup = null;
     }
 
     onUpdate(delta) {

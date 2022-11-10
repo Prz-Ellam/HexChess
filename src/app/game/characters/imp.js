@@ -9,13 +9,14 @@ import death from '@models/Imp/Death.fbx';
 
 export class Imp extends Character
 {
-    constructor(scene, board, position)
+    constructor(scene, board, position, team)
     {
-        const modelpath =
-            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-                red :
-                green;
-        super(scene, board, modelpath, position, [ idle, walking, death ], 'Imp');
+        //const modelpath =
+        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+        //        red :
+        //        green;
+        const modelpath = (team === 'RED') ? red : green;
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Imp', team);
     }
 
     findMoves(scene, position, changeSide) {
@@ -47,9 +48,5 @@ export class Imp extends Character
 
         const valids = super.discardCells(scene, coords, changeSide);
         return valids;
-    }
-
-    setPowerup(item) {
-        
     }
 }

@@ -81,7 +81,8 @@ module.exports = {
             '@maps': path.resolve(__dirname, 'src/app/game/maps'),
             '@routes': path.resolve(__dirname, 'src/app/routes'),
             '@models': path.resolve(__dirname, 'src/app/assets/models'),
-            '@audios': path.resolve(__dirname, 'src/app/assets/audios')
+            '@audios': path.resolve(__dirname, 'src/app/assets/audios'),
+            '@images': path.resolve(__dirname, 'src/app/assets/images')
         },
     },
     plugins: [

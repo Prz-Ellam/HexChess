@@ -8,12 +8,13 @@ import walking from '@models/Lady/Walking.fbx';
 import death from '@models/Lady/Death.fbx'
 
 export class Lady extends Character {
-    constructor(scene, board, position, animations) {
-        const modelpath =
-            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-                red :
-                green;
-        super(scene, board, modelpath, position, [ idle, walking, death ], 'Lady');
+    constructor(scene, board, position, team) {
+        //const modelpath =
+        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+        //        red :
+        //        green;
+        const modelpath = (team === 'RED') ? red : green;
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Lady', team);
     }
 
     findMoves(scene, position, changeSide) {
@@ -57,7 +58,4 @@ export class Lady extends Character {
         return valids;
     }
 
-    setPowerup(item) {
-        
-    }
 }

@@ -11,11 +11,11 @@ export class MapFactory {
 
     create(name) {
         switch (name) {
-            case 'Forest':
+            case 'FOREST':
                 return new ForestMap(this.scene);
-            case 'Snow':
+            case 'SNOW':
                 return new SnowMap(this.scene);
-            case 'Desert':
+            case 'DESERT':
                 return new DesertMap(this.scene);
         }
     }

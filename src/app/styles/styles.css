@@ -21,12 +21,16 @@ body::before {
 }
 
 h2 {
-    font-family: 'Silkscreen', cursive;
-    color: #fff;
+    font-family: 'Silkscreen', cursive !important;
+    color: #fff !important;
     margin-top: 2em;
     margin-bottom: 2em;
-    font-size: 42px;
-    text-shadow: 0 0 20px #A29CD7;
+    font-size: 42px !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
+}
+
+.title-style {
+    padding-top: 0 !important;
 }
 
 .button {
@@ -95,20 +99,10 @@ h2 {
 }
 */
 
-.red-win-desert {
-    background-image: url('../assets/images/JRojo-win-desert.png');
-    background-repeat: no-repeat;
-    background-size:cover;
-}
-
-.red-win-forest {
-    background-image: url('../assets/images/JRojo-win-forest.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.red-win-snow {
-    background-image: url('../assets/images/JRojo-win-snow.png');
-    background-repeat: no-repeat;
-    background-size: cover;
+.btn-next {
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    --clr: #8A7DFD;
+    outline: none;
 }

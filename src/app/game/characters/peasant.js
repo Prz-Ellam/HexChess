@@ -9,13 +9,13 @@ import death from '@models/Peasant/Death.fbx';
 
 export class Peasant extends Character
 {
-    constructor(scene, board, position)
-    {
-        const modelpath =
-            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-                red :
-                green;
-        super(scene, board, modelpath, position, [ idle, walking, death ], 'Peasant');
+    constructor(scene, board, position, team) {
+        //const modelpath =
+        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+        //        red :
+        //        green;
+        const modelpath = (team === 'RED') ? red : green;
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Peasant', team);
     }
 
     findMoves(scene, position, changeSide) {

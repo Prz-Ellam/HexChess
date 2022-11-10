@@ -20,7 +20,7 @@ export class ForestMap {
                 child.receiveShadow = true;
             })
             object.position.y = 1;
-            object.position.z = 6;
+            object.position.z = 22;
             object.scale.set(.01, .01, .01);
             object.castShadow = true;
             object.receiveShadow = true;

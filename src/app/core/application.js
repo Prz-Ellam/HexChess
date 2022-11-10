@@ -13,6 +13,7 @@ import { MapFactory } from '../game/maps/map-factory';
 import { io } from 'socket.io-client'
 import { Router } from '../routes/router';
 import { AudioManager } from './audio';
+import { SnowParticles } from '../game/particles/snow-particles';
 
 export class Application {
 
@@ -128,8 +129,13 @@ export class Application {
         controls.maxPolarAngle = THREE.MathUtils.degToRad(80.0);
         controls.update();
 
+        if (this.configuration.scenario === 'SNOW') {
+            this.snow = new SnowParticles(this.scene);
+            this.snow.emitParticles(this.scene);
+        }
+
         this.particleSystem = new ParticleSystem(this.scene, {
-            position: new THREE.Vector3(1.0, -1.0, 0.0),
+            position: new THREE.Vector3(0.0, 10.0, 0.0),
             rotationBegin: 0.0,
             rotationEnd: 0.0,
             rotationVariation: 0.0,
@@ -138,7 +144,7 @@ export class Application {
             scaleVariation: new THREE.Vector3(0.3, 0.3, 0.3),
             speed: new THREE.Vector3(0.0, 0.0, 0.0),
             speedVariation: new THREE.Vector3(0.0, 5.0, 0.0),
-            lifetime: 1.0
+            lifetime: 50.0
         }, 1000);
 
         const mapScene = new MapFactory(this.scene, this.configuration.scenario);
@@ -215,8 +221,14 @@ export class Application {
 
         TWEEN.update();
 
+        //this.particleSystem.emitParticles();
         this.particleSystem.onUpdate(delta);
         this.particleSystem.onRender();
+
+       
+        if (this.configuration.scenario === 'SNOW') {
+            this.snow.onUpdate(delta);
+        }
 
         this.renderer.render(this.scene, this.camera);
     }

@@ -9,13 +9,13 @@ import death from '@models/Monk/Death.fbx';
 
 export class Monk extends Character
 {
-    constructor(scene, board, position)
-    {
-        const modelpath =
-            (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-                red :
-                green;
-        super(scene, board, modelpath, position, [ idle, walking, death ], 'Monk');
+    constructor(scene, board, position, team) {
+        //const modelpath =
+        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
+        //        red :
+        //        green;
+        const modelpath = (team === 'RED') ? red : green;
+        super(scene, board, modelpath, position, [ idle, walking, death ], 'Monk', team);
     }
 
     findMoves(scene, position, changeSide) {
@@ -32,7 +32,4 @@ export class Monk extends Character
         return valids;
     }
 
-    setPowerup(item) {
-        
-    }
 }

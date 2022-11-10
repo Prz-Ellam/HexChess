@@ -3,6 +3,16 @@ import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { codeToVector, getObjectsByProperty } from '../core/helpers';
 import { Character } from './characters/character';
 import { Potion } from './items/potion';
+import { Ghost } from './items/ghost';
+import { Book } from './items/book';
+
+import Swal from 'sweetalert2';
+import redForestVictory from '@images/JRojo-win-forest.png';
+import redDesertVictory from '@images/JRojo-win-desert.png';
+import redSnowVictory from '@images/JRojo-win-snow.png';
+import greenForestVictory from '@images/JVerde-win-forest.png';
+import greenDesertVictory from '@images/JVerde-win-desert.png';
+import greenSnowVictory from '@images/JVerde-win-snow.png';
 
 export class GameManager {
     constructor(scene, board, team, io, configuration) {
@@ -25,21 +35,16 @@ export class GameManager {
             items.forEach(item => {
                 const hexagon = this.scene.getObjectByProperty('name', item.cell);
                 item.staticPosition = hexagon.position.y + (hexagon.scale.y / 2.0);
-            })
-        })
+            });
+        });
 
         // Only multiplayer
         if (this.configuration.players === 'MULTIPLAYER') {
             this.io.on('select', data => this.select(data));
             this.io.on('move', data => this.move(data));
             this.io.on('deselect', () => this.deselect());
-            this.io.on('setItem', data => { setTimeout(this.setItem(data), 1000) });
+            this.io.on('setItem', data => setTimeout(this.setItem(data), 1000));
             this.io.on('setVariations', variations => this.board.setSizeVariations(variations));
-            //this.io.on('moveComplete', data => {
-            //    if (!data.status) console.log(data);
-            //});
-            //this.io.on('beginTurn', data => { this.changeTurn(data) });
-            //this.io.on('setTurn', team => { this.currentTeam = team; console.log(team) });
         }
     }
 
@@ -62,7 +67,6 @@ export class GameManager {
             const position = codeToVector(object.cell);
             const moves = object.findMoves(this.scene, position, this.changeSide);
 
-
             const data = {
                 cells: moves,
                 character: {
@@ -77,9 +81,6 @@ export class GameManager {
             else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('select', data);
             }
-
-            //this.select(data);
-            //this.io.emit('select', data);
         }
 
         // Hay turno actualmente y se selecciona un objeto no valido
@@ -92,9 +93,6 @@ export class GameManager {
             else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('deselect');
             }
-
-            //this.io.emit('deselect');
-            //this.deselect();
         }
 
         // Hay turno actualmente y se selecciona un elemento valido
@@ -112,9 +110,6 @@ export class GameManager {
             else if (this.configuration.players === 'MULTIPLAYER') {
                 this.io.emit('move', data);
             }
-
-            //this.move(data);
-            //this.io.emit('move', data)
         }
     }
 
@@ -211,10 +206,9 @@ export class GameManager {
             this.scene.remove(character);
 
             const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
-            if (remainingTeam === 0) alert(`Perdio el equipo ${defeatedTeam}`);
-
-            document.body.innerHTML = 
-            '<div class="red-win-desert" style="width: 100vw; height: 100vh;"></div>';
+            if (remainingTeam === 0) {
+                this.gameOver();
+            }
 
         }, character.actions['death']._clip.duration * 1000 - 10);
     }
@@ -272,7 +266,6 @@ export class GameManager {
         console.log(distance);
 
         selectedObject.cell = targetCell;
-        //alert('CHECK');
         const tween = new TWEEN.Tween(
             {
                 x: startPosition.x,
@@ -286,18 +279,13 @@ export class GameManager {
                 z: targetPosition.z
             }, 1000 //distance * 1000
         ).onStart(() => {
-            // No
             fadeToAction(
                 selectedObject.actions['idle'],
                 selectedObject.actions['walking'], 0.2);
-            //selectedObject.actions['walking'].play();
         }).onUpdate(coords => {
             selectedObject.rotation.y = angle;
             selectedObject.position.set(coords.x, coords.y, coords.z);
         }).onComplete(() => {
-
-            //alert('CHECK');
-
             fadeToAction(
                 selectedObject.actions['walking'],
                 selectedObject.actions['idle'], 0.2);
@@ -320,15 +308,22 @@ export class GameManager {
                 if (this.currentTeam === this.team)
                     this.spawnItem();
                     
-                this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                //this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
             }
             else {
                 setTimeout(() => {
                     if (this.currentTeam === this.team) {
                         this.spawnItem();
                     }
-                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                    //this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
                 }, 1000);
+            }
+
+            if (selectedObject.powerup) {
+                selectedObject.powerupTurns--;
+
+                if (selectedObject.powerupTurns < 0)
+                    selectedObject.removePowerup();
             }
 
             // Si es contra IA
@@ -378,12 +373,35 @@ export class GameManager {
             const chosenCellIndex = parseInt(Math.random() * freeCells.length);
             const chosenCell = freeCells[chosenCellIndex];
 
-            this.io.emit('setItem', chosenCell);
+            const itemType = Math.round(Math.random() * 2);
+            const types = [ 'Potion', 'Book', 'Ghost' ];
+            const item = types[itemType];
+
+            this.io.emit('setItem', { cell: chosenCell, type: item });
         }
     }
 
-    setItem(chosenCell) {
-        const potion = new Potion(this.scene, chosenCell);
+    setItem(data) {
+        const cell = data.cell;
+        const item = data.type;
+
+        switch (item) {
+            case 'Potion': {
+                const potion = new Potion(this.scene, cell);
+                break;
+            }
+            case 'Book': {
+                const book = new Book(this.scene, cell);
+                break;
+            }
+            case 'Ghost': {
+                const ghost = new Ghost(this.scene, cell);
+                break;
+            }
+        }
+
+        //const potion = new Potion(this.scene, chosenCell);
+        
     }
 
     getItem(character, item) {
@@ -395,10 +413,23 @@ export class GameManager {
     }
 
     gameOver() {
-
+        Swal.fire({
+            title: '¡GANASTE!',
+            background: '#1B1B36',
+            imageUrl: redForestVictory,
+            imageAlt: 'Game over',
+            width: '800px',
+            buttonsStyling: false,
+            showConfirmButton: true,
+            confirmButtonText: 'Continuar',
+            customClass: {
+                title: 'title-style',
+                confirmButton: 'btn button button-anim btn-next'
+            },
+            backdrop: `
+                rgba(0, 0, 123, 0.4)
+            `
+        });
     }
 
-    scoring() {
-
-    }
 }
