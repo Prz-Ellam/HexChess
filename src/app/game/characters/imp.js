@@ -24,28 +24,25 @@ export class Imp extends Character
         const z = position.y;
 
         let coords = [];
-        if (z % 2 !== 0)
-        {
+        let hexagon = scene.getObjectByName(`(${x}, ${z + 2})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
             coords.push(new THREE.Vector2(x, z + 2));
-            coords.push(new THREE.Vector2(x, z - 2));
-        }
-        else
-        {
-            coords.push(new THREE.Vector2(x + 1, z + 2));
-            coords.push(new THREE.Vector2(x + 1, z - 2));
-        }
 
-        if (scene.getObjectByProperty('cell', `(${x + 1}, ${z})`) === undefined)
+        hexagon = scene.getObjectByName(`(${x}, ${z - 2})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+            coords.push(new THREE.Vector2(x, z - 2));
+/*
+        coords.push(new THREE.Vector2(x, z + 2));
+        coords.push(new THREE.Vector2(x, z - 2));
+*/      
+        hexagon = scene.getObjectByName(`(${x + 2}, ${z})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
             coords.push(new THREE.Vector2(x + 2, z));
 
-        if (scene.getObjectByProperty('cell', `(${x - 1}, ${z})`) === undefined)
+        hexagon = scene.getObjectByName(`(${x - 2}, ${z})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
             coords.push(new THREE.Vector2(x - 2, z));
         
-        //coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z - 1));
-        //coords.push(new THREE.Vector2(x - 2 + (1 - z % 2), z + 1));
-        //coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z - 1));
-        //coords.push(new THREE.Vector2(x + 1 + (1 - z % 2), z + 1));
-
         const valids = super.discardCells(scene, coords, changeSide);
         return valids;
     }

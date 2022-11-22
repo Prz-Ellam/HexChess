@@ -15,10 +15,11 @@ import greenDesertVictory from '@images/JVerde-win-desert.png';
 import greenSnowVictory from '@images/JVerde-win-snow.png';
 
 export class GameManager {
-    constructor(scene, board, team, io, configuration) {
+    constructor(scene, board, team, io, configuration, audio) {
         this.team = team;
         this.currentTeam = 'RED';
         this.scene = scene;
+        this.audio = audio;
         this.board = board;
         this.configuration = configuration;
         this.changeSide = false;
@@ -28,7 +29,6 @@ export class GameManager {
             position: null,
             object: null
         };
-        this.items = [];
 
         window.addEventListener('focus', () => {
             const items = getObjectsByProperty(this.scene, 'typeGame', 'Item');
@@ -194,6 +194,7 @@ export class GameManager {
     defeatCharacter(character, data) {
         character.actions['idle'].stop();
         character.actions['death'].play();
+        this.audio.death.play();
 
         setTimeout(() => {
             this.moveCharacter(
@@ -219,6 +220,7 @@ export class GameManager {
         const team = recruiter.team;
         console.log(team);
 
+        this.audio.wololo.play();
         character.traverse(child => {
             if (child.isMesh) {
                 //child.material = recruiterMap.clone();
@@ -248,6 +250,7 @@ export class GameManager {
                 .play();
         }
 
+        let targetCellObject = this.scene.getObjectByName(targetCell);
         let selectedObject = this.scene.getObjectByProperty('cell', startCell);
         if (selectedObject === undefined) return;
 
@@ -270,13 +273,15 @@ export class GameManager {
             {
                 x: startPosition.x,
                 y: startPosition.y,
-                z: startPosition.z
+                z: startPosition.z,
+                start: 0.0
             }
         ).to(
             {
                 x: targetPosition.x,
                 y: startPosition.y,
-                z: targetPosition.z
+                z: targetPosition.z,
+                start: 1.0
             }, 1000 //distance * 1000
         ).onStart(() => {
             fadeToAction(
@@ -284,7 +289,17 @@ export class GameManager {
                 selectedObject.actions['walking'], 0.2);
         }).onUpdate(coords => {
             selectedObject.rotation.y = angle;
-            selectedObject.position.set(coords.x, coords.y, coords.z);
+
+            let height = 0
+            if (selectedObject.character == 'Imp') {
+                height = 8 * coords.start * (1 - coords.start);
+            }
+            if (selectedObject.character == 'Monk') {
+                this.audio.teleport.play();
+                height = 1000;
+            }
+
+            selectedObject.position.set(coords.x, coords.y + height, coords.z);
         }).onComplete(() => {
             fadeToAction(
                 selectedObject.actions['walking'],
@@ -293,8 +308,8 @@ export class GameManager {
             this.changeSide = false;
             this.deselectObject();
 
-            if (this.configuration.dificulty === 'HARD' && this.currentTeam === this.team) {
-                const variations = this.board.createSizeVariations();
+            if (this.currentTeam === this.team || this.configuration.players === 'SINGLEPLAYER') {
+                const variations = this.board.createSizeVariations(this.configuration.dificulty);
 
                 if (this.configuration.players === 'SINGLEPLAYER') {
                     this.board.setSizeVariations(variations);
@@ -308,14 +323,14 @@ export class GameManager {
                 if (this.currentTeam === this.team)
                     this.spawnItem();
                     
-                //this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
             }
             else {
                 setTimeout(() => {
                     if (this.currentTeam === this.team) {
                         this.spawnItem();
                     }
-                    //this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
                 }, 1000);
             }
 
@@ -327,13 +342,101 @@ export class GameManager {
             }
 
             // Si es contra IA
-            // if (this.currentTeam === 'B') {
-                //alert('JAJAJA');
+            if (this.currentTeam === 'GREEN') {
+                
+                const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
+                let booleano = false;
+
+                loop1:
+                for (const character of team) {
+                    const position = codeToVector(character.cell);
+                    const moves = character.findMoves(this.scene, position, this.changeSide);
+                    loop2:
+                    for (const move of moves) {
+                        const element = this.scene.getObjectByProperty('cell', move);
+                        if (element) {
+                            const hexagon = this.scene.getObjectByName(move);
+                            if (!hexagon) continue;
+                            const data = {
+                                startPosition: character.position,
+                                targetPosition: hexagon.position,
+                                startCell: character.cell,
+                                targetCell: hexagon.name
+                            }
+                            this.move(data);
+                            booleano = true;
+                            break loop1;
+                        }
+                    }
+                }
+
+                if (booleano) return;
+
+                const movableCharacters = [];
+                for (const character of team) {
+                    const position = codeToVector(character.cell);
+                    const moves = character.findMoves(this.scene, position, this.changeSide);
+                    if (moves !== undefined && moves.length > 0) {
+                        movableCharacters.push(character);
+                        /*
+                        console.log('Tu has sido seleccionado: ' + moves[0]);
+                        const hexagon = this.scene.getObjectByName(moves[0]);
+                        if (!hexagon) continue;
+                        const data = {
+                            startPosition: character.position,
+                            targetPosition: hexagon.position,
+                            startCell: character.cell,
+                            targetCell: hexagon.name
+                        }
+                        this.move(data);
+                        break;
+                        */
+                    }
+                }
+
+                console.log(movableCharacters);
+                const random = Math.round(Math.random() * (movableCharacters.length - 1));
+                console.log(random);
+                const newCharacter = movableCharacters[random];
+                const position = codeToVector(newCharacter.cell);
+                const moves = newCharacter.findMoves(this.scene, position, this.changeSide);
+                console.log(moves);
+                const moveRandom = Math.round(Math.random() * (moves.length - 1));
+                const move = moves[moveRandom];
+                const newHexagon = this.scene.getObjectByName(move);
+                console.log(newHexagon);
+                    
+                    const data = {
+                        startPosition: newCharacter.position,
+                        targetPosition: newHexagon.position,
+                        startCell: newCharacter.cell,
+                        targetCell: newHexagon.name
+                    }
+                    this.move(data);
+
+/*
+                const random = Math.round(Math.random() * movableCharacters.length);
+                const character = movableCharacters[random];
+                const position = codeToVector(character.cell);
+                const moves = character.findMoves(this.scene, position, this.changeSide);
+                for (let move of moves) {
+                    const hexagon = this.scene.getObjectByName(move);
+                    if (!hexagon) continue;
+                    const data = {
+                        startPosition: character.position,
+                        targetPosition: hexagon.position,
+                        startCell: character.cell,
+                        targetCell: hexagon.name
+                    }
+                    this.move(data);
+                }
+*/
+                
                 
                 //this.makeIaTurn();
 
                 //this.currentTeam = 'A';
-            //}
+            }
 
             //});
         });
@@ -341,11 +444,9 @@ export class GameManager {
         tween.start();
     }
 
-
-
     spawnItem() {
 
-        if (this.items.length >= 3) {
+        if (this.items >= 3) {
             return;
         }
 
@@ -353,7 +454,7 @@ export class GameManager {
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.random() * 100;
 
-        if (true /*random > percentage*/) {
+        if (random < percentage) {
             const ocupiedCells = [];
             this.scene.traverse(child => {
                 if (child.cell) {
@@ -376,8 +477,14 @@ export class GameManager {
             const itemType = Math.round(Math.random() * 2);
             const types = [ 'Potion', 'Book', 'Ghost' ];
             const item = types[itemType];
+            this.items++;
 
-            this.io.emit('setItem', { cell: chosenCell, type: item });
+            if (this.configuration.players === 'SINGLEPLAYER') {
+                this.setItem({ cell: chosenCell, type: item });
+            }
+            else if (this.configuration.players === 'MULTIPLAYER') {
+                this.io.emit('setItem', { cell: chosenCell, type: item });
+            }
         }
     }
 
@@ -407,29 +514,64 @@ export class GameManager {
     getItem(character, item) {
 
         //character.powerup = item.type;
+        this.audio.powerup.play();
         character.setPowerup(item.type);
         this.scene.remove(item);
+        this.items--;
 
     }
 
     gameOver() {
-        Swal.fire({
-            title: '¡GANASTE!',
-            background: '#1B1B36',
-            imageUrl: redForestVictory,
-            imageAlt: 'Game over',
-            width: '800px',
-            buttonsStyling: false,
-            showConfirmButton: true,
-            confirmButtonText: 'Continuar',
-            customClass: {
-                title: 'title-style',
-                confirmButton: 'btn button button-anim btn-next'
-            },
-            backdrop: `
-                rgba(0, 0, 123, 0.4)
-            `
-        });
+
+        if (this.configuration.players === 'MULTIPLAYER') {
+            fetch('/api/v1/games', {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                Swal.fire({
+                    title: '¡GANASTE!',
+                    background: '#1B1B36',
+                    imageUrl: redForestVictory,
+                    imageAlt: 'Game over',
+                    width: '800px',
+                    buttonsStyling: false,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Continuar',
+                    customClass: {
+                        title: 'title-style',
+                        confirmButton: 'btn button button-anim btn-next'
+                    },
+                    backdrop: `
+                        rgba(0, 0, 123, 0.4)
+                    `
+                });
+
+            });
+        }
+        else {
+
+            Swal.fire({
+                title: '¡GANASTE!',
+                background: '#1B1B36',
+                imageUrl: redForestVictory,
+                imageAlt: 'Game over',
+                width: '800px',
+                buttonsStyling: false,
+                showConfirmButton: true,
+                confirmButtonText: 'Continuar',
+                customClass: {
+                    title: 'title-style',
+                    confirmButton: 'btn button button-anim btn-next'
+                },
+                backdrop: `
+                    rgba(0, 0, 123, 0.4)
+                `
+            });
+
+        }
+
     }
 
 }

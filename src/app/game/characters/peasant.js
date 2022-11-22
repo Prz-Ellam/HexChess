@@ -10,10 +10,6 @@ import death from '@models/Peasant/Death.fbx';
 export class Peasant extends Character
 {
     constructor(scene, board, position, team) {
-        //const modelpath =
-        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-        //        red :
-        //        green;
         const modelpath = (team === 'RED') ? red : green;
         super(scene, board, modelpath, position, [ idle, walking, death ], 'Peasant', team);
     }
@@ -23,29 +19,45 @@ export class Peasant extends Character
         const z = position.y;
 
         let coords = [];
-        /*
-        while (start <= this.boardCount.y)
-        {
-            console.log(start);
-            start++;
-            coords.push(new THREE.Vector2(x, start));
-        }
-        */
+        let hexagon;
 
         for (let i = x + 1; i <= 10; i++) {
-            coords.push(new THREE.Vector2(i, z));
-            if (scene.getObjectByProperty('cell', `(${i}, ${z})`) !== undefined) break;
+            //coords.push(new THREE.Vector2(i, z));
+            hexagon = scene.getObjectByName(`(${i}, ${z})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(i, z));
+            else
+                break;
+            if (scene.getObjectByProperty('cell', `(${i}, ${z})`) !== undefined
+            && this.powerup !== 'Ghost') break;
         }
 
         for (let i = x - 1; i >= 1; i--) {
-            coords.push(new THREE.Vector2(i, z));
-            if (scene.getObjectByProperty('cell', `(${i}, ${z})`) !== undefined) break;
+            //coords.push(new THREE.Vector2(i, z));
+            hexagon = scene.getObjectByName(`(${i}, ${z})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(i, z));
+            else
+                break;
+            if (scene.getObjectByProperty('cell', `(${i}, ${z})`) !== undefined
+            && this.powerup !== 'Ghost') break;
         }
 
-        coords.push(new THREE.Vector2(x + (1 - z % 2), z - 1));
-        coords.push(new THREE.Vector2(x + (1 - z % 2), z + 1));
-        coords.push(new THREE.Vector2(x - (z % 2), z - 1));
-        coords.push(new THREE.Vector2(x - (z % 2), z + 1));
+        hexagon = scene.getObjectByName(`(${x + (1 - z % 2)}, ${z - 1})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+            coords.push(new THREE.Vector2(x + (1 - z % 2), z - 1));
+
+        hexagon = scene.getObjectByName(`(${x + (1 - z % 2)}, ${z + 1})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+            coords.push(new THREE.Vector2(x + (1 - z % 2), z + 1));
+
+        hexagon = scene.getObjectByName(`(${x - (z % 2)}, ${z - 1})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+            coords.push(new THREE.Vector2(x - (z % 2), z - 1));
+
+        hexagon = scene.getObjectByName(`(${x - (z % 2)}, ${z + 1})`);
+        if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+            coords.push(new THREE.Vector2(x - (z % 2), z + 1));
      
         const valids = super.discardCells(scene, coords, changeSide);
         return valids;

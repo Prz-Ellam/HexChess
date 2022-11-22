@@ -18,7 +18,7 @@ export class Character {
         'GREEN': {}
     };
 
-    async create(scene, model, position, animations, character, team) {
+    create(scene, model, position, animations, character, team) {
 
         const fbxLoader = new FBXLoader();
         fbxLoader.load(model, object => {
@@ -117,18 +117,21 @@ export class Character {
 
     }
 
-    discardCells(scene, coords, changeSide) {
+    discardCells(scene, coords, changeSide, height) {
         const valids = [];
         coords = coords.filter(coord => {
             if (coord.x < 1 && coord.x > this.boardCount.x &&
                 coord.y < 1 && coord.y > this.boardCount.y) return false;
 
             const anotherObject = scene.getObjectByProperty('cell', `(${coord.x}, ${coord.y})`);
-
             if (anotherObject !== undefined) {
                 if (anotherObject.team === this.team) return false;
                 if (anotherObject.team !== this.team && changeSide) return false;
+                if (anotherObject.powerup === 'Potion') return false;
             }
+
+            // const hexagon = scene.getObjectByName(`(${coord.x}, ${coord.y})`);
+            // if (hexagon.scale.y !== height) return false;
 
             valids.push(`(${coord.x}, ${coord.y})`);
             return true;

@@ -6,6 +6,7 @@ const http = require('http');
 const express = require('express');
 const path = require('path');
 const socketio = require('socket.io');
+const cookieParser = require("cookie-parser");
 
 // El servidor se crea
 const app = express();
@@ -53,11 +54,12 @@ app.use(express.json());
 app.use(session({ secret: 'SECRET' }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
 // Routes
 
 // Static
-/*
+
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -65,13 +67,13 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (id, done) {
     done(null, id);
 })
-*/
-/*
+
+
 passport.use(new FacebookStrategy({
     clientID: process.env.FB_ID,
     clientSecret: process.env.FB_SECRET,
     callbackURL: '/facebook/callback',
-    profileFields: ['id', 'displayName', 'picture.type(large)', 'email']
+    profileFields: ['id', 'displayName', 'email']
 }, function (token, refreshToken, profile, done) {
     console.log(profile);
     return done(null, profile);
@@ -84,7 +86,12 @@ app.get('/facebook/callback', passport.authenticate('facebook', {
     successRedirect: '/profile',
     failureRedirect: '/failed'
 }));
-*/
+
+
+
+
+
+
 // Esta ruta debia morir para que jalara el proyecto
 const bcrypt = require('bcrypt');
 //app.set('views', path.join(__dirname, '../dist'));
@@ -171,8 +178,10 @@ app.post('/api/v1/login', async (req, res) => {
         });
 
     const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET_KEY);
+    req.headers.authorization = token;
     res
         .cookie('Authorization', token)
+        .header('Authorization', token)
         .json({ 
             'status': true, 
             'token': token 
@@ -195,6 +204,31 @@ app.get('/api/v1/scores', async (req, res) => {
 
     const scores = await User.find({}, { username: 1, victories: 1 }).sort({ 'victories': -1 });
     res.json(scores);
+
+});
+
+app.post('/api/v1/logout', async (req, res) => {
+
+    res.clearCookie('Authorization');
+    res.json({ 'status': true, 'message': 'Logout' });
+
+})
+
+app.post('/api/v1/games', async (req, res) => {
+
+    const token = req.cookies.Authorization;
+    try {
+        const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        const user = await User.findOneAndUpdate({ _id: decode.id },
+            { $inc: { victories: 1 } }, 
+            { new: true });
+
+        res.json(user);
+    }
+    catch (e) {
+        res.json({ status: 'No session' });
+    }
 
 });
 

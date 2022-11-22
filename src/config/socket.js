@@ -347,6 +347,22 @@ module.exports = async function (io) {
         socket.on('setVariations', data => {
             const game = Array.from(socket.rooms)[1];
             io.to(game).emit('setVariations', data);
+        });
+
+        socket.on('gameOver', async () => {
+
+            const gameCode = Array.from(socket.rooms)[1];
+
+            const game = await Game.findOne({ code: gameCode });
+            if (!game) {
+                console.log('No pertenece a ninguna partida este individuo');
+                return;
+            }
+            else {
+                
+                console.log(game);
+            }
+
         })
 
     });

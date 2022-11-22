@@ -1,44 +1,48 @@
 <canvas id="canvas"></canvas>
 
-<div class="container-box">
-    <h2 style="font-size:55px">PAUSA</h2>
+<section class="container">
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="text-center">
+        <h2 style="font-size:55px">PAUSA</h2>
 
-    <!--Btn Home-->
-    <div style="display: inline; margin-right: 8px">
-        <button class="button" href="/" id="btn-home" style="--clr:#8A7DFD"
-            class='btn btn-primary btn-lg'>
-            <span></span>
-            <i id="home"></i>
-            <i class="bx bx-home"></i>
-        </button>
-    </div>
+        <!--Btn Home-->
+        <div>
+            <a class="btn button button-anim" href="/" id="btn-home"
+                >
+                <span></span>
+                <i id="home"></i>
+                <i class="bx bx-home"></i>
+            </a>
+        </div>
 
-    <!--Btn Reiniciar-->
-    <div style="display: inline; margin-right: 16px">
-        <a class="button" type="submit" id="btn-reiniciar" style="--clr:#8A7DFD" 
-        class="btn btn-primary btn-lg">
-            <span></span>
-            <i id="restart"></i>
-            <i class="bx bx-redo"></i>
-        </a>
-    </div>
+        <!--Btn Reiniciar-->
+        <div >
+            <a class="btn button button-anim" type="submit" id="btn-reiniciar" style="--clr:#8A7DFD" 
+            >
+                <span></span>
+                <i id="restart"></i>
+                <i class="bx bx-redo"></i>
+            </a>
+        </div>
 
-    <!--Btn Exit-->
-    <div style="display: inline; margin-right: 8px">
-        <a class="button" id="btn-exit" href="/configuration"
-            style="--clr:#8A7DFD" class="btn btn-primary btn-lg">
-            <span></span>
-            <i id="salir"></i>
-            <i class="bx bx-cog"></i>
-        </a>
+        <!--Btn Exit-->
+        <div>
+            <a class="btn button button-anim" id="btn-exit" href="/configuration"
+                >
+                <span></span>
+                <i id="salir"></i>
+                <i class="bx bx-cog"></i>
+            </a>
+        </div>
     </div>
-
-    <!--Btn Reanudar-->
-    <div>
-        <a class="button button-anim" id="btn-reanudar" href="/game" style="--clr:#8A7DFD"
-            class="btn btn-primary btn-lg">
-            <span>REANUDAR</span>
-            <i class="widget"></i>
-        </a>
+<!--
+        <div>
+            <a class="button button-anim" id="btn-reanudar" href="/game" style="--clr:#8A7DFD"
+                class="btn btn-primary btn-lg">
+                <span>REANUDAR</span>
+                <i class="widget"></i>
+            </a>
+        </div>
+    -->
     </div>
-</div>
+</section>

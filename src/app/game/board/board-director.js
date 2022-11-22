@@ -3,20 +3,20 @@ import { CharacterFactory } from '@characters/character-factory';
 export class BoardDirector
 {
     constructor() {
-        /*
+        
         this.board = [
-            [ 'MonkGreen', 'MonkGreen', 'ImpGreenGreen', 'PeasantGreen', 'WitchGreen', 'LadyGreen', 'PeasantGreen', 'ImpGreen', 'MonkGreen', 'MonkGreen' ],
+            [ 'MonkGreen', 'MonkGreen', 'ImpGreen', 'PeasantGreen', 'WitchGreen', 'LadyGreen', 'PeasantGreen', 'ImpGreen', 'MonkGreen', 'MonkGreen' ],
             [ 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen' ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 'Potion', 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed' ],
             [ 'MonkRed', 'MonkRed', 'ImpRed', 'PeasantRed', 'LadyRed', 'WitchRed', 'PeasantRed', 'ImpRed', 'MonkRed', 'MonkRed' ]
         ];
-        */
+        
         /*
         this.board = [
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -24,13 +24,14 @@ export class BoardDirector
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 'Imp', 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 'Potion', 'PeasantRed', 'KnightGreen', 'KnightGreen', 'KnightRed', 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 'Lady', 0, 'Imp', 'Imp', 0, 'Peasant', 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
         ];
         */
+       /*
         this.board = [
             [ 0, 0, 0, 0, 0, 0, 0, 'KnightGreen', 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -43,6 +44,7 @@ export class BoardDirector
             [ 0, 0, 'KnightRed', 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 'KnightRed', 0, 0, 0, 0, 0, 0, 0 ],
         ];
+        */
     }
 
     create(scene, board) {

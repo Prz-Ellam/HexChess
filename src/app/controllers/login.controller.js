@@ -1,6 +1,6 @@
-import view from '@views/signup.html';
+import view from '@views/login.html';
 
-export class SignupController {
+export class LoginController {
 
     constructor() {
         
@@ -10,7 +10,7 @@ export class SignupController {
         const root = document.getElementById('root');
         root.innerHTML = view;
 
-        const form = document.getElementById('signup-form');
+        const form = document.getElementById('login-form');
         form.addEventListener('submit', event => {
             event.preventDefault();
 
@@ -21,7 +21,7 @@ export class SignupController {
             formData.forEach((value, key) => formObject[key] = value);
             console.log(formObject);
 
-            fetch('/api/v1/users', {
+            fetch('/api/v1/login', {
                 method: 'POST',
                 body: JSON.stringify(formObject),
                 headers: {

@@ -122,12 +122,13 @@ export class Board {
         });
     }
 
-    createSizeVariations() {
+    createSizeVariations(dificulty) {
         const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
         const cellsVariations = [];
         cells.forEach(cell => {
             let change = Math.random() * (2 - 1) + 1;
             change = Math.round(change);
+            if (dificulty === 'NORMAL') change = 1.0;
             cellsVariations.push(change);
         });
         return cellsVariations;

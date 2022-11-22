@@ -9,7 +9,9 @@ export class Book {
     }
 
     create(scene, position) {
-        const fbxLoader = new FBXLoader();
+        const manager = new THREE.LoadingManager();
+
+        const fbxLoader = new FBXLoader(manager);
         fbxLoader.load(book, object => {
             object.traverse(child => {
                 child.castShadow = true;

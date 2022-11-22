@@ -62,6 +62,31 @@ export class Application {
         }, 1000);
         */
 
+        THREE.DefaultLoadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
+            console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+        };
+        
+        THREE.DefaultLoadingManager.onLoad = () => {
+        
+            console.log('Loading Complete!');
+            const root = document.getElementById('root');
+            root.innerHTML = '';
+            root.append(this.renderer.domElement);
+        
+        };
+        
+        THREE.DefaultLoadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            
+            const loadingLabel = document.getElementById('loading-label');
+            loadingLabel.innerText = `Cargando: %${ parseFloat((itemsLoaded / itemsTotal) * 100).toFixed(1) }`;
+            //console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+        
+        };
+        
+        THREE.DefaultLoadingManager.onError = url => {
+            console.log( 'There was an error loading ' + url );
+        };
+
         this.socket.on('finishGame', () => { 
             alert('Se perdio la conexión con tu rival');
             this.router.redirect('/');
@@ -81,9 +106,7 @@ export class Application {
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         //this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         //this.renderer.toneMappingExposure = 1.8;
-        const root = document.getElementById('root');
-        root.innerHTML = '';
-        root.append(this.renderer.domElement);
+        
 
         this.bindEvents();
 
@@ -161,7 +184,7 @@ export class Application {
 
         this.clock = new THREE.Clock();
         
-        this.gameManager = new GameManager(this.scene, board, team, this.socket, this.configuration);
+        this.gameManager = new GameManager(this.scene, board, team, this.socket, this.configuration, this.audio);
 
         this.run();
     }

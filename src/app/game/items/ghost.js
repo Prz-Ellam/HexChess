@@ -9,7 +9,9 @@ export class Ghost {
     }
 
     create(scene, position) {
-        const fbxLoader = new FBXLoader();
+        const manager = new THREE.LoadingManager();
+
+        const fbxLoader = new FBXLoader(manager);
         fbxLoader.load(ghost, object => {
             object.traverse(child => {
                 if (child.isMesh) {

@@ -9,10 +9,6 @@ import death from '@models/Lady/Death.fbx'
 
 export class Lady extends Character {
     constructor(scene, board, position, team) {
-        //const modelpath =
-        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-        //        red :
-        //        green;
         const modelpath = (team === 'RED') ? red : green;
         super(scene, board, modelpath, position, [ idle, walking, death ], 'Lady', team);
     }
@@ -20,41 +16,66 @@ export class Lady extends Character {
     findMoves(scene, position, changeSide) {
         const x = position.x;
         const z = position.y;
+        let hexagon;
 
         let coords = [];
         let xCopy = x, zCopy = z;
         while (zCopy < 10) {
             if (zCopy % 2 == 0) xCopy++;
             zCopy++;
-            coords.push(new THREE.Vector2(xCopy, zCopy));
-            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined) break;
+            hexagon = scene.getObjectByName(`(${xCopy}, ${zCopy})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(xCopy, zCopy));
+            else
+                break;
+            //coords.push(new THREE.Vector2(xCopy, zCopy));
+            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined
+            && this.powerup !== 'Ghost') break;
         }
 	 
 	    xCopy = x, zCopy = z;
         while (zCopy < 10) {
             if (zCopy % 2 != 0) xCopy--;
             zCopy++;
-            coords.push(new THREE.Vector2(xCopy, zCopy));
-            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined) break;
+            hexagon = scene.getObjectByName(`(${xCopy}, ${zCopy})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(xCopy, zCopy));
+            else
+                break;
+            // coords.push(new THREE.Vector2(xCopy, zCopy));
+            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined
+            && this.powerup !== 'Ghost') break;
         }
 
         xCopy = x, zCopy = z;
         while (zCopy > 1) {
             if (zCopy % 2 == 0) xCopy++;
             zCopy--;
-            coords.push(new THREE.Vector2(xCopy, zCopy));
-            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined) break;
+            hexagon = scene.getObjectByName(`(${xCopy}, ${zCopy})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(xCopy, zCopy));
+            else
+                break;
+            // coords.push(new THREE.Vector2(xCopy, zCopy));
+            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined
+            && this.powerup !== 'Ghost') break;
         }
 
 	    xCopy = x, zCopy = z;
 	    while (zCopy > 1) {
             if (zCopy % 2 != 0) xCopy--;
             zCopy--;
-            coords.push(new THREE.Vector2(xCopy, zCopy));
-            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined) break;
+            hexagon = scene.getObjectByName(`(${xCopy}, ${zCopy})`);
+            if (hexagon !== undefined && hexagon.scale.y === this.position.y)
+                coords.push(new THREE.Vector2(xCopy, zCopy));
+            else
+                break;
+            // coords.push(new THREE.Vector2(xCopy, zCopy));
+            if (scene.getObjectByProperty('cell', `(${xCopy}, ${zCopy})`) !== undefined
+            && this.powerup !== 'Ghost') break;
 	    }
 
-        const valids = super.discardCells(scene, coords, changeSide);
+        const valids = super.discardCells(scene, coords, changeSide, this.position.y);
         return valids;
     }
 

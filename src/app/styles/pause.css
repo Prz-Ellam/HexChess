@@ -9,29 +9,15 @@
 
 /*Btn-Home*/
 #btn-home {
+    position: relative;
     font-size: 2.2em;
     letter-spacing: .1em;
     padding: 10px 30px;
-    margin-top: -150px;
-    margin-bottom: 150px;
-    display: inline;
     margin-right: 8px;
+    --clr: #8A7DFD;
 }
 
-#btn-home::before {
-    content: '';
-    inset: 2px;
-    background: #27282c;
-}
 
-#btn-home span {
-    z-index: 1;
-}
-
-#btn-home #home {
-    inset: 0;
-    display: block;
-}
 
 #btn-home #home::before {
     content: '';
@@ -45,22 +31,7 @@
     transition: 0.5s;
 }
 
-#btn-home:hover #home::before {
-    width: 20px;
-    left: 20%;
-}
 
-#btn-home #home::after {
-    content: '';
-    position: absolute;
-    top: 97%;
-    left: 30%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
 
 #btn-home:hover #home::after {
     width: 20px;
@@ -76,6 +47,7 @@
     padding: 10px 30px;
     margin-top: -150px;
     margin-bottom: 150px;
+    --clr: #8A7DFD;
 }
 
 #btn-reiniciar span {
@@ -89,11 +61,11 @@
 
 /*Btn-Salir*/
 #btn-exit {
+    position: relative;
     font-size: 2.2em;
     letter-spacing: .1em;
     padding: 10px 30px;
-    margin-top: -150px;
-    margin-bottom: 150px;
+    --clr: #8A7DFD;
 }
 
 #btn-exit::before {
@@ -151,8 +123,6 @@ div #btn-exit:hover #salir::after {
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-top: -150px;
-    margin-bottom: 150px;
 }
 
 #btn-reanudar::before {
