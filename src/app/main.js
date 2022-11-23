@@ -4,12 +4,13 @@ import '@fontsource/silkscreen'
 import 'boxicons/css/boxicons.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import '@styles/bubbles.css';
-import '@styles/styles.css';
-import '@styles/players.css';
-import '@styles/dificulty.css';
-import '@styles/home.css';
-import '@styles/mode.css';
+//import '@styles/bubbles.css';
+//import '@styles/styles.css';
+//import '@styles/players.css';
+//import '@styles/dificulty.css';
+//import '@styles/home.css';
+//import '@styles/mode.css';
+//import '@styles/style.css';
 
 var app = null;
 
