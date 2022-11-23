@@ -4,10 +4,11 @@ export class ScenarioController {
 
     constructor(app) {
 
-        import('@styles/bubbles.css');
-        import('@styles/styles.css');
-        import('@styles/scenario.css');
-
+        //import('@styles/bubbles.css');
+        //import('@styles/styles.css');
+        //import('@styles/scenario.css');
+        import('@styles/style.css');
+        
         const root = document.getElementById('root');
         root.innerHTML = view;
 

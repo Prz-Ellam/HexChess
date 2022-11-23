@@ -4,9 +4,10 @@ export class ScoreController {
 
     constructor() {
 
-        import('@styles/score.css');
-        import('@styles/stars.css');
-
+        //import('@styles/score.css');
+        //import('@styles/stars.css');
+        import('@styles/style.css');
+        
         const root = document.getElementById('root');
         root.innerHTML = view;
         //this.initController();

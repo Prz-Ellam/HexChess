@@ -3,7 +3,7 @@ import view from '@views/dificulty.html';
 export class DificultyController {
 
     constructor(app) {
-
+         import('@styles/style.css');
         const root = document.getElementById('root');
         root.innerHTML = view;
 
