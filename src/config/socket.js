@@ -13,11 +13,11 @@ module.exports = async function (io) {
     const gamesInterval = {};
 
     const clientStream = Clients.watch([
-        { $match: { "operationType": { $in: [ "insert", "update", "delete" ] } } },
+        { $match: { "operationType": { $in: [ "insert", "update", "replace" ] } } },
         { $project: { "_id": 1, "fullDocument": 1, "ns": 1, "documentKey": 1 } }
     ]);
     const gameStream = Game.watch([
-        { $match: { "operationType": { $in: [ "insert", "update", "delete" ] } } },
+        { $match: { "operationType": { $in: [ "insert", "update", "replace" ] } } },
         { $project: { "_id": 1, "fullDocument": 1, "ns": 1, "documentKey": 1 } }
     ], { fullDocument: 'updateLookup' });
 
