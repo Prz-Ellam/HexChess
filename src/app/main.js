@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import '@styles/dificulty.css';
 //import '@styles/home.css';
 //import '@styles/mode.css';
-//import '@styles/style.css';
+import '@styles/style.css';
 
 var app = null;
 
