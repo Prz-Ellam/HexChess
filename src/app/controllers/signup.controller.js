@@ -4,8 +4,9 @@ export class SignupController {
 
     constructor() {
         
-        import('@styles/styles.css');
-        import('@styles/signup.css');
+        //import('@styles/styles.css');
+        //import('@styles/signup.css');
+        import('@styles/style.css');
 
         const root = document.getElementById('root');
         root.innerHTML = view;
