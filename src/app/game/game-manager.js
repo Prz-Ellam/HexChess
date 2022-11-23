@@ -334,14 +334,16 @@ export class GameManager {
 
             if (selectedObject.powerup) {
 
+                if (selectedObject.powerup === 'Book') {
+                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                }
+
                 selectedObject.powerupTurns--;
 
                 if (selectedObject.powerupTurns < 0)
                     selectedObject.removePowerup();
 
-                if (selectedObject.powerup === 'Book') {
-                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
-                }
+                
             }
 
             // Si es contra IA

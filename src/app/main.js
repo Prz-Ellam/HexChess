@@ -5,6 +5,7 @@ import 'boxicons/css/boxicons.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import '@styles/style.css';
+import './assets/favicon.ico';
 
 var app = null;
 

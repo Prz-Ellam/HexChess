@@ -62,6 +62,13 @@ module.exports = {
                 generator: {
                     filename: 'assets/audios/[hash][ext][query]'
                 }
+            },
+            {
+                test: /\.(ico)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: '[name][ext]'
+                }
             }
         ]
     },
