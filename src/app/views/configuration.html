@@ -51,23 +51,41 @@
     </div>
     <div class="ajustes">
         <div class="graficos" id="graficos-vista">
-            <form id="graphics-form">
+            <form id="form-graficos">
                 <label for="fov-id" class="form-label">FOV</label>
-                <input type="range" class="form-range" id="fov-id" name="fov_name" min="0" max="100"><br><br><br>
-                <label for="sombras-id" class="form-label">SOMBRAS</label>
-                <input type="checkbox" class="form-check" id="sombras-id" name="shadows"><br><br><br>
-                <label class="form-label">OUTPUT ENCODING</label> <br><br><br>
-                <label for="srgb-id" class="form-label">SRGBENCODING</label>
-                <input type="checkbox" class="form-check" id="srgb-id" name="srgb_name"> &nbsp;&nbsp;
-                <label for="dllas-id" class="form-label">NA DLLAS</label>
-                <input type="checkbox" class="form-check" id="dllas-id" name="dllas_name"><br><br>
-                <label for="none-id" class="form-label">NINGUNA</label>
-                <input type="checkbox" class="form-check" id="none-id" name="none_name"> &nbsp;&nbsp;
-                <label for="linear-id" class="form-label">LINEAR ENCODING</label>
-                <input type="checkbox" class="form-check" id="linear-id" name="linear_name"><br><br><br><br>
-                <label for="antialias-id" class="form-label">ANTIALIAS</label>
-                <input type="checkbox" class="form-check" id="antialias-id" name="antialias_name"><br>
-                <button type="submit" class="btn button button-anim" id="aceptar-graficos" value="aceptar"
+                <input type="range" class="form-range" id="fov-id" name="fov-name" min="0" max="100"><br><br>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="sombras-id" name="sombras-name">
+                    <label class="form-check-label" for="sombras-id">SOMBRAS</label>
+                  </div>
+                  <br>
+                  <label class="form-label">OUTPUT ENCODING</label>
+                  <br><br>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="srgb-id" name="srgb-name">
+                    <label class="form-check-label" for="srgb-id">SRGBENCODING</label>
+                  </div>
+                  <br>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="dllas-id" name="dllas-name">
+                    <label class="form-check-label" for="dllas-id">NA DLLAS</label>
+                  </div>
+                  <br>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="none-id" name="none-name">
+                    <label class="form-check-label" for="none-id">NINGUNA</label>
+                  </div>
+                  <br>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="linear-id" name="linear-name">
+                    <label class="form-check-label" for="linear-id">LINEAR ENCODING</label>
+                  </div>
+                  <br>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="antialias-id" name="antialias-name">
+                    <label class="form-check-label" for="antialias-id">ANTIALIAS</label>
+                  </div>
+                <button type="submit" class="button button-anim" id="aceptar-graficos" value="aceptar"
                     style="--clr:#8A7DFD">
                     <span>ACEPTAR</span>
                 </button>
@@ -75,8 +93,11 @@
         </div>
         <div class="audio" id="audio-vista" style="display:none">
             <form id="form-audio">
-                <label for="sonido-id" class="form-label">HABILITAR/DESHABILITAR</label>
-                <input type="checkbox" class="form-check" id="sonido-id" name="sonido_name"><br><br><br>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="sonido-id" name="sonido-name">
+                    <label class="form-check-label" for="sonido-id">HABILITAR/DESHABILITAR</label>
+                  </div>
+                  <br><br>
                 <label for="volume-id" class="form-label">VOLUMEN</label>
                 <input type="range" class="form-range" id="volume-id" name="volume_name" min="0" max="100"><br>
                 <button type="submit" class="btn button button-anim" id="aceptar-audio" value="aceptar"
@@ -84,6 +105,9 @@
                     <span>ACEPTAR</span>
                 </button>
             </form>
+        </div>
+        <div class="controles" id="controles-vista" style="display:none;">
+            <img src="../assets/images/control.png" alt="" class="img-fluid" id="img-control">
         </div>
     </div>
  <!--Btn Return-->
