@@ -1,6 +1,6 @@
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 
-import desert from '../../assets/models/Desert/TERRENO-DESIERTO.fbx';
+import desert from '../../assets/models/desert/desert.fbx';
 
 export class DesertMap {
 
