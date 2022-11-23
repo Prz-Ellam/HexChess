@@ -89,9 +89,6 @@ app.get('/facebook/callback', passport.authenticate('facebook', {
 
 
 
-
-
-
 // Esta ruta debia morir para que jalara el proyecto
 const bcrypt = require('bcrypt');
 //app.set('views', path.join(__dirname, '../dist'));

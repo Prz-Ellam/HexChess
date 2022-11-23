@@ -12,8 +12,14 @@ module.exports = async function (io) {
 
     const gamesInterval = {};
 
-    const clientStream = Clients.watch();
-    const gameStream = Game.watch([], { fullDocument: 'updateLookup' });
+    const clientStream = Clients.watch([
+        { $match: { "operationType": { $in: [ "insert", "update", "delete" ] } } },
+        { $project: { "_id": 1, "fullDocument": 1, "ns": 1, "documentKey": 1 } }
+    ]);
+    const gameStream = Game.watch([
+        { $match: { "operationType": { $in: [ "insert", "update", "delete" ] } } },
+        { $project: { "_id": 1, "fullDocument": 1, "ns": 1, "documentKey": 1 } }
+    ], { fullDocument: 'updateLookup' });
 
     gameStream.on('change', async change => {
         if (change.operationType === 'update') {
