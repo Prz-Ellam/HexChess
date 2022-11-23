@@ -4,7 +4,6 @@ export class PauseController {
 
     constructor() {
 
-        import('@styles/styles.css');
         import('@styles/pause.css');
 
         const root = document.getElementById('root');

@@ -28,7 +28,7 @@ export class Book {
             object.staticPosition = object.position.y;
             object.position.z = hexagon.position.z;
 
-            object.type = 'Potion';
+            object.type = 'Book';
             object.typeGame = 'Item';
             object.cell = hexagon.name;
 

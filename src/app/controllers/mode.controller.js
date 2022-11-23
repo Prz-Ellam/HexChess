@@ -4,11 +4,6 @@ export class ModeController {
 
     constructor(app) {
 
-        //import('@styles/bubbles.css');
-        //import('@styles/styles.css');
-        //import('@styles/mode.css');
-        import('@styles/style.css');
-
         const root = document.getElementById('root');
         root.innerHTML = view;
 

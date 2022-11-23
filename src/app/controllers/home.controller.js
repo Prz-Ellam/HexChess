@@ -43,7 +43,7 @@ export class HomeController {
           function shareScore(score) {
               FB.ui({
                   method: 'share',
-                  href: 'https://developers.facebook.com/docs/',
+                  href: 'https://hex-chess.azurewebsites.net/',
                   hashtag: '#tarea',
                   quote: 'Mi puntuación fue de: ' + score
               }, function(response) {});

@@ -250,7 +250,6 @@ export class GameManager {
                 .play();
         }
 
-        let targetCellObject = this.scene.getObjectByName(targetCell);
         let selectedObject = this.scene.getObjectByProperty('cell', startCell);
         if (selectedObject === undefined) return;
 
@@ -266,8 +265,7 @@ export class GameManager {
         let distance = Math.sqrt(
             Math.pow(targetCoords.y - startCoords.y, 2) +
             Math.pow(targetCoords.x - startCoords.x, 2));
-        console.log(distance);
-
+        
         selectedObject.cell = targetCell;
         const tween = new TWEEN.Tween(
             {
@@ -335,10 +333,15 @@ export class GameManager {
             }
 
             if (selectedObject.powerup) {
+
                 selectedObject.powerupTurns--;
 
                 if (selectedObject.powerupTurns < 0)
                     selectedObject.removePowerup();
+
+                if (selectedObject.powerup === 'Book') {
+                    this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                }
             }
 
             // Si es contra IA
@@ -378,19 +381,6 @@ export class GameManager {
                     const moves = character.findMoves(this.scene, position, this.changeSide);
                     if (moves !== undefined && moves.length > 0) {
                         movableCharacters.push(character);
-                        /*
-                        console.log('Tu has sido seleccionado: ' + moves[0]);
-                        const hexagon = this.scene.getObjectByName(moves[0]);
-                        if (!hexagon) continue;
-                        const data = {
-                            startPosition: character.position,
-                            targetPosition: hexagon.position,
-                            startCell: character.cell,
-                            targetCell: hexagon.name
-                        }
-                        this.move(data);
-                        break;
-                        */
                     }
                 }
 
@@ -410,31 +400,8 @@ export class GameManager {
                     }
                     this.move(data);
 
-/*
-                const random = Math.round(Math.random() * movableCharacters.length);
-                const character = movableCharacters[random];
-                const position = codeToVector(character.cell);
-                const moves = character.findMoves(this.scene, position, this.changeSide);
-                for (let move of moves) {
-                    const hexagon = this.scene.getObjectByName(move);
-                    if (!hexagon) continue;
-                    const data = {
-                        startPosition: character.position,
-                        targetPosition: hexagon.position,
-                        startCell: character.cell,
-                        targetCell: hexagon.name
-                    }
-                    this.move(data);
-                }
-*/
-                
-                
-                //this.makeIaTurn();
-
-                //this.currentTeam = 'A';
             }
 
-            //});
         });
 
         tween.start();
@@ -502,8 +469,6 @@ export class GameManager {
                 break;
             }
         }
-
-        //const potion = new Potion(this.scene, chosenCell);
         
     }
 

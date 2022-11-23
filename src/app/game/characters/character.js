@@ -150,6 +150,7 @@ export class Character {
                     }
                 });
                 this.powerup = item;
+                this.powerupTurns = 3;
                 break;
             }
             case 'Ghost': {
@@ -167,11 +168,16 @@ export class Character {
                     }
                 });
                 this.powerup = item;
+                this.powerupTurns = 3;
+                break;
+            }
+            case 'Book': {
+                this.scale.set(.012, .012, .012);
+                this.powerup = item;
+                this.powerupTurns = 1;
                 break;
             }
         }
-
-        this.powerupTurns = 3;
 
     }
 
@@ -185,6 +191,7 @@ export class Character {
                 child.material = newMaterial;
             }
         });
+        this.scale.set(.01, .01, .01);
         this.powerup = null;
     }
 
