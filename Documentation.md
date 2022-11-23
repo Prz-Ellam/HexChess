@@ -4,3 +4,8 @@
 4. npm init (darle enter a todo)
 5. npm install express
 6. npm install nodemon -D
+
+
+1. npm run dev
+2. npm run webpack
+3. mongod --replSet "rs0"

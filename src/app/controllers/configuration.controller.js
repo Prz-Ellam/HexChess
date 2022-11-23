@@ -29,6 +29,15 @@ export class ConfigurationController {
             document.getElementsByClassName('graficos')[0].style.display = 'none';
         });
 
+        document.getElementById('graphics-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this)
+            const data = [...formData.entries()];
+            console.log(data);
+
+            localStorage.setItem('shadows', data['shadows']);
+        });
+
     }
 
 }
