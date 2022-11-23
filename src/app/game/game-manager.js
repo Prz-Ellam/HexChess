@@ -342,7 +342,7 @@ export class GameManager {
             }
 
             // Si es contra IA
-            if (this.currentTeam === 'GREEN') {
+            if (this.currentTeam === 'GREEN' && this.configuration.players === 'SINGLEPLAYER') {
                 
                 const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
                 let booleano = false;
@@ -394,17 +394,13 @@ export class GameManager {
                     }
                 }
 
-                console.log(movableCharacters);
                 const random = Math.round(Math.random() * (movableCharacters.length - 1));
-                console.log(random);
                 const newCharacter = movableCharacters[random];
                 const position = codeToVector(newCharacter.cell);
                 const moves = newCharacter.findMoves(this.scene, position, this.changeSide);
-                console.log(moves);
                 const moveRandom = Math.round(Math.random() * (moves.length - 1));
                 const move = moves[moveRandom];
                 const newHexagon = this.scene.getObjectByName(move);
-                console.log(newHexagon);
                     
                     const data = {
                         startPosition: newCharacter.position,
