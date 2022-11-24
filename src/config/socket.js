@@ -1,6 +1,5 @@
 const { nanoid } = require('nanoid');
 const Ajv = require('ajv');
-const { update } = require('../models/client.model');
 
 Clients = require('../models/client.model');
 Game = require('../models/game.model');

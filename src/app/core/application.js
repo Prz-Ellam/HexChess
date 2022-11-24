@@ -191,7 +191,7 @@ export class Application {
 
     bindEvents() {
         window.addEventListener('resize', () => this.onWindowResizeEvent());
-        window.addEventListener('dblclick', event => this.onDoubleClickEvent(event));
+        window.addEventListener('click', event => this.onClickEvent(event));
         window.addEventListener('keydown', () => this.onKeyEvent());
     }
 
@@ -201,7 +201,7 @@ export class Application {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    onDoubleClickEvent(event) {
+    onClickEvent(event) {
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 

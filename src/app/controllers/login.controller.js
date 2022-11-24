@@ -18,7 +18,7 @@ export class LoginController {
             formData.forEach((value, key) => formObject[key] = value);
             console.log(formObject);
 
-            fetch('/api/v1/login', {
+            fetch('/api/v1/auth', {
                 method: 'POST',
                 body: JSON.stringify(formObject),
                 headers: {
