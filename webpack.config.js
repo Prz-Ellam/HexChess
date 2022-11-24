@@ -5,10 +5,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     mode: 'development',
     entry: { 
-        main: './src/app/main.js' 
+        main: './src/frontend/main.js' 
     },
     output: {
-        path: path.resolve(__dirname, 'src', 'public'),
+        path: path.resolve(__dirname, 'src', 'backend', 'public'),
         filename: '[name].bundle.js',
         clean: true,
         assetModuleFilename: 'assets/[name][ext]'
@@ -78,25 +78,25 @@ module.exports = {
             path.resolve(__dirname, 'node_modules')
         ],
         alias: {
-            '@styles': path.resolve(__dirname, 'src/app/styles'),
-            '@views': path.resolve(__dirname, 'src/app/views'),
-            '@controllers': path.resolve(__dirname, 'src/app/controllers'),
-            '@core': path.resolve(__dirname, 'src/app/core'),
-            '@board': path.resolve(__dirname, 'src/app/game/board'),
-            '@characters': path.resolve(__dirname, 'src/app/game/characters'),
-            '@items': path.resolve(__dirname, 'src/app/game/items'),
-            '@maps': path.resolve(__dirname, 'src/app/game/maps'),
-            '@routes': path.resolve(__dirname, 'src/app/routes'),
-            '@models': path.resolve(__dirname, 'src/app/assets/models'),
-            '@audios': path.resolve(__dirname, 'src/app/assets/audios'),
-            '@images': path.resolve(__dirname, 'src/app/assets/images')
+            '@styles': path.resolve(__dirname, 'src/frontend/styles'),
+            '@views': path.resolve(__dirname, 'src/frontend/views'),
+            '@controllers': path.resolve(__dirname, 'src/frontend/controllers'),
+            '@core': path.resolve(__dirname, 'src/frontend/core'),
+            '@board': path.resolve(__dirname, 'src/frontend/game/board'),
+            '@characters': path.resolve(__dirname, 'src/frontend/game/characters'),
+            '@items': path.resolve(__dirname, 'src/frontend/game/items'),
+            '@maps': path.resolve(__dirname, 'src/frontend/game/maps'),
+            '@routes': path.resolve(__dirname, 'src/frontend/routes'),
+            '@models': path.resolve(__dirname, 'src/frontend/assets/models'),
+            '@audios': path.resolve(__dirname, 'src/frontend/assets/audios'),
+            '@images': path.resolve(__dirname, 'src/frontend/assets/images')
         },
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'HexChess',
             filename: 'index.html',
-            template: 'src/app/index.html'
+            template: 'src/frontend/index.html'
         }),
         new MiniCssExtractPlugin({
             filename: 'main.bundle.css'

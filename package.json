@@ -5,10 +5,11 @@
 	"main": "src/app.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node src/app.js",
-		"dev": "nodemon src/app.js",
+		"start": "node src/backend/app.js",
+		"dev": "nodemon src/backend/app.js",
 		"webpack": "webpack --mode development --watch",
-		"build": "webpack"
+		"build": "webpack",
+		"mongo": "mongod --replSet \"rs0\""
 	},
 	"author": "",
 	"license": "ISC",
