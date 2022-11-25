@@ -115,6 +115,30 @@ body {
     transition: all 0.3s;
 }
 
+/*pantalla manuales*/
+
+#btn-item{
+    position: absolute;
+    right: 2em;
+    top: 7em;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+}
+
+#manual-title::after {
+    content: "COMO JUGAR";
+    text-align: center;
+}
+
+p{
+    font-family: 'Silkscreen', cursive !important;
+    color: #fff !important;
+    
+    font-size: 15px !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
+}
+
 /*Loader*/
 .loader-wrapper h5 {
     position: absolute;
