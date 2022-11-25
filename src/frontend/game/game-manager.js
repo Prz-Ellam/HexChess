@@ -95,7 +95,7 @@ export class GameManager {
         }
 
         // Hay turno actualmente y se selecciona un objeto no valido
-        if (this.selected.status && 
+        if (this.selected.status &&
             (object.objectType !== ObjectType.CELL || !object.selectable) && // Una celda no seleccionable
             (object.objectType !== ObjectType.CHARACTER || object.team !== this.team)) { // Uno que no sea character
 
@@ -114,10 +114,10 @@ export class GameManager {
             object.objectType === ObjectType.CELL && object.selectable) {
 
             const data = {
-                startPosition:  this.selected.object.position,
-                startCell:      this.selected.object.cell,
+                startPosition: this.selected.object.position,
+                startCell: this.selected.object.cell,
                 targetPosition: object.position,
-                targetCell:     object.name
+                targetCell: object.name
             }
 
             switch (this.configuration.players) {
@@ -151,7 +151,7 @@ export class GameManager {
      * @param {THREE.Vector3} position 
      * @param {String} cell 
      */
-     selectObject(position, cell) {
+    selectObject(position, cell) {
         this.selected = {
             status: true,
             object: {
@@ -181,7 +181,7 @@ export class GameManager {
         let targetObject = this.scene.getObjectByProperty('cell', data.targetCell);
         if (targetObject !== undefined) {
             if (targetObject.objectType === ObjectType.CHARACTER) {
-                
+
                 switch (this.configuration.mode) {
                     case Mode.CHECKMATE:
                         this.defeatCharacter(targetObject, data);
@@ -192,7 +192,7 @@ export class GameManager {
                         break;
                     }
                 }
-                
+
                 return;
             }
             else if (targetObject.objectType === ObjectType.ITEM) {
@@ -233,7 +233,7 @@ export class GameManager {
     }
 
     changeCharacterTeam(character, recruiter) {
-        
+
         const team = recruiter.team;
         console.log(team);
 
@@ -281,7 +281,7 @@ export class GameManager {
         let distance = Math.sqrt(
             Math.pow(targetCoords.y - startCoords.y, 2) +
             Math.pow(targetCoords.x - startCoords.x, 2));
-        
+
         selectedObject.cell = targetCell;
         const tween = new TWEEN.Tween(
             {
@@ -318,7 +318,7 @@ export class GameManager {
             fadeToAction(
                 selectedObject.actions['walking'],
                 selectedObject.actions['idle'], 0.2);
-            
+
             this.changeSide = false;
             this.deselectObject();
 
@@ -338,7 +338,7 @@ export class GameManager {
             if (this.configuration.dificulty === 'NORMAL') {
                 if (this.currentTeam === this.team)
                     this.spawnItem();
-                    
+
                 this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
             }
             else {
@@ -361,13 +361,13 @@ export class GameManager {
                 if (selectedObject.powerupTurns < 0)
                     selectedObject.removePowerup();
 
-                
+
             }
 
             // Si es contra IA
-            if (this.currentTeam === 'GREEN' && 
+            if (this.currentTeam === 'GREEN' &&
                 this.configuration.players === 'SINGLEPLAYER') {
-                
+
                 const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
                 let booleano = false;
 
@@ -412,14 +412,14 @@ export class GameManager {
                 const moveRandom = Math.round(Math.random() * (moves.length - 1));
                 const move = moves[moveRandom];
                 const newHexagon = this.scene.getObjectByName(move);
-                    
-                    const data = {
-                        startPosition: newCharacter.position,
-                        targetPosition: newHexagon.position,
-                        startCell: newCharacter.cell,
-                        targetCell: newHexagon.name
-                    }
-                    this.move(data);
+
+                const data = {
+                    startPosition: newCharacter.position,
+                    targetPosition: newHexagon.position,
+                    startCell: newCharacter.cell,
+                    targetCell: newHexagon.name
+                }
+                this.move(data);
 
             }
 
@@ -439,7 +439,7 @@ export class GameManager {
         const random = Math.round(Math.random() * 100); // Random between 0 - 100
 
         if (random < percentage) {
-            
+
             // Get objects has property
             const ocupiedCells = [];
             this.scene.traverse(child => {
@@ -461,7 +461,7 @@ export class GameManager {
             const chosenCell = freeCells[chosenCellIndex];
 
             const itemType = Math.round(Math.random() * 2);
-            const types = [ 'Potion', 'Book', 'Ghost' ];
+            const types = ['Potion', 'Book', 'Ghost'];
             const item = types[itemType];
 
             switch (this.configuration.players) {
@@ -495,10 +495,10 @@ export class GameManager {
             fetch('/api/v1/games', {
                 method: 'POST'
             })
-            .then(res => res.json())
-            .then(res => {
-                this.gameOverScreen();
-            });
+                .then(res => res.json())
+                .then(res => {
+                    this.gameOverScreen();
+                });
         }
         else {
             this.gameOverScreen()
@@ -507,30 +507,31 @@ export class GameManager {
     }
 
     gameOverScreen() {
-        window.fbAsyncInit = function() {
+        window.fbAsyncInit = function () {
             FB.init({
-              appId      : '447339420703828',
-              xfbml      : true,
-              version    : 'v2.9'
+                appId: '447339420703828',
+                xfbml: true,
+                version: 'v2.9'
             });
             FB.AppEvents.logPageView();
-          };
-          
-          (function(d, s, id){
-             var js, fjs = d.getElementsByTagName(s)[0];
-             if (d.getElementById(id)) {return;}
-             js = d.createElement(s); js.id = id;
-             js.src = "//connect.facebook.net/en_US/sdk.js";
-             fjs.parentNode.insertBefore(js, fjs);
-           }(document, 'script', 'facebook-jssdk'));
-          
-          
-          function shareScore(score) {
-              FB.ui({
-                  method: 'share',
-                  href: 'https://hex-chess.azurewebsites.net/'
-              }, function(response) {});
-          }
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+
+        function shareScore(score) {
+            FB.ui({
+                method: 'share',
+                href: 'https://hex-chess.azurewebsites.net/',
+                quote: '¡MAMAAAAA! Gane una partida de HexChess'
+            }, function (response) { });
+        }
 
         Swal.fire({
             title: '¡GANASTE!',
@@ -553,14 +554,15 @@ export class GameManager {
         })
             .then(result => {
                 if (result.isConfirmed) {
-                    //this.audio.sound.stop();
-                    window.location.href = '/';
-                    //this.router.redirect('/');
+
                 }
                 else if (result.isDismissed) {
                     shareScore(100);
-                    window.location.href = '/';
                 }
+                //this.audio.sound.stop();
+
+                //this.router.redirect('/');
+                window.location.href = '/';
             });
     }
 
