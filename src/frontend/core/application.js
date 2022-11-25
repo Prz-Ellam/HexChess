@@ -30,7 +30,7 @@ export class Application {
     delta = 10;
     startX;
     startY;
-    pause = false;
+    pauseFlag = false;
 
     socket = null;
     configuration = {};
@@ -96,7 +96,7 @@ export class Application {
             const btnResume = document.getElementById('btn-resume');
             btnResume.addEventListener('click', event => {
 
-                pause = false;
+                this.pauseFlag = false;
                 
                 event.preventDefault();
                 const pauseMenu = document.getElementById('pause-menu');
@@ -227,13 +227,13 @@ export class Application {
     }
 
     onMouseDownEvent(event) {
-        if (pause) return;
+        if (this.pauseFlag) return;
         this.startX = event.pageX;
         this.startY = event.pageY;
     }
 
     onMouseUpEvent(event) {
-        if (pause) return;
+        if (this.pauseFlag) return;
         const diffX = Math.abs(event.pageX - this.startX);
         const diffY = Math.abs(event.pageY - this.startY);
 
@@ -265,7 +265,7 @@ export class Application {
 
         if (event.key === 'Escape') {
 
-            pause = true;
+            this.pauseFlag = true;
             const canvas = Array.from(document.getElementsByTagName('canvas'))[0];
             const pauseMenu = document.getElementById('pause-menu');
             pauseMenu.style.display = 'block';
