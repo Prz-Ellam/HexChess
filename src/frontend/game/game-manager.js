@@ -34,7 +34,7 @@ export class GameManager {
         };
 
         window.addEventListener('focus', () => {
-            const items = getObjectsByProperty(this.scene, 'typeGame', 'Item');
+            const items = getObjectsByProperty(this.scene, 'objectType', ObjectType.ITEM);
             items.forEach(item => {
                 const hexagon = this.scene.getObjectByProperty('name', item.cell);
                 item.staticPosition = hexagon.position.y + (hexagon.scale.y / 2.0);

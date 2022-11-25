@@ -17,17 +17,19 @@ export class DesertMap {
                 }
                 child.castShadow = true;
                 child.receiveShadow = true;
-            })
-            object.position.y = 0;
-            object.position.z = -45;
+            });
+
             object.scale.set(.01, .01, .01);
             object.castShadow = true;
             object.receiveShadow = true;
+
+            object.position.y = 0;
+            object.position.z = -45;
+            
             object.userData.isContainer = true;
             object.objectType = ObjectType.MAP;
 
             scene.add(object);
-
         });
     }
 

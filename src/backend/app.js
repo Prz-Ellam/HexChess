@@ -6,13 +6,16 @@ const http = require('http');
 const express = require('express');
 const path = require('path');
 
+
 // El servidor se crea
 const app = express();
 const server = http.createServer(app);
 
+
 // Database
 const database = require('./config/database');
 database();
+
 
 // Socket
 const socketio = require('socket.io');
@@ -25,9 +28,11 @@ const io = socketio(server, {
 const socket = require('./config/socket');
 socket(io);
 
+
 // Session
 const session = require('express-session');
 const passport = require('./config/passport');
+
 
 // Middlewares
 const cors = require('cors');
@@ -39,9 +44,11 @@ app.use(session({ secret: process.env.SECRET }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 // Static
 app.use(express.static(path.join(__dirname, 'public')));
 app.engine('html', require('ejs').renderFile);
+
 
 // Routes
 app.get('/', (req, res) => {
@@ -63,6 +70,7 @@ app.use('/api/v1/games', gamesRoutes);
 app.get('*', (req, res, next) => {
     res.redirect('/');
 });
+
 
 // Server start
 app.set('port', process.env.PORT || 3000);

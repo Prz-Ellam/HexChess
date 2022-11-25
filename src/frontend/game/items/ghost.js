@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Resources from '../../core/resources';
+import Resources from '@core/resources';
 import ObjectType from '../config/object-type';
 
 export class Ghost {

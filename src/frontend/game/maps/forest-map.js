@@ -16,12 +16,13 @@ export class ForestMap {
                 child.receiveShadow = true;
             });
 
+            object.scale.set(.01, .01, .01);
             object.castShadow = true;
             object.receiveShadow = true;
 
             object.position.y = 1.0;
             object.position.z = 22.0;
-            object.scale.set(.01, .01, .01);
+            
             object.userData.isContainer = true;
             object.objectType = ObjectType.MAP;
 

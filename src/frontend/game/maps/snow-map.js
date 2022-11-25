@@ -15,10 +15,11 @@ export class SnowMap {
                 child.receiveShadow = true;
             });
 
+            object.scale.set(.01, .01, .01);
             object.position.y = 1.0;
             object.position.z = 11.0;
             object.position.x = 2.0;
-            object.scale.set(.01, .01, .01);
+            
             object.castShadow = true;
             object.receiveShadow = true;
             object.userData.isContainer = true;
