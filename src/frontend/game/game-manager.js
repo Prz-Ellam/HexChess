@@ -524,15 +524,6 @@ export class GameManager {
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
-
-        function shareScore(score) {
-            FB.ui({
-                method: 'share',
-                href: 'https://hex-chess.azurewebsites.net/',
-                quote: '¡MAMAAAAA! Gane una partida de HexChess'
-            }, function (response) { });
-        }
-
         Swal.fire({
             title: '¡GANASTE!',
             background: '#1B1B36',
@@ -557,7 +548,11 @@ export class GameManager {
 
                 }
                 else if (result.isDismissed) {
-                    shareScore(100);
+                    FB.ui({
+                        method: 'share',
+                        href: 'https://hex-chess.azurewebsites.net/',
+                        quote: '¡MAMAAAAA! Gane una partida de HexChess'
+                    }, function (response) {});
                 }
                 //this.audio.sound.stop();
 
