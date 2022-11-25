@@ -9,6 +9,10 @@ body {
     overflow: hidden;
 }
 
+.bg-blue {
+    background: #0c192c !important;
+}
+
 body::before {
     position: absolute;
     content: "";

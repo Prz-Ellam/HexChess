@@ -542,12 +542,12 @@ export class GameManager {
             showConfirmButton: true,
             confirmButtonText: 'Continuar',
             showCancelButton: true,
-            cancelButtonText: 'Compartir en Facebook',
+            cancelButtonText: '',
             reverseButtons: true,
             customClass: {
                 title: 'title-style',
                 confirmButton: 'btn button button-anim btn-next',
-                cancelButton: 'fb-share-button'
+                cancelButton: 'fb-share-button bg-blue mx-5'
             },
             backdrop: `rgba(0, 0, 123, 0.4)`
         })
