@@ -547,7 +547,7 @@ export class GameManager {
             customClass: {
                 title: 'title-style',
                 confirmButton: 'btn button button-anim btn-next',
-                cancelButton: 'btn btn-danger mx-5'
+                cancelButton: 'fb-share-button'
             },
             backdrop: `rgba(0, 0, 123, 0.4)`
         })
