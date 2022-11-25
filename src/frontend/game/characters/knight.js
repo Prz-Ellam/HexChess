@@ -33,7 +33,7 @@ export class Knight extends Character {
             new THREE.Vector2(x + (1 - z % 2), z + 1),
             new THREE.Vector2(x - (z % 2), z - 1),
             new THREE.Vector2(x - (z % 2), z + 1)
-        ];
+        ]; 
 
         let hexagon = scene.getObjectByName(`(${x - 1}, ${z})`);
         if (hexagon !== undefined && hexagon.scale.y === this.position.y)
