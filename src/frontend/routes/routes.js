@@ -9,6 +9,8 @@ import { ModeController } from '@controllers/mode.controller'
 import { GameController } from '@controllers/game.controller'
 import { SignupController } from '../controllers/signup.controller'
 import { LoginController } from '@controllers/login.controller'
+import { ManualPersonajeController} from '../controllers/manualpersonaje.controller'
+import { ManualItemsController } from '../controllers/manualitems.controller'
 
 const routes = {
     '/': HomeController,
@@ -21,7 +23,9 @@ const routes = {
     '/players': PlayersController,
     '/game': GameController,
     '/signup': SignupController,
-    '/login': LoginController
+    '/login': LoginController,
+    '/manualpersonaje': ManualPersonajeController,
+    '/manualitems': ManualItemsController
 }
 
 export { routes }
