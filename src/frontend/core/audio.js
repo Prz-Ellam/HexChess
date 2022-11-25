@@ -22,7 +22,7 @@ export class AudioManager {
 			sound.setLoop(true);
 			sound.setVolume(0.2);
 			// El audio todo el tiempo es muy molesto asi que lo comente, descomentar esto para escuchar
-			sound.play();
+			//sound.play();
 		});
 
 		this.sound = sound;

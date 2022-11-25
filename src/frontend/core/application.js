@@ -23,6 +23,8 @@ import { Ghost } from '../game/items/ghost';
 import { Potion } from '../game/items/potion';
 import { Book } from '../game/items/book';
 
+import pause from '@views/pause.html';
+
 export class Application {
 
     delta = 10;
@@ -87,9 +89,22 @@ export class Application {
 
         THREE.DefaultLoadingManager.onLoad = () => {
 
-            console.log('Loading Complete!');
             const root = document.getElementById('root');
             root.innerHTML = '';
+            root.innerHTML = pause;
+            const btnResume = document.getElementById('btn-resume');
+            btnResume.addEventListener('click', event => {
+
+                import('@styles/pause.css');
+
+                event.preventDefault();
+                const pauseMenu = document.getElementById('pause-menu');
+                pauseMenu.style.display = 'none';
+                //pauseMenu.remove();
+                const canvas = Array.from(document.getElementsByTagName('canvas'))[0];
+                canvas.style.display = 'block';
+
+            });
             root.append(this.renderer.domElement);
 
         };
@@ -199,7 +214,7 @@ export class Application {
     bindEvents() {
         window.addEventListener('resize', () => this.onWindowResizeEvent());
         window.addEventListener('click', event => this.onClickEvent(event));
-        window.addEventListener('keydown', () => this.onKeyEvent());
+        window.addEventListener('keydown', event => this.onKeyDownEvent(event));
         window.addEventListener('mousedown', event => this.onMouseDownEvent(event));
         window.addEventListener('mouseup', event => this.onMouseUpEvent(event));
     }
@@ -243,7 +258,35 @@ export class Application {
 
     }
 
-    onKeyEvent(event) {
+    async onKeyDownEvent(event) {
+
+        if (event.key === 'Escape') {
+
+            const canvas = Array.from(document.getElementsByTagName('canvas'))[0];
+            const pauseMenu = document.getElementById('pause-menu');
+            pauseMenu.style.display = 'block';
+            canvas.style.display = 'none';
+
+            //import('@styles/pause.css');
+            //const view = await import('@views/pause.html');
+            /*
+            const root = document.getElementById('root');
+            root.innerHTML += pause;
+
+            const btnResume = document.getElementById('btn-resume');
+            btnResume.addEventListener('click', event => {
+
+                event.preventDefault();
+                const pauseMenu = document.getElementById('pause-menu');
+                pauseMenu.remove();
+                const canvas = Array.from(document.getElementsByTagName('canvas'))[0];
+                //canvas.style.display = 'block';
+
+            });
+            */
+
+        }
+        
 
     }
 
