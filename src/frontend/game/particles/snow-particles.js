@@ -6,7 +6,6 @@ export class SnowParticles {
     constructor(scene) {
         this.scene = scene;
         this.emitParticles(scene);
-
     }
 
     emitParticles() {
@@ -15,8 +14,8 @@ export class SnowParticles {
 
         this.numSnowflakes = 15000;
 
-       this.maxRange = 1000, this.minRange = this.maxRange / 2;
-       this.minHeight = 10;
+        this.maxRange = 1000, this.minRange = this.maxRange / 2;
+        this.minHeight = 10;
 
         const geometry = new THREE.BufferGeometry();
 
@@ -60,20 +59,20 @@ export class SnowParticles {
         let particles = this.particles;
         let maxRange = this.maxRange, minRange = this.minRange, minHeight = this.minHeight;
 
-        for (let i=0; i< numSnowflakes*3; i+=3){
+        for (let i = 0; i < numSnowflakes * 3; i += 3) {
 
             particles.geometry.attributes.position.array[i] -= particles.geometry.attributes.velocity.array[i];
 
-            particles.geometry.attributes.position.array[i+1] -= particles.geometry.attributes.velocity.array[i+1];
+            particles.geometry.attributes.position.array[i + 1] -= particles.geometry.attributes.velocity.array[i + 1];
 
-            particles.geometry.attributes.position.array[i+2] -= particles.geometry.attributes.velocity.array[i+2];
-        
-            if(particles.geometry.attributes.position.array[i+1] < 10){
-                particles.geometry.attributes.position.array[i] = Math.floor(Math.random()*maxRange - minRange);
-                particles.geometry.attributes.position.array[i+1] = Math.floor(Math.random()*minRange + minHeight);
-                particles.geometry.attributes.position.array[i+2] = Math.floor(Math.random()*maxRange - minRange);
+            particles.geometry.attributes.position.array[i + 2] -= particles.geometry.attributes.velocity.array[i + 2];
+
+            if (particles.geometry.attributes.position.array[i + 1] < 10) {
+                particles.geometry.attributes.position.array[i] = Math.floor(Math.random() * maxRange - minRange);
+                particles.geometry.attributes.position.array[i + 1] = Math.floor(Math.random() * minRange + minHeight);
+                particles.geometry.attributes.position.array[i + 2] = Math.floor(Math.random() * maxRange - minRange);
             }
-        
+
             particles.geometry.attributes.position.needsUpdate = true;
 
         }

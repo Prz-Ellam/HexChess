@@ -1,6 +1,6 @@
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-
-import forest from '../../assets/models/Forest/forest-terrain.fbx';
+import forest from '@models/Forest/forest-terrain.fbx';
+import ObjectType from '../config/object-type';
 
 export class ForestMap {
 
@@ -11,22 +11,21 @@ export class ForestMap {
     create(scene) {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(forest, object => {
-            object.traverse(function (child) {
-                if (child.isMesh) {
-                    const oldMat = child.material;
-
-                }
+            object.traverse(child => {
                 child.castShadow = true;
                 child.receiveShadow = true;
-            })
-            object.position.y = 1;
-            object.position.z = 22;
-            object.scale.set(.01, .01, .01);
+            });
+
             object.castShadow = true;
             object.receiveShadow = true;
 
+            object.position.y = 1.0;
+            object.position.z = 22.0;
+            object.scale.set(.01, .01, .01);
+            object.userData.isContainer = true;
+            object.objectType = ObjectType.MAP;
+
             scene.add(object);
-        }
-        )
+        });
     }
 }

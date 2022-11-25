@@ -11,4 +11,9 @@ export class GameController {
 
     }
 
+    create() {
+
+        
+    }
+
 }

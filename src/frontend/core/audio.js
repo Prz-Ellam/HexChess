@@ -25,6 +25,8 @@ export class AudioManager {
 			sound.play();
 		});
 
+		this.sound = sound;
+
 		const deathAudio = new THREE.Audio(listener);
 		audioLoader.load(death, buffer => {
 			deathAudio.setBuffer(buffer);

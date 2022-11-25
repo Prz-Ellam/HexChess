@@ -3,19 +3,31 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 
-import { Board } from '../game/board/board';
+import { Board } from '@board/board';
 import { getObjectsByProperty, getContainerObjByChild } from './helpers';
 import { BoardDirector } from '../game/board/board-director';
 import { GameManager } from '../game/game-manager';
-import { ParticleSystem } from './particle-system';
 import { MapFactory } from '../game/maps/map-factory';
 
 import { io } from 'socket.io-client'
-import { Router } from '../routes/router';
+import { Router } from '@routes/router';
 import { AudioManager } from './audio';
 import { SnowParticles } from '../game/particles/snow-particles';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+
+import book from '@models/Book/Book.fbx';
+import ghost from '@models/Ghost/Ghost.fbx';
+import potion from '@models/Potion/Potion.fbx';
+import Resources from './resources';
+import { Ghost } from '../game/items/ghost';
+import { Potion } from '../game/items/potion';
+import { Book } from '../game/items/book';
 
 export class Application {
+
+    delta = 10;
+    startX;
+    startY;
 
     socket = null;
     configuration = {};
@@ -54,40 +66,47 @@ export class Application {
     }
 
     createScene(team) {
-        /*
-        let startTime = 0;
-        setInterval(() => {
-            startTime++;
-            console.log(startTime);
-        }, 1000);
-        */
+
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(potion, object => {
+            Resources.items['Potion'] = object;
+            const dummyPotion = new Potion(this.scene, '(5, 6)');
+        });
+        fbxLoader.load(ghost, object => {
+            Resources.items['Ghost'] = object;
+            const dummyGhost = new Ghost(this.scene, '(5, 5)');
+        });
+        fbxLoader.load(book, object => {
+            Resources.items['Book'] = object;
+            const dummyBook = new Book(this.scene, '(6, 5)');
+        });
 
         THREE.DefaultLoadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
-            console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
         };
-        
+
         THREE.DefaultLoadingManager.onLoad = () => {
-        
+
             console.log('Loading Complete!');
             const root = document.getElementById('root');
             root.innerHTML = '';
             root.append(this.renderer.domElement);
-        
-        };
-        
-        THREE.DefaultLoadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
-            
-            const loadingLabel = document.getElementById('loading-label');
-            loadingLabel.innerText = `Cargando: %${ parseFloat((itemsLoaded / itemsTotal) * 100).toFixed(1) }`;
-            //console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-        
-        };
-        
-        THREE.DefaultLoadingManager.onError = url => {
-            console.log( 'There was an error loading ' + url );
+
         };
 
-        this.socket.on('finishGame', () => { 
+        THREE.DefaultLoadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+
+            const loadingLabel = document.getElementById('loading-label');
+            loadingLabel.innerText = `Cargando: %${parseFloat((itemsLoaded / itemsTotal) * 100).toFixed(1)}`;
+            //console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+        };
+
+        THREE.DefaultLoadingManager.onError = url => {
+            console.log('There was an error loading ' + url);
+        };
+
+        this.socket.on('finishGame', () => {
             alert('Se perdio la conexión con tu rival');
             this.router.redirect('/');
         });
@@ -106,7 +125,7 @@ export class Application {
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         //this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         //this.renderer.toneMappingExposure = 1.8;
-        
+
 
         this.bindEvents();
 
@@ -157,20 +176,8 @@ export class Application {
             this.snow.emitParticles(this.scene);
         }
 
-        this.particleSystem = new ParticleSystem(this.scene, {
-            position: new THREE.Vector3(0.0, 10.0, 0.0),
-            rotationBegin: 0.0,
-            rotationEnd: 0.0,
-            rotationVariation: 0.0,
-            scaleBegin: new THREE.Vector3(1.0, 1.0, 1.0),
-            scaleEnd: new THREE.Vector3(0.0, 0.0, 0.0),
-            scaleVariation: new THREE.Vector3(0.3, 0.3, 0.3),
-            speed: new THREE.Vector3(0.0, 0.0, 0.0),
-            speedVariation: new THREE.Vector3(0.0, 5.0, 0.0),
-            lifetime: 50.0
-        }, 1000);
-
-        const mapScene = new MapFactory(this.scene, this.configuration.scenario);
+        const mapFactory = new MapFactory(this.scene);
+        mapFactory.create(this.configuration.scenario);
 
         const board = new Board(this.scene,
             new THREE.Vector3(0.0, 0.0, 0.0),
@@ -183,8 +190,8 @@ export class Application {
         boardDirector.create(this.scene, board);
 
         this.clock = new THREE.Clock();
-        
-        this.gameManager = new GameManager(this.scene, board, team, this.socket, this.configuration, this.audio);
+
+        this.gameManager = new GameManager(this.scene, board, team, this.socket, this.configuration, this.audio, this.router);
 
         this.run();
     }
@@ -193,6 +200,8 @@ export class Application {
         window.addEventListener('resize', () => this.onWindowResizeEvent());
         window.addEventListener('click', event => this.onClickEvent(event));
         window.addEventListener('keydown', () => this.onKeyEvent());
+        window.addEventListener('mousedown', event => this.onMouseDownEvent(event));
+        window.addEventListener('mouseup', event => this.onMouseUpEvent(event));
     }
 
     onWindowResizeEvent() {
@@ -201,29 +210,41 @@ export class Application {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    onClickEvent(event) {
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
+    onMouseDownEvent(event) {
+        this.startX = event.pageX;
+        this.startY = event.pageY;
+    }
 
-        mouse.x = (event.clientX / window.innerWidth) * 2.0 - 1.0;
-        mouse.y = -(event.clientY / window.innerHeight) * 2.0 + 1.0;
+    onMouseUpEvent(event) {
+        const diffX = Math.abs(event.pageX - this.startX);
+        const diffY = Math.abs(event.pageY - this.startY);
 
-        raycaster.setFromCamera(mouse, this.camera);
+        if (diffX < this.delta && diffY < this.delta) {
+            
+            let raycaster = new THREE.Raycaster();
+            let mouse = new THREE.Vector2();
 
-        const intersects = raycaster.intersectObjects(this.scene.children, true);
-        if (intersects.length > 0) {
-            let object = intersects[0].object;
-            let currentObject = getContainerObjByChild(object);
-            if (currentObject === null) currentObject = object;
+            mouse.x = (event.clientX / window.innerWidth) * 2.0 - 1.0;
+            mouse.y = -(event.clientY / window.innerHeight) * 2.0 + 1.0;
 
-            console.log(currentObject.name);
+            raycaster.setFromCamera(mouse, this.camera);
 
-            this.gameManager.processAction(currentObject);
+            const intersects = raycaster.intersectObjects(this.scene.children, true);
+            if (intersects.length > 0) {
+                let object = intersects[0].object;
+                let currentObject = getContainerObjByChild(object);
+                if (!currentObject) currentObject = object;
+                this.gameManager.processAction(currentObject);
+            }
         }
     }
 
+    onClickEvent(event) {
+
+    }
+
     onKeyEvent(event) {
-        this.particleSystem.emitParticles();
+
     }
 
     run() {
@@ -244,11 +265,6 @@ export class Application {
 
         TWEEN.update();
 
-        //this.particleSystem.emitParticles();
-        this.particleSystem.onUpdate(delta);
-        this.particleSystem.onRender();
-
-       
         if (this.configuration.scenario === 'SNOW') {
             this.snow.onUpdate(delta);
         }

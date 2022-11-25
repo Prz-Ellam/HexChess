@@ -2,9 +2,6 @@ import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { codeToVector, getObjectsByProperty } from '../core/helpers';
 import { Character } from './characters/character';
-import { Potion } from './items/potion';
-import { Ghost } from './items/ghost';
-import { Book } from './items/book';
 
 import Swal from 'sweetalert2';
 import redForestVictory from '@images/JRojo-win-forest.png';
@@ -13,17 +10,23 @@ import redSnowVictory from '@images/JRojo-win-snow.png';
 import greenForestVictory from '@images/JVerde-win-forest.png';
 import greenDesertVictory from '@images/JVerde-win-desert.png';
 import greenSnowVictory from '@images/JVerde-win-snow.png';
+import { ItemFactory } from './items/item-factory';
+import Mode from './config/mode';
+import ObjectType from './config/object-type';
+import Players from './config/players';
 
 export class GameManager {
-    constructor(scene, board, team, io, configuration, audio) {
+    constructor(scene, board, team, io, configuration, audio, router) {
         this.team = team;
         this.currentTeam = 'RED';
         this.scene = scene;
         this.audio = audio;
         this.board = board;
+        this.router = router;
         this.configuration = configuration;
         this.changeSide = false;
         this.io = io;
+        this.items = 3;
         this.selected = {
             status: false,
             position: null,
@@ -48,21 +51,27 @@ export class GameManager {
         }
     }
 
-    changeTurn(data) {
-        this.currentTeam = data.team;
-    }
-
     /**
      * Prepara un turno para un jugador
      * 
-     * @param {Group} object 
+     * @param {Group} object - Un objeto 3D de THREE, sin especificar el tipo
      * @returns
      */
     processAction(object) {
         // No hay turno actualmente
         // this.selected.status dice si ya hay un objeto seleccionado (true) o no (false)
-        if (object.typeGame === 'Character' && !this.selected.status &&
-            object.team === this.currentTeam && object.team === this.team) {
+        if (object.objectType === ObjectType.CHARACTER &&   // Debe ser un personaje
+            object.team === this.currentTeam &&             // Tiene que ser tu turno
+            object.team === this.team) {                    // Tiene que ser tuyo
+
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.deselect();
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('deselect');
+                    break;
+            }
 
             const position = codeToVector(object.cell);
             const moves = object.findMoves(this.scene, position, this.changeSide);
@@ -75,46 +84,51 @@ export class GameManager {
                 }
             }
 
-            if (this.configuration.players === 'SINGLEPLAYER') {
-                this.select(data);
-            }
-            else if (this.configuration.players === 'MULTIPLAYER') {
-                this.io.emit('select', data);
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.select(data);
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('select', data);
+                    break;
             }
         }
 
         // Hay turno actualmente y se selecciona un objeto no valido
-        if (this.selected.status && (object.typeGame !== 'Cell' || !object.selectable)
-            && object.typeGame !== 'Character') {
+        if (this.selected.status && 
+            (object.objectType !== ObjectType.CELL || !object.selectable) && // Una celda no seleccionable
+            (object.objectType !== ObjectType.CHARACTER || object.team !== this.team)) { // Uno que no sea character
 
-            if (this.configuration.players === 'SINGLEPLAYER') {
-                this.deselect();
-            }
-            else if (this.configuration.players === 'MULTIPLAYER') {
-                this.io.emit('deselect');
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.deselect();
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('deselect');
+                    break;
             }
         }
 
         // Hay turno actualmente y se selecciona un elemento valido
-        if (object.typeGame === 'Cell' && this.selected.status && object.selectable) {
+        if (this.selected.status &&
+            object.objectType === ObjectType.CELL &&  object.selectable) {
+
             const data = {
-                startPosition: this.selected.object.position,
+                startPosition:  this.selected.object.position,
                 targetPosition: object.position,
-                startCell: this.selected.object.cell,
-                targetCell: object.name
+                startCell:      this.selected.object.cell,
+                targetCell:     object.name
             }
 
-            if (this.configuration.players === 'SINGLEPLAYER') {
-                this.move(data);
-            }
-            else if (this.configuration.players === 'MULTIPLAYER') {
-                this.io.emit('move', data);
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.move(data);
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('move', data);
+                    break;
             }
         }
-    }
-
-    makeIaTurn() {
-
     }
 
     /**
@@ -122,7 +136,7 @@ export class GameManager {
      * @param {cells: Array<string>, target: {position: THREE.Vector3, cell: string}} data 
      */
     select(data) {
-        this.board.makeSelectableCells(data.cells);
+        this.board.makeSelectableCells(data);
         this.selectObject(data.character.position, data.character.cell);
     }
 
@@ -131,44 +145,13 @@ export class GameManager {
         this.deselectObject();
     }
 
-    move(data) {
-        this.board.cleanSelectableCells();
-
-        let targetObject = this.scene.getObjectByProperty('cell', data.targetCell);
-        if (targetObject !== undefined) {
-            if (targetObject.typeGame === 'Character') {
-                // Checkmate
-                if (this.configuration.mode === 'CHECKMATE')
-                    this.defeatCharacter(targetObject, data);
-                else if (this.configuration.mode === 'COLDWAR') {
-                // Coldwar
-                    var recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
-                    this.changeCharacterTeam(targetObject, recruiterCharacter);
-                }
-                return;
-            }
-            else if (targetObject.typeGame === 'Item') {
-                // Item
-                var character = this.scene.getObjectByProperty('cell', data.startCell);
-                this.getItem(character, targetObject);
-            }
-        }
-
-        this.moveCharacter(
-            data.startPosition,
-            data.startCell,
-            data.targetPosition,
-            data.targetCell
-        );
-    }
-
     /**
      * Selecciona un personaje
      * 
      * @param {THREE.Vector3} position 
      * @param {String} cell 
      */
-    selectObject(position, cell) {
+     selectObject(position, cell) {
         this.selected = {
             status: true,
             object: {
@@ -191,6 +174,41 @@ export class GameManager {
         };
     }
 
+    move(data) {
+
+        this.board.cleanSelectableCells();
+
+        let targetObject = this.scene.getObjectByProperty('cell', data.targetCell);
+        if (targetObject !== undefined) {
+            if (targetObject.objectType === ObjectType.CHARACTER) {
+                
+                switch (this.configuration.mode) {
+                    case Mode.CHECKMATE:
+                        this.defeatCharacter(targetObject, data);
+                        break;
+                    case Mode.COLDWAR: {
+                        let recruiterCharacter = this.scene.getObjectByProperty('cell', data.startCell);
+                        this.changeCharacterTeam(targetObject, recruiterCharacter);
+                        break;
+                    }
+                }
+                
+                return;
+            }
+            else if (targetObject.objectType === ObjectType.ITEM) {
+                let character = this.scene.getObjectByProperty('cell', data.startCell);
+                this.getItem(character, targetObject);
+            }
+        }
+
+        this.moveCharacter(
+            data.startPosition,
+            data.startCell,
+            data.targetPosition,
+            data.targetCell
+        );
+    }
+
     defeatCharacter(character, data) {
         character.actions['idle'].stop();
         character.actions['death'].play();
@@ -211,11 +229,10 @@ export class GameManager {
                 this.gameOver();
             }
 
-        }, character.actions['death']._clip.duration * 1000 - 10);
+        }, character.actions['death']._clip.duration * 1000 - 100);
     }
 
     changeCharacterTeam(character, recruiter) {
-        console.log(Character.maps);
         
         const team = recruiter.team;
         console.log(team);
@@ -223,7 +240,6 @@ export class GameManager {
         this.audio.wololo.play();
         character.traverse(child => {
             if (child.isMesh) {
-                //child.material = recruiterMap.clone();
                 child.material = Character.maps[team][character.character].clone();
                 character.team = recruiter.team;
             }
@@ -309,11 +325,13 @@ export class GameManager {
             if (this.currentTeam === this.team || this.configuration.players === 'SINGLEPLAYER') {
                 const variations = this.board.createSizeVariations(this.configuration.dificulty);
 
-                if (this.configuration.players === 'SINGLEPLAYER') {
-                    this.board.setSizeVariations(variations);
-                }
-                else if (this.configuration.players === 'MULTIPLAYER') {
-                    this.io.emit('setVariations', variations);
+                switch (this.configuration.players) {
+                    case Players.SINGLEPLAYER:
+                        this.board.setSizeVariations(variations);
+                        break;
+                    case Players.MULTIPLAYER:
+                        this.io.emit('setVariations', variations);
+                        break;
                 }
             }
 
@@ -347,7 +365,8 @@ export class GameManager {
             }
 
             // Si es contra IA
-            if (this.currentTeam === 'GREEN' && this.configuration.players === 'SINGLEPLAYER') {
+            if (this.currentTeam === 'GREEN' && 
+                this.configuration.players === 'SINGLEPLAYER') {
                 
                 const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
                 let booleano = false;
@@ -415,11 +434,13 @@ export class GameManager {
             return;
         }
 
-        const charactersCount = getObjectsByProperty(this.scene, 'typeGame', 'Character').length;
+        const charactersCount = getObjectsByProperty(this.scene, 'objectType', ObjectType.CHARACTER).length;
         const percentage = -Math.log(charactersCount) * 3 + 30;
-        const random = Math.random() * 100;
+        const random = Math.round(Math.random() * 100); // Random between 0 - 100
 
         if (random < percentage) {
+            
+            // Get objects has property
             const ocupiedCells = [];
             this.scene.traverse(child => {
                 if (child.cell) {
@@ -436,104 +457,79 @@ export class GameManager {
                 }
             }
 
-            const chosenCellIndex = parseInt(Math.random() * freeCells.length);
+            const chosenCellIndex = Math.round(Math.random() * freeCells.length);
             const chosenCell = freeCells[chosenCellIndex];
 
             const itemType = Math.round(Math.random() * 2);
             const types = [ 'Potion', 'Book', 'Ghost' ];
             const item = types[itemType];
-            this.items++;
 
-            if (this.configuration.players === 'SINGLEPLAYER') {
-                this.setItem({ cell: chosenCell, type: item });
-            }
-            else if (this.configuration.players === 'MULTIPLAYER') {
-                this.io.emit('setItem', { cell: chosenCell, type: item });
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.setItem({ cell: chosenCell, type: item });
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('setItem', { cell: chosenCell, type: item });
+                    break;
             }
         }
     }
 
     setItem(data) {
-        const cell = data.cell;
         const item = data.type;
-
-        switch (item) {
-            case 'Potion': {
-                const potion = new Potion(this.scene, cell);
-                break;
-            }
-            case 'Book': {
-                const book = new Book(this.scene, cell);
-                break;
-            }
-            case 'Ghost': {
-                const ghost = new Ghost(this.scene, cell);
-                break;
-            }
-        }
-        
+        const itemFactory = new ItemFactory(this.scene);
+        itemFactory.create(item, data.cell);
+        this.items++;
     }
 
     getItem(character, item) {
-
-        //character.powerup = item.type;
         this.audio.powerup.play();
         character.setPowerup(item.type);
         this.scene.remove(item);
         this.items--;
-
     }
 
     gameOver() {
 
-        if (this.configuration.players === 'MULTIPLAYER') {
+        if (this.configuration.players === Players.MULTIPLAYER) {
             fetch('/api/v1/games', {
                 method: 'POST'
             })
             .then(res => res.json())
             .then(res => {
-
-                Swal.fire({
-                    title: '¡GANASTE!',
-                    background: '#1B1B36',
-                    imageUrl: redForestVictory,
-                    imageAlt: 'Game over',
-                    width: '800px',
-                    buttonsStyling: false,
-                    showConfirmButton: true,
-                    confirmButtonText: 'Continuar',
-                    customClass: {
-                        title: 'title-style',
-                        confirmButton: 'btn button button-anim btn-next'
-                    },
-                    backdrop: `
-                        rgba(0, 0, 123, 0.4)
-                    `
-                });
-
+                this.gameOverScreen();
             });
         }
         else {
-
-            Swal.fire({
-                title: '¡GANASTE!',
-                background: '#1B1B36',
-                imageUrl: redForestVictory,
-                imageAlt: 'Game over',
-                width: '800px',
-                buttonsStyling: false,
-                showConfirmButton: true,
-                confirmButtonText: 'Continuar',
-                customClass: {
-                    title: 'title-style',
-                    confirmButton: 'btn button button-anim btn-next'
-                },
-                backdrop: `
-                    rgba(0, 0, 123, 0.4)
-                `
-            });
-
+            this.gameOverScreen()
         }
+
+    }
+
+    gameOverScreen() {
+
+        Swal.fire({
+            title: '¡GANASTE!',
+            background: '#1B1B36',
+            imageUrl: redForestVictory,
+            imageAlt: 'Game over',
+            width: '800px',
+            buttonsStyling: false,
+            showConfirmButton: true,
+            confirmButtonText: 'Continuar',
+            customClass: {
+                title: 'title-style',
+                confirmButton: 'btn button button-anim btn-next'
+            },
+            backdrop: `
+                rgba(0, 0, 123, 0.4)
+            `
+        })
+            .then(() => {
+                this.audio.sound.stop();
+                window.location.href = '/';
+                //this.router.redirect('/');
+            });
 
     }
 

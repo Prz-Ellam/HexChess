@@ -11,10 +11,6 @@ export class Imp extends Character
 {
     constructor(scene, board, position, team)
     {
-        //const modelpath =
-        //    (new RegExp(/\((\d+), (\d+)\)/).exec(position)[2] < 5) ?
-        //        red :
-        //        green;
         const modelpath = (team === 'RED') ? red : green;
         super(scene, board, modelpath, position, [ idle, walking, death ], 'Imp', team);
     }

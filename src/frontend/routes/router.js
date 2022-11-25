@@ -12,7 +12,6 @@ export class Router {
     }
 
     routing(event) {
-        //localStorage.removeItem('path');
         event = event || window.event;
         event.preventDefault();
         window.history.pushState({}, '', event.currentTarget.href);
@@ -27,13 +26,9 @@ export class Router {
     resolve() {
 
         const path = window.location.pathname;
-        //if (path === '/') {
-        //    path = localStorage.getItem('path') || window.location.pathname;
-        //    window.history.pushState(null, null, path);
-        //}
-        
-        const route = routes[path] || routes['404'];
-        const controller = new route(this.application);
+
+        const route = routes[path];
+        new route(this.application);
 
         const a = document.body.querySelectorAll('a');
         a.forEach(a => {

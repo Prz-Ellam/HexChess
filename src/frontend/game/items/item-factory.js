@@ -1,6 +1,6 @@
 import { Book } from './book';
 import { Ghost } from './ghost';
-import { Potion } from './potion'
+import { Potion } from './potion';
 
 export class ItemFactory {
 
@@ -8,14 +8,16 @@ export class ItemFactory {
         this.scene = scene;
     }
 
-    create(name) {
+    create(name, cell) {
         switch (name) {
             case 'Potion':
-                return new Potion(this.scene);
+                return new Potion(this.scene, cell);
             case 'Book':
-                return new Book(this.scene);
+                return new Book(this.scene, cell);
             case 'Ghost':
-                return new Ghost(this.scene);
+                return new Ghost(this.scene, cell);
+            default:
+                console.warn(`No item named ${name}`);
         }
     }
 

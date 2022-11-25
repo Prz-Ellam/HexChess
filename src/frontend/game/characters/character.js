@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import ObjectType from '../config/object-type';
 //import fbxLoader from '../../core/loaders';
 export class Character {
 
@@ -27,7 +28,8 @@ export class Character {
                     const oldMat = child.material;
 
                     const newMaterial = new THREE.MeshPhysicalMaterial({
-                        map: oldMat.map
+                        map: oldMat.map,
+                        transparent: true
                     });
 
                     child.material = newMaterial;
@@ -74,6 +76,7 @@ export class Character {
             object.boardCount = this.boardCount;
             object.setPowerup = this.setPowerup;
             object.removePowerup = this.removePowerup;
+            object.objectType = ObjectType.CHARACTER;
             object.actions = {};
 
             const animLoader = new FBXLoader();
@@ -157,14 +160,16 @@ export class Character {
                 this.traverse(child => {
                     if (child.isMesh) {
                         const oldMat = child.material;
-
+                        
+                        child.material.opacity = 0.2;
+/*
                         const newMaterial = new THREE.MeshPhysicalMaterial({
                             map: oldMat.map,
                             transparent: true,
                             opacity: 0.2
                         });
-
-                        child.material = newMaterial;
+*/
+                        //child.material = newMaterial;
                     }
                 });
                 this.powerup = item;
@@ -184,14 +189,19 @@ export class Character {
     removePowerup() {
         this.traverse(child => {
             if (child.isMesh) {
-                const oldMat = child.material;
-                const newMaterial = new THREE.MeshPhysicalMaterial({
-                    map: oldMat.map,
-                });
-                child.material = newMaterial;
+                switch (this.powerup) {
+                    case 'Potion':
+                        child.material.emissive = new THREE.Color(0x000000);
+                        break;
+                    case 'Book':
+                        this.scale.set(.01, .01, .01);
+                        break;
+                    case 'Ghost':
+                        child.material.opacity = 1.0;
+                        break;
+                }
             }
         });
-        this.scale.set(.01, .01, .01);
         this.powerup = null;
     }
 

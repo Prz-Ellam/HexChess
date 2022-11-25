@@ -3,9 +3,15 @@ import view from '@views/login.html';
 export class LoginController {
 
     constructor() {
-        
+
         const root = document.getElementById('root');
         root.innerHTML = view;
+
+        this.bindEvents();
+
+    }
+
+    bindEvents() {
 
         const form = document.getElementById('login-form');
         form.addEventListener('submit', event => {
@@ -16,8 +22,7 @@ export class LoginController {
 
             const formObject = {};
             formData.forEach((value, key) => formObject[key] = value);
-            console.log(formObject);
-
+            
             fetch('/api/v1/auth', {
                 method: 'POST',
                 body: JSON.stringify(formObject),
@@ -26,13 +31,12 @@ export class LoginController {
                     'Accept': 'application/json'
                 }
             })
-            .then(res => res.json())
-            .then(res => {
-                alert(JSON.stringify(res));
-            });
+                .then(res => res.json())
+                .then(res => {
+                    alert(JSON.stringify(res));
+                });
 
         });
-
     }
 
 

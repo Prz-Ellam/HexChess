@@ -1,6 +1,6 @@
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-
-import desert from '../../assets/models/desert/desert.fbx';
+import desert from '@models/desert/desert.fbx';
+import ObjectType from '../config/object-type';
 
 export class DesertMap {
 
@@ -23,11 +23,12 @@ export class DesertMap {
             object.scale.set(.01, .01, .01);
             object.castShadow = true;
             object.receiveShadow = true;
+            object.userData.isContainer = true;
+            object.objectType = ObjectType.MAP;
 
             scene.add(object);
 
-        }
-        )
+        });
     }
 
 }

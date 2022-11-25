@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import { getObjectsByProperty } from '@core/helpers';
+import Dificulty from '../config/dificulty';
+import ObjectType from '../config/object-type';
 
 export class Board {
 
@@ -25,53 +27,33 @@ export class Board {
         const endZ = Math.round(this.position.y + (this.count.y / 2));
 
         const board = new THREE.Object3D();
-        // board.position.set(this.position);
 
         for (let x = startX; x < endX; x++) {
             for (let z = startZ; z < endZ; z++) {
 
                 const hexagon = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.0, 1.0, 1.0, 6, 1, false),
-                    new THREE.MeshPhongMaterial({ 
-                        //clearcoat: 1.0,
-                        //clearcoatRoughness: 0.1,
+                    new THREE.MeshPhongMaterial({
                         color : 0x958ae6,
-                        ////flatShading: true,
-                        //roughness: 0.5,
-                        //metalness: 1.0,
-                        //transparent: true,
-                        //opacity: 1.0
-                        ////specular: 0x4737a0,
-                        //uuid: "0DD2D112-EA1F-3781-A46D-55B79A64DD19",
-                        //vertexColors: 0,
-                        //color: 16777215,
-                        //depthWrite: true,
-                        ////shininess: 32,
-                        //depthTest: true,
-
-
                         specular: 0x5854ff,
                         flatShading: true,
                         vertexColors: 0,
-                        //color: 0x632ecf,
                         depthWrite: true,
-                       
                         shininess: 50,
-                       
                         depthTest: true,
                         emissive: 0
                     })
                 );
 
-                hexagon.position.x = (z % 2 === 0) ? x : x + 0.5;
-                hexagon.position.x *= this.space;
-                hexagon.position.y = 0.5;
-                hexagon.position.z = z * 1.535; // TODO: Numero magicos
-
                 hexagon.castShadow = true;
                 hexagon.receiveShadow = true;
 
-                if (dificulty === 'Hard') {
+                hexagon.position.x = (z % 2 === 0) ? x : x + 0.5;
+                hexagon.position.x *= this.space;
+                hexagon.position.y = 0.5;
+                hexagon.position.z = z * 1.535;
+
+                if (dificulty === Dificulty.HARD) {
                     let change = Math.random() * (2 - 1) + 1;
                     change = Math.round(change);
                     hexagon.scale.y = change;
@@ -83,6 +65,7 @@ export class Board {
                 hexagon.name = `(${xCoord}, ${zCoord})`;
                 hexagon.isValid = false;
                 hexagon.typeGame = 'Cell';
+                hexagon.objectType = ObjectType.CELL;
 
                 board.add(hexagon);
             }
@@ -91,7 +74,6 @@ export class Board {
         board.name = 'Board';
         this.scene.add(board);
         this.size = new THREE.Vector2(endX - startX, endZ - startZ);
-
     }
 
     /**
@@ -99,14 +81,32 @@ export class Board {
      * @date 2022-10-30
      * @param {Array<string>} cells - Arreglo con los codigos de todas las celdas que serán seleccionables
      */
-    makeSelectableCells(cells) {
-        cells.forEach(coords => {
-            const cell = this.scene.getObjectByName(coords, true);
-            if (cell !== undefined) {
-                cell.material.color.setHex(0xa7bad0);
-                cell.selectable = true;
+    makeSelectableCells(data) {
+        data.cells.forEach(cell => {
+            const hexagon = this.scene.getObjectByName(cell, true);
+            if (hexagon !== undefined) {
+                let color = 0xA7BAD0;
+                const object = this.scene.getObjectByProperty('cell', cell);
+                if (object !== undefined) {
+                    switch (object.objectType) {
+                        case ObjectType.CHARACTER:
+                            color = '0xFF8178';
+                            break;
+                        case ObjectType.ITEM:
+                            color = '0x8CDBA9';
+                            break;
+                    }
+                }
+
+                hexagon.material.color.setHex(color);
+                hexagon.selectable = true;
             }
         });
+        const principalHexagon = this.scene.getObjectByName(data.character.cell, true);
+        if (principalHexagon !== undefined) {
+            principalHexagon.material.color.setHex(0xCED16D);
+            principalHexagon.standing = true;
+        }
     }
 
     /**
@@ -117,6 +117,11 @@ export class Board {
     cleanSelectableCells() {
         const selectableCells = getObjectsByProperty(this.scene, 'selectable', true);
         selectableCells.forEach(cell => {
+            cell.selectable = false;
+            cell.material.color.setHex(0x958ae6);
+        });
+        const selectableCells2 = getObjectsByProperty(this.scene, 'standing', true);
+        selectableCells2.forEach(cell => {
             cell.selectable = false;
             cell.material.color.setHex(0x958ae6);
         });

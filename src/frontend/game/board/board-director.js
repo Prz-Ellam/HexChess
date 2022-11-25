@@ -3,7 +3,7 @@ import { CharacterFactory } from '@characters/character-factory';
 export class BoardDirector
 {
     constructor() {
-        
+        /*
         this.board = [
             [ 'MonkGreen', 'MonkGreen', 'ImpGreen', 'PeasantGreen', 'WitchGreen', 'LadyGreen', 'PeasantGreen', 'ImpGreen', 'MonkGreen', 'MonkGreen' ],
             [ 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen', 'KnightGreen' ],
@@ -16,22 +16,22 @@ export class BoardDirector
             [ 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed', 'KnightRed' ],
             [ 'MonkRed', 'MonkRed', 'ImpRed', 'PeasantRed', 'LadyRed', 'WitchRed', 'PeasantRed', 'ImpRed', 'MonkRed', 'MonkRed' ]
         ];
+        */
         
-        /*
         this.board = [
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 'Book', 'PeasantRed', 'KnightGreen', 'KnightGreen', 'KnightRed', 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 'PeasantRed', 'KnightGreen', 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
         ];
         
-        */
+        
        /*
         this.board = [
             [ 0, 0, 0, 0, 0, 0, 0, 'KnightGreen', 0, 0 ],

@@ -4,19 +4,21 @@ import { SnowMap } from './snow-map';
 
 export class MapFactory {
 
-    constructor(scene, name) {
+    constructor(scene) {
         this.scene = scene;
-        this.create(name);
     }
 
     create(name) {
         switch (name) {
             case 'FOREST':
                 return new ForestMap(this.scene);
-            case 'SNOW':
-                return new SnowMap(this.scene);
             case 'DESERT':
                 return new DesertMap(this.scene);
+            case 'SNOW':
+                return new SnowMap(this.scene);
+            default:
+                console.warn(`No map named: ${name}`);
         }
     }
+
 }
