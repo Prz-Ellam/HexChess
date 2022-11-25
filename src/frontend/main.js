@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import '@styles/style.css';
 import './assets/favicon.ico';
+import './assets/images/cover.png';
 
 var app = null;
 
