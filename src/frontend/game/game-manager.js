@@ -528,9 +528,7 @@ export class GameManager {
           function shareScore(score) {
               FB.ui({
                   method: 'share',
-                  href: 'https://hex-chess.azurewebsites.net/',
-                  hashtag: '#tarea',
-                  quote: 'Mi puntuación fue de: ' + score
+                  href: 'https://hex-chess.azurewebsites.net/'
               }, function(response) {});
           }
 
