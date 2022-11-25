@@ -111,12 +111,12 @@ export class GameManager {
 
         // Hay turno actualmente y se selecciona un elemento valido
         if (this.selected.status &&
-            object.objectType === ObjectType.CELL &&  object.selectable) {
+            object.objectType === ObjectType.CELL && object.selectable) {
 
             const data = {
                 startPosition:  this.selected.object.position,
-                targetPosition: object.position,
                 startCell:      this.selected.object.cell,
+                targetPosition: object.position,
                 targetCell:     object.name
             }
 
@@ -507,6 +507,32 @@ export class GameManager {
     }
 
     gameOverScreen() {
+        window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '447339420703828',
+              xfbml      : true,
+              version    : 'v2.9'
+            });
+            FB.AppEvents.logPageView();
+          };
+          
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+          
+          
+          function shareScore(score) {
+              FB.ui({
+                  method: 'share',
+                  href: 'https://hex-chess.azurewebsites.net/',
+                  hashtag: '#tarea',
+                  quote: 'Mi puntuación fue de: ' + score
+              }, function(response) {});
+          }
 
         Swal.fire({
             title: '¡GANASTE!',
@@ -517,20 +543,27 @@ export class GameManager {
             buttonsStyling: false,
             showConfirmButton: true,
             confirmButtonText: 'Continuar',
+            showCancelButton: true,
+            cancelButtonText: 'Compartir en Facebook',
+            reverseButtons: true,
             customClass: {
                 title: 'title-style',
-                confirmButton: 'btn button button-anim btn-next'
+                confirmButton: 'btn button button-anim btn-next',
+                cancelButton: 'btn btn-danger mx-5'
             },
-            backdrop: `
-                rgba(0, 0, 123, 0.4)
-            `
+            backdrop: `rgba(0, 0, 123, 0.4)`
         })
-            .then(() => {
-                this.audio.sound.stop();
-                window.location.href = '/';
-                //this.router.redirect('/');
+            .then(result => {
+                if (result.isConfirmed) {
+                    //this.audio.sound.stop();
+                    window.location.href = '/';
+                    //this.router.redirect('/');
+                }
+                else if (result.isDismissed) {
+                    shareScore(100);
+                    window.location.href = '/';
+                }
             });
-
     }
 
 }
