@@ -17,8 +17,9 @@ export class LoginController {
         const btnGuess = document.getElementById('btn-guess');
         btnGuess.addEventListener('click', event => {
             document.cookie = 'Authorization=guest';
-            const router = new Router();
-            router.redirect('/');
+            window.location.href = '/';
+            //const router = new Router();
+            //router.redirect('/');
         });
 
         const form = document.getElementById('login-form');
@@ -45,9 +46,10 @@ export class LoginController {
                         alert(JSON.stringify(res));
                     }
 
-                    const router = new Router();
-                    router.redirect('/');
-                    
+                    //const router = new Router();
+                    //router.redirect('/');
+                    window.location.href = '/';
+
                 });
 
         });
