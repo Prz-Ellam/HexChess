@@ -8,25 +8,25 @@ module.exports = {
         if (!req.body)  
             return res.status(400).json({ 
                 'status': false, 
-                'message': 'Favor de ingresar sus datos' 
+                'message': 'Favor de rellenar los campos' 
             });
         if (!req.body.username || !req.body.password)
             return res.status(400).json({ 
                 'status': false, 
-                'message': 'Favor de ingresar sus datos' 
+                'message': 'Favor de rellenar los campos' 
             });
     
         const user = await User.findOne({ username: req.body.username.toUpperCase() });
         if (!user)
             return res.status(401).json({ 
                 'status': false, 
-                'message': 'Sus credenciales no son válidas' 
+                'message': 'Las credenciales que ingresó no son válidas' 
             });
     
         if (!await compare(req.body.password, user.password))
             return res.status(401).json({ 
                 'status': false, 
-                'message': 'Sus credenciales no son válidas' 
+                'message': 'Las credenciales que ingresó no son válidas' 
             });
     
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET_KEY);

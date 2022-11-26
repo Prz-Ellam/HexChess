@@ -93,6 +93,9 @@ export class Application {
             const root = document.getElementById('root');
             root.innerHTML = '';
             root.innerHTML = pause;
+            root.innerHTML += `
+            <div class="text" style="position: absolute; left: 1em; top: 1em; color: #ff0000" id="turn">RED</div>
+            `;
             const btnResume = document.getElementById('btn-resume');
             btnResume.addEventListener('click', event => {
 

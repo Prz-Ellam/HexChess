@@ -78,6 +78,53 @@ export class GameManager {
 
             const position = codeToVector(object.cell);
             const moves = object.findMoves(this.scene, position, this.changeSide);
+
+            if (moves.length === 0) {
+                if (this.noMovements(Team.RED)) {
+                    console.log('Parece que no te puedes mover');
+                    if (this.currentTeam === this.team || this.configuration.players == Players.SINGLEPLAYER) {
+                        const variations = this.board.createSizeVariations(this.configuration.dificulty);
+            
+                        switch (this.configuration.players) {
+                            case Players.SINGLEPLAYER:
+                                this.board.setSizeVariations(variations);
+                                break;
+                            case Players.MULTIPLAYER:
+                                this.io.emit('setVariations', variations);
+                                break;
+                        }
+                    }
+
+                    if (this.configuration.dificulty === Dificulty.NORMAL) {
+                        if (this.currentTeam === this.team || this.configuration.players === Players.SINGLEPLAYER)
+                            this.spawnItem();
+
+                        // Cambio de turno
+                        if (!this.changeSide) {
+                            this.changeTurn();
+                            const turn = document.getElementById('turn');
+                            turn.innerText = this.currentTeam;
+                            turn.style.color = (this.currentTeam === 'RED') ? '#00FF00' : '#FF0000';
+                        }
+
+                        this.iaTurn();
+                    }
+                    else {
+                        setTimeout(() => {
+                            if (this.currentTeam === this.team || this.configuration.players === Players.SINGLEPLAYER)
+                            this.spawnItem();
+
+                            // Cambio de turno
+                            if (!this.changeSide)
+                                this.changeTurn();
+
+                            this.iaTurn();
+                        }, 1300);
+                    }
+                }
+                return;
+            }
+
             const data = {
                 cells: moves,
                 character: {
@@ -110,7 +157,16 @@ export class GameManager {
                     break;
             }
         }
+/*
+        if (this.selected.status &&
+            object.objectType === ObjectType.ITEM) {
 
+            console.log(object.cell);
+            const hexagon = this.scene.getObjectByProperty('cell', object.cell);
+            console.log(hexagon.selectable);
+
+        }
+*/
         // Hay turno actualmente y se selecciona un elemento valido
         if (this.selected.status &&
             object.objectType === ObjectType.CELL && object.selectable) {
@@ -131,6 +187,13 @@ export class GameManager {
                     break;
             }
         }
+    }
+
+    changeTurn() {
+        this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+        const turn = document.getElementById('turn');
+        turn.innerText = this.currentTeam;
+        turn.style.color = (this.currentTeam === 'RED') ? '#FF0000' : '#00FF00';
     }
 
     /**
@@ -228,7 +291,9 @@ export class GameManager {
 
             const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
             if (remainingTeam === 0) {
-                this.gameOver();
+                const winner = (remainingTeam === 'RED') ? 'GREEN' : 'RED'; 
+                this.gameOver(winner);
+                return;
             }
 
             this.moveCharacter(
@@ -244,6 +309,7 @@ export class GameManager {
         this.audio.wololo.play();
 
         const team = recruiter.team;
+        const defeatedTeam = character.team;
         character.traverse(child => {
             if (child.isMesh) {
                 child.material = Character.maps[team][character.character].clone();
@@ -269,19 +335,14 @@ export class GameManager {
         character.scale.set(.01, .01, .01);
         character.team = recruiter.team;
 
-        this.changeSide = true;
-        this.spawnItem();
-        if (recruiter.powerup) {
-            if (recruiter.powerup === 'Book') {
-                this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
-            }
-
-            recruiter.powerupTurns--;
-
-            if (recruiter.powerupTurns < 0)
-                recruiter.removePowerup();
+        const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
+        if (remainingTeam === 0) {
+            const winner = (remainingTeam === 'RED') ? 'GREEN' : 'RED';
+            this.gameOver();
+            return;
         }
-        this.iaTurn();
+
+        this.finishTurn(recruiter, true);
     }
 
     moveCharacter(startPosition, startCell, targetPosition, targetCell) {
@@ -327,17 +388,18 @@ export class GameManager {
 
             selectedObject.position.set(coords.x, coords.y + height, coords.z);
         }).onComplete(() => {
-            this.finishTurn(selectedObject);
+            this.finishTurn(selectedObject, false);
         });
 
         tween.start();
     }
 
-    finishTurn(character) {
-        fadeToAction(character.actions['walking'], character.actions['idle'], 0.2);
-        this.deselect();
-        this.changeSide = false;
+    finishTurn(character, changeSide) {
+        this.changeSide = changeSide;
 
+        if (!changeSide)
+            fadeToAction(character.actions['walking'], character.actions['idle'], 0.2);
+        
         // Si es de tu equipo o es singleplayer
         if (this.currentTeam === this.team || this.configuration.players == Players.SINGLEPLAYER) {
             const variations = this.board.createSizeVariations(this.configuration.dificulty);
@@ -358,7 +420,7 @@ export class GameManager {
         else {
             setTimeout(() => {
                 this.finishTurnActions(character);
-            }, 1000);
+            }, 1300);
         }
     }
 
@@ -368,12 +430,13 @@ export class GameManager {
             this.spawnItem();
 
         // Cambio de turno
-        this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+        if (!this.changeSide)
+            this.changeTurn();
 
         // El personaje tiene un powerup
         if (character.powerup) {
             if (character.powerup === 'Book') {
-                this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                this.changeTurn();
             }
 
             character.powerupTurns--;
@@ -386,7 +449,7 @@ export class GameManager {
 
     iaTurn() {
         // Si es contra IA
-        if (this.currentTeam === 'GREEN' &&
+        if (this.currentTeam === Team.GREEN &&
             this.configuration.players === Players.SINGLEPLAYER) {
 
             const team = getObjectsByProperty(this.scene, 'team', Team.GREEN);
@@ -457,6 +520,47 @@ export class GameManager {
                 }
             }
 
+            if (movableCharacters.length === 0) {
+                if (this.noMovements(Team.GREEN)) {
+                    if (this.currentTeam === this.team || this.configuration.players == Players.SINGLEPLAYER) {
+                        const variations = this.board.createSizeVariations(this.configuration.dificulty);
+            
+                        switch (this.configuration.players) {
+                            case Players.SINGLEPLAYER:
+                                this.board.setSizeVariations(variations);
+                                break;
+                            case Players.MULTIPLAYER:
+                                this.io.emit('setVariations', variations);
+                                break;
+                        }
+                    }
+
+                    if (this.configuration.dificulty === Dificulty.NORMAL) {
+                        if (this.currentTeam === this.team || this.configuration.players === Players.SINGLEPLAYER)
+                            this.spawnItem();
+
+                        // Cambio de turno
+                        if (!this.changeSide)
+                            this.changeTurn();
+
+                        this.iaTurn();
+                    }
+                    else {
+                        setTimeout(() => {
+                            if (this.currentTeam === this.team || this.configuration.players === Players.SINGLEPLAYER)
+                            this.spawnItem();
+
+                            // Cambio de turno
+                            if (!this.changeSide)
+                                this.changeTurn();
+
+                            this.iaTurn();
+                        }, 1300);
+                    }
+                }
+                return;
+            }
+
             const random = Math.round(Math.random() * (movableCharacters.length - 1));
             const newCharacter = movableCharacters[random];
             const position = codeToVector(newCharacter.cell);
@@ -503,6 +607,18 @@ export class GameManager {
             }, 1000);
 
         }
+    }
+
+    noMovements(team) {
+        const characters = getObjectsByProperty(this.scene, 'team', team);
+        let possibleMoves = 0;
+        characters.forEach(character => {
+            const position = codeToVector(character.cell);
+            let moves = character.findMoves(this.scene, position, this.changeSide)?.length;
+            possibleMoves += moves;
+        });
+
+        return (possibleMoves === 0) ? true : false;
     }
 
     spawnItem() {
@@ -565,22 +681,22 @@ export class GameManager {
         this.items--;
     }
 
-    gameOver() {
-        if (this.configuration.players === Players.MULTIPLAYER) {
+    gameOver(winner) {
+        if (this.configuration.players === Players.MULTIPLAYER && winner === this.team) {
             fetch('/api/v1/games', {
                 method: 'POST'
             })
                 .then(res => res.json())
                 .then(res => {
-                    this.gameOverScreen();
-                });
+                    this.gameOverScreen(winner);
+                });            
         }
         else {
-            this.gameOverScreen();
+            this.gameOverScreen(winner);
         }
     }
 
-    gameOverScreen() {
+    gameOverScreen(winner) {
         window.fbAsyncInit = function () {
             FB.init({
                 appId: '447339420703828',
@@ -598,22 +714,37 @@ export class GameManager {
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
+        let cover;
+        switch (this.configuration.scenario) {
+            case 'FOREST':
+                cover = (winner === Team.RED) ? redForestVictory : greenForestVictory;
+                break;
+            case 'SNOW':
+                cover = (winner === Team.RED) ? redSnowVictory : greenSnowVictory;
+                break;
+            case 'DESERT':
+                cover = (winner === Team.RED) ? redDesertVictory : greenDesertVictory;
+                break;
+            default:
+                cover = (winner === Team.RED) ? redForestVictory : greenForestVictory;
+                break;
+        }
+
         Swal.fire({
-            title: '¡GANASTE!',
+            title: (winner === this.team) ? '¡GANASTE!' : 'PERDISTE...',
             background: '#1B1B36',
-            imageUrl: redForestVictory,
+            imageUrl: cover,
             imageAlt: 'Game over',
             width: '800px',
             buttonsStyling: false,
             showConfirmButton: true,
-            confirmButtonText: 'Continuar',
+            confirmButtonText: '',
             showCancelButton: true,
-            cancelButtonText: '',
-            reverseButtons: true,
+            cancelButtonText: 'Continuar',
             customClass: {
                 title: 'title-style',
-                confirmButton: 'btn button button-anim btn-next',
-                cancelButton: 'fb-share-button bg-blue mx-5'
+                cancelButton: 'btn button button-anim btn-next',
+                confirmButton: 'fb-share-button border-0 mx-5 bg-purple'
             },
             backdrop: `rgba(0, 0, 123, 0.4)`
         })
@@ -621,7 +752,7 @@ export class GameManager {
                 if (result.isConfirmed) {
 
                 }
-                else if (result.isDismissed) {
+                else if (result.isConfirmed) {
                     FB.ui({
                         method: 'share',
                         href: 'https://hex-chess.azurewebsites.net/',

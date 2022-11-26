@@ -1,5 +1,6 @@
 import view from '@views/login.html';
 import { Router } from '@routes/router';
+import Swal from 'sweetalert2';
 
 export class LoginController {
 
@@ -43,13 +44,25 @@ export class LoginController {
                 .then(res => res.json())
                 .then(res => {
                     if (!res.status) {
-                        alert(JSON.stringify(res));
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            background: '#1B1B36',
+                            buttonsStyling: false,
+                            text: res.message,
+                            customClass: {
+                                title: 'title-style',
+                                confirmButton: 'btn button button-anim btn-next',
+                            },
+                        });
+
                     }
+                    else {
 
                     //const router = new Router();
                     //router.redirect('/');
                     window.location.href = '/';
-
+                    }
                 });
 
         });
