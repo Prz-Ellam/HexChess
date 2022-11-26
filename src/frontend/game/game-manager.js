@@ -514,7 +514,7 @@ export class GameManager {
         const percentage = -Math.log(charactersCount) * 3 + 30;
         const random = Math.round(Math.random() * 100); // Random between 0 - 100
 
-        if (true) {
+        if (random < percentage) {
 
             // Get objects has property
             const ocupiedCells = [];
