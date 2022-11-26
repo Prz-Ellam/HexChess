@@ -8,18 +8,20 @@
                 <input type="text" name="username" id="username" class="form-control">
             </div>
 
-            <div>
+            <div class="mb-4">
                 <label id="signup" for="password" class="form-label" role="button">Contraseña:</label>
                 <input type="password" name="password" id="password" class="form-control">
-            </div><br><br>
+            </div>
 
-            <a href="/login">Login</a> <br><br>
-
-            <div>
-                <button type="submit" class="btn button button-anim" id="btn-register" href="/mode" value="register">
+            <div class="d-sm-flex justify-content-center">
+                <button type="submit" class="btn button button-anim" id="btn-register" value="register">
                     <span>Registrarse</span>
                     <i class="widget"></i>
                 </button>
+                <a type="button" class="btn button button-anim" id="btn-login" value="login" href="/login">
+                    <span>Inicia sesión</span>
+                    <i class="widget"></i>
+                </a>
             </div>
         </form>
     </div>

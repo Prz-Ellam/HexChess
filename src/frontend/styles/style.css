@@ -123,8 +123,8 @@ body {
 
 #btn-item{
     position: absolute;
-    right: 2em;
-    top: 7em;
+    right: 8em;
+    top: 2em;
     font-size: 1.2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
@@ -233,14 +233,14 @@ p{
 }
 
 [type="text"], [type="password"] {
-    font-size: 2em;
+    font-size: 1.6em;
     font-family: 'Silkscreen', cursive;
     border: none;
     text-transform: uppercase;
     border-radius: 0;
 }
 
-#btn-login, #btn-register{
+#btn-login, #btn-register {
     position: relative;
     font-size: 1.3em;
     letter-spacing: 0.1em;
@@ -453,7 +453,7 @@ input[type="checkbox"]:checked{
     position: relative;
     font-size: 2.5em;
     letter-spacing: 0.1em;
-    padding: 10px 20px;
+    padding: 10px 57px;
     margin-bottom: 1em;
 }
 
@@ -496,7 +496,7 @@ input[type="checkbox"]:checked{
 /*--------------------------------------------------------------------------------------*/
 /*Btn config, Btn Score, Btn user*/
 
-#btn-config,#btn-score,#btn-user {
+#btn-config,#btn-score,#btn-user,#btn-exit, #btn-book {
     position: relative;
 
     padding: 10px 20px;
@@ -506,12 +506,12 @@ input[type="checkbox"]:checked{
     transition: 0.5s;
 }
 
-#btn-config #mov, #btn-score #mov, #btn-usuario #movu {
+#btn-config #mov, #btn-score #mov, #btn-usuario #movu, #btn-book #movu {
     inset: 0;
     display: block;
 }
 
-#btn-config #mov::before, #btn-score #mov::before, #btn-usuario #movu::before {
+#btn-config #mov::before, #btn-score #mov::before, #btn-usuario #movu::before, #btn-book #movu::before {
     content: '';
     position: absolute;
     top: -3%;
@@ -523,7 +523,7 @@ input[type="checkbox"]:checked{
     transition: 0.5s;
 }
 
-#btn-config:hover #mov::before, #btn-score:hover #mov::before,#btn-usuario:hover #movu::before {
+#btn-config:hover #mov::before, #btn-score:hover #mov::before,#btn-usuario:hover #movu::before, #btn-book:hover #movu::before {
     width: 20px;
     left: 20%;
 }
@@ -625,17 +625,17 @@ input[type="checkbox"]:checked{
   
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #1C162E; 
   }
    
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #444444; 
+    background: #f1f1f1;; 
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #444444; 
+    background: #f1f1f1; 
   }
 
 
@@ -800,11 +800,11 @@ tbody tr:hover {
 }
 
 @media (max-width: 1000px) {
-
+/*
     body {
         overflow: scroll
     }
-
+*/
     .flex-container {
         flex-direction: column;
         height: 2000px;

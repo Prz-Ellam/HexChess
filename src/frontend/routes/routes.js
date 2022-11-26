@@ -24,7 +24,7 @@ const routes = {
     '/game': GameController,
     '/signup': SignupController,
     '/login': LoginController,
-    '/manualpersonaje': ManualPersonajeController,
+    '/instructions': ManualPersonajeController,
     '/manualitems': ManualItemsController
 }
 

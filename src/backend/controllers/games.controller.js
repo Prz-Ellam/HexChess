@@ -6,6 +6,9 @@ module.exports = {
     save: async (req, res) => {
 
         const token = req.cookies.Authorization;
+        if (token === 'guest') {
+            return res.json({ status: 'Guest' });
+        }
         try {
             const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
     

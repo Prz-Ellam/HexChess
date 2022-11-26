@@ -27,6 +27,12 @@ export class Router {
 
         const path = window.location.pathname;
 
+        const auth = document.cookie.split(';').find(row => row.startsWith('Authorization'))?.split('=')[1];
+        if (!auth && (path !== '/login' && path !== '/signup')) {
+            this.redirect('/login');
+            return;
+        }
+
         const route = routes[path];
         new route(this.application);
 
@@ -37,11 +43,11 @@ export class Router {
 
     }
 
-    close(e) {
-        e = e || window.event;
+    close(event) {
+        event = event || window.event;
 
-        if (e) {
-            e.returnValue = '';
+        if (event) {
+            event.returnValue = '';
         }
 
         return '';

@@ -1,15 +1,16 @@
 User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const Ajv = require('ajv');
+const jwt = require('jsonwebtoken');
 
 UserController = {
 
     create: async function(req, res) {
 
         if (!req.body)
-            return res.status(400).json({ 'status': false, 'message': 'Missing parameters' });
+            return res.status(400).json({ 'status': false, 'message': 'Favor de ingresar sus datos' });
         if (!req.body.username || !req.body.password)
-            return res.status(400).json({ 'status': false, 'message': 'Missing parameters' });
+            return res.status(400).json({ 'status': false, 'message': 'Favor de ingresar sus datos' });
 
         const schema = {
             type: 'object',
@@ -20,10 +21,11 @@ UserController = {
                     maxLength: 20
                 },
                 password: {
-                    type: 'string'
+                    type: 'string',
+                    minLength: 6
                 }
             },
-            required: ['username', 'password']
+            required: [ 'username', 'password' ]
         }
 
         const ajv = new Ajv({ allErrors: true });
@@ -33,6 +35,13 @@ UserController = {
             return res.status(400).json({
                 'status': valid, message: ajv.errorsText(ajv.errors,
                     { separator: '\n' })
+            });
+
+        const searchUser = await User.findOne({ username: req.body.username });
+        if (searchUser)
+            return res.status(401).json({ 
+                'status': false, 
+                'message': 'Alguien ya posee este nombre de usuario' 
             });
 
         const hashedPwd = await bcrypt.hash(req.body.password, 10);
@@ -45,7 +54,10 @@ UserController = {
 
         user.save();
 
-        res.json({ 'status': true, 'message': 'The user was created successfully' });
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET_KEY);
+        res
+            .cookie('Authorization', token)
+            .json({ 'status': true, 'message': 'El usuario fue creado satisfactoriamente' });
 
     }
 

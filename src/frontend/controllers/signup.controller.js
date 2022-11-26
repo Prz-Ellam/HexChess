@@ -1,4 +1,5 @@
 import view from '@views/signup.html';
+import { Router } from '../routes/router';
 
 export class SignupController {
 
@@ -28,7 +29,10 @@ export class SignupController {
             })
             .then(res => res.json())
             .then(res => {
-                alert(JSON.stringify(res));
+                if (res.status) {
+                    const router = new Router();
+                    router.redirect('/');
+                }
             });
 
         });

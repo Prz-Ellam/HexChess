@@ -128,7 +128,7 @@ export class Board {
     }
 
     createSizeVariations(dificulty) {
-        const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
+        const cells = getObjectsByProperty(this.scene, 'objectType', ObjectType.CELL);
         const cellsVariations = [];
         cells.forEach(cell => {
             let change = Math.random() * (2 - 1) + 1;
@@ -140,7 +140,7 @@ export class Board {
     }
 
     setSizeVariations(cellsVariations) {
-        const cells = getObjectsByProperty(this.scene, 'typeGame', 'Cell');
+        const cells = getObjectsByProperty(this.scene, 'objectType', ObjectType.CELL);
 
         cells.forEach((cell, i) => {
             const element = this.scene.getObjectByProperty('cell', cell.name);
@@ -153,7 +153,7 @@ export class Board {
                 cell.scale.y = status.scale;
                 cell.position.y = status.position;
                 if (element !== undefined) {
-                    if (element.typeGame === 'Item') {
+                    if (element.objectType === ObjectType.ITEM) {
                         element.staticPosition = status.position + (status.scale / 2.0);
                     }
                     else {

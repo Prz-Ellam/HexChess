@@ -1,30 +1,32 @@
 <section class="container">
     <div class="d-flex align-items-center justify-content-center vh-100">
         <form class="text-center" id="login-form">
-            <h2 id="">Iniciar sesión</h2>
+            <h2 id="" class="mb-5 mt-3">Inicia sesión</h2>
 
             <div class="mb-5">
                 <label id="signin1" for="username" class="form-label" role="button">Nombre de usuario:</label>
                 <input type="text" name="username" id="username" class="form-control">
             </div>
 
-            <div>
+            <div class="mb-5">
                 <label id="signin" for="password" class="form-label" role="button">Contraseña:</label>
                 <input type="password" name="password" id="password" class="form-control">
             </div>
-           <br><br>
-            <div>
-                <button type="submit" class="btn button button-anim" id="btn-login" value="login">
-                    <span>Iniciar sesión</span>
+            
+            <div class="d-sm-flex justify-content-center">
+                <button type="submit" class="btn button button-anim mb-2 me-2" id="btn-login" value="login">
+                    <span>Entrar</span>
                     <i class="widget"></i>
                 </button>
-                &nbsp;&nbsp;
-
-                <button type="submit" class="btn button button-anim" id="btn-guess" value="guess">
+                <button type="button" class="btn button button-anim mb-2" id="btn-guess" value="guess">
                     <span>Invitado</span>
                     <i class="widget"></i>
                 </button>
             </div>
+            <a type="button" class="btn button button-anim mb-2 text-center" id="btn-guess" value="signup" href="/signup">
+                <span>Registrarse</span>
+                <i class="widget"></i>
+            </a>
         </form>
     </div>
     <div>

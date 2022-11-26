@@ -95,7 +95,7 @@ export class GameManager {
         }
 
         // Hay turno actualmente y se selecciona un objeto no valido
-        if (this.selected.status &&
+        if (this.selected.status && this.currentTeam === this.team &&
             (object.objectType !== ObjectType.CELL || !object.selectable) && // Una celda no seleccionable
             (object.objectType !== ObjectType.CHARACTER || object.team !== this.team)) { // Uno que no sea character
 
@@ -340,6 +340,7 @@ export class GameManager {
                     this.spawnItem();
 
                 this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                this.iaTurn();
             }
             else {
                 setTimeout(() => {
@@ -347,6 +348,7 @@ export class GameManager {
                         this.spawnItem();
                     }
                     this.currentTeam = (this.currentTeam === 'RED') ? 'GREEN' : 'RED';
+                    this.iaTurn();
                 }, 1000);
             }
 
@@ -364,68 +366,142 @@ export class GameManager {
 
             }
 
-            // Si es contra IA
-            if (this.currentTeam === 'GREEN' &&
-                this.configuration.players === 'SINGLEPLAYER') {
+        });
 
-                const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
-                let booleano = false;
+        tween.start();
+    }
 
-                loop1:
-                for (const character of team) {
-                    const position = codeToVector(character.cell);
-                    const moves = character.findMoves(this.scene, position, this.changeSide);
-                    loop2:
-                    for (const move of moves) {
-                        const element = this.scene.getObjectByProperty('cell', move);
-                        if (element) {
-                            const hexagon = this.scene.getObjectByName(move);
-                            if (!hexagon) continue;
+    iaTurn() {
+        // Si es contra IA
+        if (this.currentTeam === 'GREEN' &&
+            this.configuration.players === 'SINGLEPLAYER') {
+
+            const team = getObjectsByProperty(this.scene, 'team', 'GREEN');
+            let booleano = false;
+
+            loop1:
+            for (const character of team) {
+                const position = codeToVector(character.cell);
+                const moves = character.findMoves(this.scene, position, this.changeSide);
+                loop2:
+                for (const move of moves) {
+                    const element = this.scene.getObjectByProperty('cell', move);
+                    if (element) {
+                        const hexagon = this.scene.getObjectByName(move);
+                        if (!hexagon) continue;
+
+
+                        switch (this.configuration.players) {
+                            case Players.SINGLEPLAYER:
+                                this.deselect();
+                                break;
+                            case Players.MULTIPLAYER:
+                                this.io.emit('deselect');
+                                break;
+                        }
+
+                        const data = {
+                            cells: moves,
+                            character: {
+                                position: character.position,
+                                cell: character.cell
+                            }
+                        }
+
+                        switch (this.configuration.players) {
+                            case Players.SINGLEPLAYER:
+                                this.select(data);
+                                break;
+                            case Players.MULTIPLAYER:
+                                this.io.emit('select', data);
+                                break;
+                        }
+
+                        setTimeout(() => {
                             const data = {
                                 startPosition: character.position,
                                 targetPosition: hexagon.position,
                                 startCell: character.cell,
                                 targetCell: hexagon.name
                             }
+
                             this.move(data);
-                            booleano = true;
-                            break loop1;
-                        }
+                        }, 1000);
+
+
+
+                        booleano = true;
+                        break loop1;
                     }
                 }
+            }
 
-                if (booleano) return;
+            if (booleano) return;
 
-                const movableCharacters = [];
-                for (const character of team) {
-                    const position = codeToVector(character.cell);
-                    const moves = character.findMoves(this.scene, position, this.changeSide);
-                    if (moves !== undefined && moves.length > 0) {
-                        movableCharacters.push(character);
-                    }
+            const movableCharacters = [];
+            for (const character of team) {
+                const position = codeToVector(character.cell);
+                const moves = character.findMoves(this.scene, position, this.changeSide);
+                if (moves !== undefined && moves.length > 0) {
+                    movableCharacters.push(character);
                 }
+            }
 
-                const random = Math.round(Math.random() * (movableCharacters.length - 1));
-                const newCharacter = movableCharacters[random];
-                const position = codeToVector(newCharacter.cell);
-                const moves = newCharacter.findMoves(this.scene, position, this.changeSide);
-                const moveRandom = Math.round(Math.random() * (moves.length - 1));
-                const move = moves[moveRandom];
-                const newHexagon = this.scene.getObjectByName(move);
+            const random = Math.round(Math.random() * (movableCharacters.length - 1));
+            const newCharacter = movableCharacters[random];
+            const position = codeToVector(newCharacter.cell);
+            const moves = newCharacter.findMoves(this.scene, position, this.changeSide);
+            const moveRandom = Math.round(Math.random() * (moves.length - 1));
+            const move = moves[moveRandom];
+            const newHexagon = this.scene.getObjectByName(move);
 
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.deselect();
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('deselect');
+                    break;
+            }
+
+            const data = {
+                cells: moves,
+                character: {
+                    position: newCharacter.position,
+                    cell: newCharacter.cell
+                }
+            }
+
+            switch (this.configuration.players) {
+                case Players.SINGLEPLAYER:
+                    this.select(data);
+                    break;
+                case Players.MULTIPLAYER:
+                    this.io.emit('select', data);
+                    break;
+            }
+
+            setTimeout(() => {
                 const data = {
                     startPosition: newCharacter.position,
                     targetPosition: newHexagon.position,
                     startCell: newCharacter.cell,
                     targetCell: newHexagon.name
                 }
+
                 this.move(data);
-
+            }, 1000);
+            /*
+            const data = {
+                startPosition: newCharacter.position,
+                targetPosition: newHexagon.position,
+                startCell: newCharacter.cell,
+                targetCell: newHexagon.name
             }
+            */
+            //this.move(data);
 
-        });
-
-        tween.start();
+        }
     }
 
     spawnItem() {
@@ -552,7 +628,7 @@ export class GameManager {
                         method: 'share',
                         href: 'https://hex-chess.azurewebsites.net/',
                         quote: '¡MAMAAAAA! Gane una partida de HexChess'
-                    }, function (response) {});
+                    }, function (response) { });
                 }
                 //this.audio.sound.stop();
 

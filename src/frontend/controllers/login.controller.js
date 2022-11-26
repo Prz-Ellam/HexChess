@@ -1,4 +1,5 @@
 import view from '@views/login.html';
+import { Router } from '@routes/router';
 
 export class LoginController {
 
@@ -12,6 +13,13 @@ export class LoginController {
     }
 
     bindEvents() {
+
+        const btnGuess = document.getElementById('btn-guess');
+        btnGuess.addEventListener('click', event => {
+            document.cookie = 'Authorization=guest';
+            const router = new Router();
+            router.redirect('/');
+        });
 
         const form = document.getElementById('login-form');
         form.addEventListener('submit', event => {
@@ -33,11 +41,16 @@ export class LoginController {
             })
                 .then(res => res.json())
                 .then(res => {
-                    alert(JSON.stringify(res));
+                    if (!res.status) {
+                        alert(JSON.stringify(res));
+                    }
+
+                    const router = new Router();
+                    router.redirect('/');
+                    
                 });
 
         });
     }
-
 
 }
