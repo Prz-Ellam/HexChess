@@ -16,7 +16,7 @@ module.exports = {
                 'message': 'Favor de ingresar sus datos' 
             });
     
-        const user = await User.findOne({ username: req.body.username });
+        const user = await User.findOne({ username: req.body.username.toUpperCase() });
         if (!user)
             return res.status(401).json({ 
                 'status': false, 

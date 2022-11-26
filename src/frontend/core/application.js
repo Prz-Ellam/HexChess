@@ -73,15 +73,15 @@ export class Application {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(potion, object => {
             Resources.items['Potion'] = object;
-            const dummyPotion = new Potion(this.scene, '(5, 6)');
+            //const dummyPotion = new Potion(this.scene, '(5, 6)');
         });
         fbxLoader.load(ghost, object => {
             Resources.items['Ghost'] = object;
-            const dummyGhost = new Ghost(this.scene, '(5, 5)');
+            //const dummyGhost = new Ghost(this.scene, '(5, 5)');
         });
         fbxLoader.load(book, object => {
             Resources.items['Book'] = object;
-            const dummyBook = new Book(this.scene, '(6, 5)');
+            //const dummyBook = new Book(this.scene, '(6, 5)');
         });
 
         THREE.DefaultLoadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
@@ -185,6 +185,7 @@ export class Application {
         controls.minDistance = 10.0;
         controls.maxDistance = 25.0;
         controls.maxPolarAngle = THREE.MathUtils.degToRad(80.0);
+        controls.enablePan = false;
         controls.update();
 
         if (this.configuration.scenario === 'SNOW') {

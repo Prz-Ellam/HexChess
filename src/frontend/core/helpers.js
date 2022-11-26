@@ -32,3 +32,17 @@ export function codeToVector(code) {
     const z = Number(values[2]);
     return new THREE.Vector2(x, z);
 }
+
+// Transición entre animaciones fluida
+export function fadeToAction(previousAction, activeAction, duration) {
+    if (previousAction !== activeAction) {
+        previousAction.fadeOut(duration);
+    }
+
+    activeAction
+        .reset()
+        .setEffectiveTimeScale(1)
+        .setEffectiveWeight(1)
+        .fadeIn(duration)
+        .play();
+}

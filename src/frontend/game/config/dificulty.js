@@ -1,6 +1,6 @@
 const Dificulty = {
-    NORMAL: 'Normal',
-    HARD: 'Hard'
+    NORMAL: 'NORMAL',
+    HARD: 'HARD'
 }
 
 export default Dificulty;

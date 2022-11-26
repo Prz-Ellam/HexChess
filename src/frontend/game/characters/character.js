@@ -148,10 +148,11 @@ export class Character {
             case 'Potion': {
                 this.traverse(child => {
                     if (child.isMesh) {
-                        //child.material = recruiterMap.clone();
                         child.material.emissive = new THREE.Color(0x964B00);
+                        child.material.opacity = 1.0;
                     }
                 });
+                this.scale.set(.01, .01, .01);
                 this.powerup = item;
                 this.powerupTurns = 3;
                 break;
@@ -159,24 +160,22 @@ export class Character {
             case 'Ghost': {
                 this.traverse(child => {
                     if (child.isMesh) {
-                        const oldMat = child.material;
-                        
+                        child.material.emissive = new THREE.Color(0x000000);
                         child.material.opacity = 0.2;
-/*
-                        const newMaterial = new THREE.MeshPhysicalMaterial({
-                            map: oldMat.map,
-                            transparent: true,
-                            opacity: 0.2
-                        });
-*/
-                        //child.material = newMaterial;
                     }
                 });
+                this.scale.set(.01, .01, .01);
                 this.powerup = item;
                 this.powerupTurns = 3;
                 break;
             }
             case 'Book': {
+                this.traverse(child => {
+                    if (child.isMesh) {
+                        child.material.emissive = new THREE.Color(0x000000);
+                        child.material.opacity = 1.0;
+                    }
+                });
                 this.scale.set(.012, .012, .012);
                 this.powerup = item;
                 this.powerupTurns = 1;
