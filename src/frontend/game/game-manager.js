@@ -338,7 +338,7 @@ export class GameManager {
         const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
         if (remainingTeam === 0) {
             const winner = (remainingTeam === 'RED') ? 'GREEN' : 'RED';
-            this.gameOver();
+            this.gameOver(winner);
             return;
         }
 
@@ -435,7 +435,7 @@ export class GameManager {
 
         // El personaje tiene un powerup
         if (character.powerup) {
-            if (character.powerup === 'Book') {
+            if (character.powerup === 'Book' && character.powerupTurns === 0) {
                 this.changeTurn();
             }
 

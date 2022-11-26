@@ -24,11 +24,62 @@
     </div>
 </div>
 
-<h2 class="config-title">AJUSTES</h2>
-  <!--Particulas-->
-  <div class="bubbles-circle"></div>
+<h2 class="config-title mb-4 mt-4">AJUSTES</h2>
+<!--Particulas-->
+<div class="bubbles-circle"></div>
 
-<div class="content">
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <form action="" id="graphics-form" class="p-5 box col-7">
+            <div class="text-center">
+                <label for="fov-id" class="form-label">FOV</label>
+                <input type="range" class="form-range" id="fov-id" name="fov-name" min="0" max="100"><br><br>
+            </div>
+
+            <div class="text-center form-check form-switch">
+                <label class="form-check-label" for="sombras-id">SOMBRAS</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="sombras-id" name="sombras-name">
+
+            </div>
+
+            <label class="form-label">OUTPUT ENCODING</label>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="srgb-id" name="srgb-name">
+                <label class="form-check-label" for="srgb-id">SRGBENCODING</label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="dllas-id" name="dllas-name">
+                <label class="form-check-label" for="dllas-id">NA DLLAS</label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="none-id" name="none-name">
+                <label class="form-check-label" for="none-id">NINGUNA</label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="linear-id" name="linear-name">
+                <label class="form-check-label" for="linear-id">LINEAR ENCODING</label>
+            </div>
+            
+            <div class="text-center form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="antialias-id" name="antialias-name">
+                <label class="form-check-label" for="antialias-id">ANTIALIAS</label>
+            </div>
+
+            <button type="submit" class="button button-anim" id="aceptar-graficos" value="aceptar"
+                style="--clr:#8A7DFD">
+                <span>ACEPTAR</span>
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<!--
+<div class="container box">
     <div class="menus">
         <nav>
             <button class="button button-anim" style="--clr:#8A7DFD" id="btn-graficos">
@@ -110,8 +161,9 @@
             <img src="../assets/images/control.png" alt="" class="img-fluid" id="img-control">
         </div>
     </div>
- <!--Btn Return-->
- <div>
+-->
+<!--Btn Return-->
+<div>
     <a class="button" href="/" id="btn-return" style="--clr:#8A7DFD">
         <span></span>
         <i id="regreso"></i>
