@@ -6,6 +6,7 @@ module.exports = {
 
         try {
             //const scores = await User.find({}, { username: 1, victories: 1 }).sort({ 'victories': -1 });
+            const scores = await User.find({});
             //console.log(scores);
             res.json({status: true});
         }
