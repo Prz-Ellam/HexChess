@@ -121,8 +121,8 @@ export class GameManager {
                             this.iaTurn();
                         }, 1300);
                     }
+                    return;
                 }
-                return;
             }
 
             const data = {
