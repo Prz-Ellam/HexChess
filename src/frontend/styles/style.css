@@ -284,6 +284,7 @@ label {
     font-family: 'Silkscreen', cursive;
     color: #fff;
     text-shadow: 0 0 20px #A29CD7;
+    margin-bottom: 0 !important;
 }
 
 input[type="range"] {
@@ -298,6 +299,7 @@ input::-webkit-slider-thumb {
 
 input[type="checkbox"], input[type="radio"] {
     border: none;
+    vertical-align: middle;
 }
 
 input[type="checkbox"]:checked, input[type="radio"]:checked {
