@@ -14,6 +14,18 @@ export class HomeController {
 
     bindEvents() {
 
+        if (localStorage.getItem('settings') === null) {
+            const settings = {
+                fov: 60,
+                shadows: true,
+                antialias: true,
+                encoding: 'srgb'
+            }
+            localStorage.setItem('settings', JSON.stringify(settings));
+        }
+
+
+
         document.getElementsByClassName('loader-wrapper')[0].style.display = 'none';
         document.getElementsByClassName('home-content')[0].style.display = 'block';
         

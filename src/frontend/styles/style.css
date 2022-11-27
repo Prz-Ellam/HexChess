@@ -13,7 +13,7 @@ body::before {
     background: linear-gradient(45deg, #CC2F64, #8A2FCC);
     content: "";
     position: absolute;
-    width: 100%;
+    width: 100vw;
     min-width: 100vw;
     min-height: 100vh;
     top: 0;
@@ -43,7 +43,7 @@ h2 {
 }
 
 .button {
-    background: #444;
+    background: #444444;
     color: #FFFFFF;
     border-color: #FFFFFF;
     text-decoration: none;
@@ -415,8 +415,9 @@ input[type="checkbox"]:checked{
 #home-title::after {
     content: "HEXCHESS";
 }
-
+/*
 @media (max-width: 800px) {
+    
     h1 {
         font-size: 4rem !important;
     }
@@ -427,7 +428,7 @@ input[type="checkbox"]:checked{
         font-size: 2.5rem !important;
     }
 }
-
+*/
 @keyframes transition {
     0% {
         opacity: 0;
@@ -439,14 +440,12 @@ input[type="checkbox"]:checked{
 }
 
 .home-content {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-
     background-image: url('../assets/images/pantalla3.png');
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: bottom;
-
     animation: transition 2s linear;
 }
 
@@ -639,7 +638,7 @@ input[type="checkbox"]:checked{
   ::-webkit-scrollbar-thumb:hover {
     background: #f1f1f1; 
   }
-
+/*
 
 h1 {
     font-family: 'Silkscreen', cursive;
@@ -649,7 +648,7 @@ h1 {
     text-shadow: 0 0 20px #fff;
 }
 
-
+*/
 
 /*-----------------------------------------------------------------------------------*/
 /*tabla*/
@@ -686,7 +685,14 @@ tbody tr:hover {
     background: rgb(53, 42, 87);
 }
 
-/*pantalla player*/
+/* players.css */
+#players-title {
+    font-family: 'Silkscreen', cursive !important;
+    font-size: 42px;
+    color: #FFFFFF;
+    margin-bottom: 64px !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
+}
 
 #players-title::after {
     content: "SELECCIONA LOS JUGADORES";
@@ -697,7 +703,7 @@ tbody tr:hover {
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 100px;
+    margin-bottom: 64px !important;
     --clr: #8A7DFD;
 }
 
@@ -706,21 +712,18 @@ tbody tr:hover {
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 100px;
     --clr: #8A7DFD;
 }
 
-@media (max-width: 450px) {
-    #btn-singleplayer {
-        font-size: 1.2rem !important;
-    }
 
-    #btn-multiplayer {
-        font-size: 1.2rem !important;
-    }
+/*mode.css*/
+#mode-title {
+    font-family: 'Silkscreen', cursive !important;
+    font-size: 42px;
+    color: #FFFFFF;
+    margin-bottom: 64px !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
 }
-
-/*pantalla modo*/
 
 #mode-title::after {
     content: "SELECCIONA EL MODO DE JUEGO";
@@ -732,16 +735,98 @@ tbody tr:hover {
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 100px;
+    margin-bottom: 64px !important;
 }
+
 /*Btn-Jaque Mate*/
 #btn-coldwar {
     position: relative;
     font-size: 2em;
     letter-spacing: 0.1em;
     padding: 10px 30px;
-    margin-bottom: 100px;
 }
+
+
+/*dificulty.css*/
+#dificulty-title {
+    font-family: 'Silkscreen', cursive !important;
+    font-size: 42px;
+    color: #FFFFFF;
+    margin-bottom: 64px !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
+}
+
+#dificulty-title::after {
+    content: "DIFICULTAD";
+}
+
+/*Btn-facil*/
+#btn-easy {
+    position: relative;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    margin-bottom: 64px !important;
+}
+
+/*Btn-Dificil*/
+#btn-hard {
+    position: relative;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+}
+
+@media (max-width: 450px) {
+
+    #players-title, #mode-title, #dificulty-title {
+        font-size: 32px !important;
+    }
+
+    #btn-singleplayer, #btn-multiplayer, #btn-checkmate {
+        font-size: 1.2rem !important;
+    }
+
+    #btn-coldwar {
+        font-size: 1.2rem !important;
+    }
+
+    #btn-easy {
+        font-size: 1.2rem !important;
+    }
+
+    #btn-hard {
+        font-size: 1.2rem !important;
+    }
+}
+
+@media (max-height: 460px) {
+
+    #players-title, #mode-title, #dificulty-title {
+        margin-bottom: 32px !important;
+    }
+
+    #btn-singleplayer, #btn-checkmate, #btn-easy {
+        margin-bottom: 32px !important;
+    }
+
+}
+
+@media (max-height: 340px) {
+
+    #players-title, #mode-title, #dificulty-title {
+        margin-bottom: 16px !important;
+    }
+
+    #btn-singleplayer, #btn-checkmate, #btn-easy {
+        margin-bottom: 16px !important;
+    }
+
+}
+
+
+
+
 
 /*pantalla escenario*/
 
@@ -847,30 +932,6 @@ tbody tr:hover {
 .capa:hover {
     opacity: 0.5;
     visibility: visible;
-}
-
-/*pantalla dificultad*/
-
-#dificulty-title::after {
-    content: "DIFICULTAD";
-}
-
-/*Btn-facil*/
-#btn-easy {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-    margin-bottom: 100px;
-}
-
-/*Btn-Dificil*/
-#btn-hard {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-    margin-bottom: 100px;
 }
 
 /*stars*/

@@ -132,16 +132,38 @@ export class Application {
         this.socket.on('time', time => console.log(time));
         //this.socket.emit('ready');
 
+        if (localStorage.getItem('settings') === null) {
+            const settings = {
+                fov: 60,
+                shadows: true,
+                antialias: true,
+                encoding: 'srgb'
+            }
+            localStorage.setItem('settings', settings);
+        }
+        const settings = JSON.parse(localStorage.getItem('settings'));
+
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
-            antialias: true
+            antialias: settings.antialias
         });
-        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.enabled = settings.shadows;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setClearColor(new THREE.Color(1.0, 1.0, 1.0, 1.0));
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+
+        let encoding =  THREE.sRGBEncoding;
+        switch (settings.encoding) {
+            case 'srgb':
+                encoding = THREE.sRGBEncoding;
+                break;
+            case 'linear':
+                encoding = THREE.LinearEncoding;
+                break;
+        }
+
+        this.renderer.outputEncoding = encoding;
         //this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         //this.renderer.toneMappingExposure = 1.8;
 
@@ -149,7 +171,7 @@ export class Application {
         this.bindEvents();
 
         this.camera = new THREE.PerspectiveCamera(
-            60.0,
+            settings.fov,
             window.innerWidth / window.innerHeight,
             0.1,
             1000.0
