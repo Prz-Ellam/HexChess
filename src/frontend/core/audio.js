@@ -20,9 +20,11 @@ export class AudioManager {
 		audioLoader.load(psychoticFlea, buffer => {
 			sound.setBuffer(buffer);
 			sound.setLoop(true);
-			sound.setVolume(0.2);
+
+			const settings = JSON.parse(localStorage.getItem('settings'));
+			sound.setVolume(settings.volume);
 			// El audio todo el tiempo es muy molesto asi que lo comente, descomentar esto para escuchar
-			//sound.play();
+			sound.play();
 		});
 
 		this.sound = sound;

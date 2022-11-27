@@ -70,7 +70,7 @@ export class Application {
 
     createScene(team) {
 
-        clearInterval(window.bubbles);
+        //clearInterval(window.bubbles);
 
         const fbxLoader = new FBXLoader();
         fbxLoader.load(potion, object => {
@@ -139,7 +139,8 @@ export class Application {
                 fov: 60,
                 shadows: true,
                 antialias: true,
-                encoding: 'srgb'
+                encoding: 'srgb',
+                volume: 0.5
             }
             localStorage.setItem('settings', settings);
         }

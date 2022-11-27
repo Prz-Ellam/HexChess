@@ -38,105 +38,16 @@
             </div>
 
             <div class="d-flex justify-content-between text-center">
-                <label for="volume-id" class="form-label">VOLUMEN</label>
-                <input type="range" class="form-range" id="volume-id" name="volume_name" min="0" max="100"><br>
-                <p class="d-inline" id="fov-value"></p>
+                <label for="volume" class="form-label">VOLUMEN</label>
+                <input type="range" class="form-range" id="volume" name="volume" min="0" max="1" step="0.1">
+                <p class="d-inline"></p>
             </div>
-
-             
 
             <button type="submit" class="button button-anim" id="aceptar-graficos" value="aceptar"
                 style="--clr:#8A7DFD">
                 <span>ACEPTAR</span>
             </button>
 
-            
         </form>
     </div>
-</div>
-
-<!--
-<div class="container box">
-    <div class="menus">
-        <nav>
-            <button class="button button-anim" style="--clr:#8A7DFD" id="btn-graficos">
-                <span>GRÁFICOS</span>
-              
-            </button>
-        </nav>
-        <nav>
-            <button class="button button-anim" style="--clr:#8A7DFD" id="btn-audio">
-                <span>AUDIO</span>
-              
-            </button>
-        </nav>
-        <nav>
-            <button class="button button-anim" style="--clr:#8A7DFD" id="btn-controles">
-                <span>CONTROLES</span>
-              
-            </button>
-        </nav>
-    </div>
-    <div class="ajustes">
-        <div class="graficos" id="graficos-vista">
-            <form id="graphics-form">
-                <label for="fov-id" class="form-label">FOV</label>
-                <input type="range" class="form-range" id="fov-id" name="fov-name" min="0" max="100"><br><br>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="sombras-id" name="sombras-name">
-                    <label class="form-check-label" for="sombras-id">SOMBRAS</label>
-                  </div>
-                  <br>
-                  <label class="form-label">OUTPUT ENCODING</label>
-                  <br><br>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="srgb-id" name="srgb-name">
-                    <label class="form-check-label" for="srgb-id">SRGBENCODING</label>
-                  </div>
-                  <br>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="dllas-id" name="dllas-name">
-                    <label class="form-check-label" for="dllas-id">NA DLLAS</label>
-                  </div>
-                  <br>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="none-id" name="none-name">
-                    <label class="form-check-label" for="none-id">NINGUNA</label>
-                  </div>
-                  <br>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="linear-id" name="linear-name">
-                    <label class="form-check-label" for="linear-id">LINEAR ENCODING</label>
-                  </div>
-                  <br>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="antialias-id" name="antialias-name">
-                    <label class="form-check-label" for="antialias-id">ANTIALIAS</label>
-                  </div>
-                <button type="submit" class="button button-anim" id="aceptar-graficos" value="aceptar"
-                    style="--clr:#8A7DFD">
-                    <span>ACEPTAR</span>
-                </button>
-            </form>
-        </div>
-        <div class="audio" id="audio-vista" style="display:none">
-            <form id="form-audio">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="sonido-id" name="sonido-name">
-                    <label class="form-check-label" for="sonido-id">HABILITAR/DESHABILITAR</label>
-                  </div>
-                  <br><br>
-                <label for="volume-id" class="form-label">VOLUMEN</label>
-                <input type="range" class="form-range" id="volume-id" name="volume_name" min="0" max="100"><br>
-                <button type="submit" class="btn button button-anim" id="aceptar-audio" value="aceptar"
-                    style="--clr:#8A7DFD">
-                    <span>ACEPTAR</span>
-                </button>
-            </form>
-        </div>
-        <div class="controles" id="controles-vista" style="display:none;">
-            <img src="../assets/images/control.png" alt="" class="img-fluid" id="img-control">
-        </div>
-    </div>
--->
 </div>

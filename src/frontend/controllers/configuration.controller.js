@@ -3,7 +3,6 @@ import view from '@views/configuration.html';
 export class ConfigurationController {
 
     constructor() {
-
         const root = document.getElementById('root');
         root.innerHTML = view;
         this.initController();
@@ -33,14 +32,15 @@ export class ConfigurationController {
         });
 */
 
-
-
         const settings = JSON.parse(localStorage.getItem('settings'));
         const shadows = document.getElementById('shadows');
         shadows.checked = settings.shadows;
         
         const fov = document.getElementById('fov');
         fov.value = settings.fov;
+
+        const volume = document.getElementById('volume');
+        volume.value = settings.volume;
 
         const antialias = document.getElementById('antialias');
         antialias.checked = settings.antialias;
@@ -59,11 +59,9 @@ export class ConfigurationController {
             }
         }
 
-
         const elements = document.getElementById('graphics-form').elements;
-        //console.log(elements);
         const a = Array.from(elements).map(element => element.name);
-        console.log(a);
+
 
         const fovValue = document.getElementById('fov-value');
         fovValue.innerText = settings.fov;
@@ -87,13 +85,11 @@ export class ConfigurationController {
                 fov: obj.fov,
                 shadows: (obj.shadows !== undefined) ? true : false,
                 antialias: (obj.antialias !== undefined) ? true : false,
-                encoding: (obj.encoding !== undefined) ? obj.encoding : 'srgb'
+                encoding: (obj.encoding !== undefined) ? obj.encoding : 'srgb',
+                volume: obj.volume
             }
             localStorage.setItem('settings', JSON.stringify(settings));
-
-            const data = [...formData.entries()];
-            console.log(data);
-            
+            window.location.href = '/';
         });
 
     }

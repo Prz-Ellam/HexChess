@@ -1,10 +1,10 @@
 <section class="container">
     <div class="row d-flex align-items-center justify-content-center vh-100">
-        <form class="text-center" id="signup-form">
+        <form class="text-center col-lg-5 col-md-7" id="signup-form">
             <h1 class="title">REGISTRATE</h1>
 
             <div class="mb-5">
-                <label id="signup1"  for="username" class="form-label" role="button">Nombre de usuario:</label>
+                <label id="signup1" for="username" class="form-label" role="button">Nombre de usuario:</label>
                 <input type="text" name="username" id="username" class="form-control">
             </div>
 
@@ -13,16 +13,14 @@
                 <input type="password" name="password" id="password" class="form-control">
             </div>
 
-            <div class="d-sm-flex justify-content-center">
-                <button type="submit" class="btn button button-anim" id="btn-register" value="register">
-                    <span>Registrarse</span>
-                    <i class="widget"></i>
-                </button>
-                <a type="button" class="btn button button-anim" id="btn-login" value="login" href="/login">
-                    <span>Inicia sesión</span>
-                    <i class="widget"></i>
-                </a>
-            </div>
+            <button type="submit" class="btn button button-anim mb-4" id="btn-register" value="register">
+                <span>Registrarse</span>
+                <i class="widget"></i>
+            </button>
+            <a type="button" class="btn button button-anim" id="btn-login" value="login" href="/login">
+                <span>Inicia sesión</span>
+                <i class="widget"></i>
+            </a>
         </form>
     </div>
 </section>

@@ -1,8 +1,3 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
 body {
     background: #0c192c !important;
     overflow: hidden;
@@ -32,11 +27,15 @@ h2 {
 }
 
 .button {
+    position: relative;
     background: #444444;
     color: #FFFFFF;
     border-color: #FFFFFF;
+    padding: 10px 30px;
     text-decoration: none;
     text-transform: uppercase;
+    font-size: 2em;
+    letter-spacing: 0.1em;
     font-family: 'Silkscreen', cursive;
     transition: 0.5s;
     border-radius: 8px;
@@ -93,9 +92,6 @@ h2 {
 
 .btn-next {
     font-size: 1.2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-    --clr: #8A7DFD;
     outline: none;
 }
 
@@ -104,8 +100,6 @@ h2 {
     right: 2em;
     top: 2em;
     font-size: 1.2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
 }
 
 /*pantalla manuales*/
@@ -114,13 +108,6 @@ h2 {
     right: 8em;
     top: 2em;
     font-size: 1.2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-}
-
-#manual-title::after {
-    content: "COMO JUGAR";
-    text-align: center;
 }
 
 p {
@@ -130,6 +117,11 @@ p {
     text-shadow: 0 0 20px #A29CD7 !important;
 }
 
+.text {
+    font-family: 'Silkscreen', cursive !important;
+    font-size: 2em !important;
+    text-shadow: 0 0 20px #A29CD7 !important;
+}
 
 .loader {
     position: absolute;
@@ -181,8 +173,6 @@ p {
     animation-delay: calc(0.1s * var(--i));
 }
 
-
-
 @keyframes opatextl {
     0% {
         opacity: 0;
@@ -203,21 +193,6 @@ p {
     }
 }
 
-/*pantalla sign up and sign in*/
-#signup1,
-#signup,
-#signin1,
-#signin {
-    font-family: 'Silkscreen', cursive;
-    color: #fff;
-    font-size: 42px;
-    text-shadow: 0 0 20px #A29CD7;
-    font-size: 2em;
-    font-family: 'Silkscreen', cursive;
-    border: none;
-    text-transform: uppercase;
-    border-radius: 0;
-}
 
 [type="text"],
 [type="password"] {
@@ -228,13 +203,24 @@ p {
     border-radius: 0;
 }
 
+@media (max-width: 450px) {
+
+    [type="text"],
+    [type="password"] {
+        font-size: 1.2em;
+    }
+
+    .text {
+        font-size: 1.5em !important;
+    }
+
+}
+
+
 #btn-login,
 #btn-register,
 #btn-guess {
-    position: relative;
     font-size: 1.3em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
     margin-bottom: 64px;
 }
 
@@ -256,29 +242,8 @@ p {
     overflow-y: scroll;
 }
 
-/*Botones*/
-.menus {
-    float: left;
-    top: 25%;
-    left: -25%;
-    position: absolute;
-}
 
-nav button {
-    list-style: none;
-    font-size: 1.6em;
-    padding: 15px;
-    padding-left: 10px;
-    color: #FFFFFF;
-    display: block;
-    margin-top: 35px;
-    text-align: center;
-}
-/*
-.ajustes {}
 
-.graficos {}
-*/
 label {
     font-size: 1.5em;
     font-family: 'Silkscreen', cursive;
@@ -292,7 +257,6 @@ input[type="range"] {
 }
 
 input::-webkit-slider-thumb {
-    -webkit-appearance: none;
     background: rgb(145, 88, 236) !important;
     box-shadow: 0 0 20px #A29CD7;
 }
@@ -309,31 +273,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
 
 #img-control {
     margin-left: -30%;
-}
-
-.audio {
-    position: absolute;
-    width: 70%;
-    margin-left: -100px;
-    margin-top: 180px;
-}
-
-#aceptar-graficos {
-    font-size: 1.3em;
-    padding: 15px;
-    padding-left: 15px;
-    text-align: center;
-    margin-top: 40px;
-    margin-left: 100px;
-}
-
-#aceptar-audio {
-    font-size: 1.3em;
-    padding: 15px;
-    padding-left: 15px;
-    text-align: center;
-    margin-top: 80px;
-    margin-left: 100px;
 }
 
 /*burbujas 2*/
@@ -395,10 +334,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     }
 }
 
-
-
-
-
 .home-container {
     width: 100vw;
     height: 100vh;
@@ -423,9 +358,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
 }
 
 #btn-play {
-    position: relative;
     font-size: 2.5em;
-    letter-spacing: 0.1em;
     padding: 10px 57px;
 }
 
@@ -461,24 +394,17 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     left: 80%;
 }
 
-
 #btn-config,
 #btn-score,
 #btn-user,
 #btn-exit,
 #btn-book {
-    position: relative;
     padding: 10px 20px;
     font-size: 1.5em;
-    letter-spacing: 0.1em;
     margin-top: 0.5em;
     transition: 0.5s;
 }
 
-
-
-
-/*Btn config, Btn Score, Btn user*/
 .title {
     font-family: 'Silkscreen', cursive;
     font-size: 42px;
@@ -496,11 +422,19 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     .title {
         font-size: 32px;
     }
+
+    label {
+        font-size: 30px,
+    }
 }
 
 @media (max-width: 340px) {
     .title {
         font-size: 24px;
+    }
+
+    label {
+        font-size: 22px;
     }
 }
 
@@ -524,7 +458,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     }
 }
 
-
 /*icono*/
 #img_icono {
     position: absolute;
@@ -536,7 +469,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
 }
 
 @keyframes opacityt {
-
     0% {
         opacity: 0;
     }
@@ -545,7 +477,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
         opacity: 1;
     }
 }
-
 
 .bubbles {
     display: flex;
@@ -581,7 +512,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     }
 }
 
-
 /*pantalla score*/
 .scrollbar {
     position: relative;
@@ -598,17 +528,14 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
     width: 10px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
     background: #1C162E;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
     background: #f1f1f1;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #f1f1f1;
 }
@@ -640,52 +567,16 @@ tbody tr:hover {
     background: rgb(53, 42, 87);
 }
 
-/* players.css */
 #btn-singleplayer {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
     margin-bottom: 64px;
 }
 
-#btn-multiplayer {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-}
-
-/*mode.css*/
 #btn-checkmate {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
     margin-bottom: 64px;
 }
 
-#btn-coldwar {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
-}
-
-/*dificulty.css*/
 #btn-easy {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
     margin-bottom: 64px;
-}
-
-#btn-hard {
-    position: relative;
-    font-size: 2em;
-    letter-spacing: 0.1em;
-    padding: 10px 30px;
 }
 
 @media (max-width: 450px) {
@@ -758,7 +649,6 @@ tbody tr:hover {
     }
 }
 
-
 .desert {
     height: 400px;
     background-image: url('../assets/images/desierto.jpg');
@@ -815,7 +705,6 @@ tbody tr:hover {
     visibility: visible;
 }
 
-
 /* Pause */
 #canvas {
     position: fixed;
@@ -826,29 +715,7 @@ tbody tr:hover {
     opacity: 0.3;
 }
 
-/*Btn-Home*/
 #btn-home,
 #btn-resume {
-    position: relative;
-    font-size: 2.2em;
-    letter-spacing: .1em;
-    padding: 10px 30px;
     margin-right: 8px;
-}
-
-#btn-home #home::before {
-    content: '';
-    position: absolute;
-    top: -3%;
-    left: 93%;
-    width: 10px;
-    height: 5px;
-    background: #2c2727;
-    transform: translateX(-50%) skewX(325deg);
-    transition: 0.5s;
-}
-
-#btn-home:hover #home::after {
-    width: 20px;
-    left: 80%;
 }

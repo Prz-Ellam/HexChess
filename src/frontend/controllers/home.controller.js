@@ -14,7 +14,8 @@ export class HomeController {
                 fov: 60,
                 shadows: true,
                 antialias: true,
-                encoding: 'srgb'
+                encoding: 'srgb',
+                volume: 0.5
             }
             localStorage.setItem('settings', JSON.stringify(settings));
         }

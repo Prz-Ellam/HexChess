@@ -5,7 +5,7 @@ export class PlayersController {
     constructor(app) {
         const root = document.getElementById('root');
         root.innerHTML = view;
-        window.bubbles = setInterval(this.square, 150);
+        //window.bubbles = setInterval(this.square, 150);
         this.bindEvents(app);
     }
 
