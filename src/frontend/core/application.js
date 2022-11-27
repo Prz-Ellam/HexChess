@@ -70,6 +70,8 @@ export class Application {
 
     createScene(team) {
 
+        clearInterval(window.bubbles);
+
         const fbxLoader = new FBXLoader();
         fbxLoader.load(potion, object => {
             Resources.items['Potion'] = object;

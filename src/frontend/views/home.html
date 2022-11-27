@@ -24,9 +24,8 @@
     </div>
 </div>
 
-<div class="home-content">
-    <!--Bubbles-->
-    <h1 id="home-title"></h1>
+<div class="home-container">
+    <h1 class="title" id="home-title">HEXCHESS</h1>
     <div class="bubbles">
         <span style="--i:11"></span>
         <span style="--i:12"></span>
@@ -71,52 +70,32 @@
     </div>
 
     <div id="menu-buttons">
-        <!--Btn Start-->
         <div>
-            <a class="button" href="/players" id="btn-play" style="--clr:#8A7DFD">
+            <a class="button" href="/players" id="btn-play">
                 <span>JUGAR</span>
                 <i class="clickeable"></i>
             </a>
         </div>
-
-        <!--Btn Config-->
-        <div style="display:inline">
-            <a href="/configuration" class="btn button button-anim" id="btn-config"
-                style="--clr:#8A7DFD; display: inline-block;">
-                <span></span>
-                <i id="mov" class="clickeable"></i>
+        <div class="d-inline-block">
+            <a href="/configuration" class="btn button" id="btn-config">
                 <i class="bx bx-cog clickeable"></i>
             </a>
         </div>
-
-        <!--Btn Score-->
-        <div style="display:inline">
-            <a href="/score" class="btn button clickeable" id="btn-score" style="--clr:#8A7DFD; display: inline-block;">
-                <span></span>
-                <i id="mov" class="clickeable"></i>
+        <div class="d-inline-block">
+            <a href="/score" class="btn button" id="btn-score">
                 <i class="bx bx-trophy clickeable"></i>
             </a>
         </div>
-
-        <div style="display:inline">
-            <a class="btn button clickeable" id="btn-book" href="/instructions"
-                style="--clr:#8A7DFD; display: inline-block;">
-                <span></span>
-                <i id="movu" class="clickeable"></i>
+        <div class="d-inline-block">
+            <a class="btn button" id="btn-book" href="/instructions">
                 <i class="bx bx-book-open clickeable"></i>
             </a>
         </div>
-
-        <!--Btn Usuario-->
-        <div style="display:inline">
-            <button class="btn button button-anim" id="btn-user" style="--clr:#8A7DFD; display: inline-block;">
-                <span></span>
-                <i id="movu" class="clickeable"></i>
+        <div class="d-inline-block">
+            <button class="btn button" id="btn-user">
                 <i class="bx bx-exit clickeable"></i>
             </button>
         </div>
-
     </div>
 </div>
-<!--End Bubbles-->
 </div>

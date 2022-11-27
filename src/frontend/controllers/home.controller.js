@@ -1,19 +1,14 @@
 import view from '@views/home.html';
-import { Router } from '../routes/router';
+import { Router } from '@routes/router';
 export class HomeController {
 
     constructor() {
-        
         const root = document.getElementById('root');
         root.innerHTML = view;
-        
-        
         this.bindEvents();
-
     }
 
     bindEvents() {
-
         if (localStorage.getItem('settings') === null) {
             const settings = {
                 fov: 60,
@@ -24,10 +19,8 @@ export class HomeController {
             localStorage.setItem('settings', JSON.stringify(settings));
         }
 
-
-
         document.getElementsByClassName('loader-wrapper')[0].style.display = 'none';
-        document.getElementsByClassName('home-content')[0].style.display = 'block';
+        document.getElementsByClassName('home-container')[0].style.display = 'block';
         
         // TODO: Btn-exit
         const btnExit = document.getElementById('btn-user');
@@ -40,25 +33,12 @@ export class HomeController {
             })
                 .then(res => res.json())
                 .then(res => {
-
-                    const router = new Router();
-                    router.redirect('/');
-
+                    window.location.href = '/';
+                    //const router = new Router();
+                    //router.redirect('/');
                 });
 
         });
-        /*
-        document.getElementById('fab').addEventListener('click', event => {
-            shareScore(100);
-        });
-        */
-
-        
-          
-          
-          //shareScore(100);
-        
     }
 
 }
-

@@ -1,4 +1,5 @@
 import { routes } from '@routes/routes';
+import getCookie from '../helpers/cookies';
 
 export class Router {
 
@@ -26,6 +27,8 @@ export class Router {
     resolve() {
 
         const path = window.location.pathname;
+
+        //const auth = getCookie('Authorization');
 
         const auth = document.cookie.split(';').find(row => row.startsWith('Authorization'))?.split('=')[1];
         if (!auth && (path !== '/login' && path !== '/signup')) {

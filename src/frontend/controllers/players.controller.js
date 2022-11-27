@@ -3,28 +3,26 @@ import view from '@views/players.html';
 export class PlayersController {
 
     constructor(app) {
-
         const root = document.getElementById('root');
         root.innerHTML = view;
+        window.bubbles = setInterval(this.square, 150);
+        this.bindEvents(app);
+    }
 
-        document.getElementById('btn-singleplayer').addEventListener('click', e => {
-            app.configuration.players = e.currentTarget.getAttribute('value');
+    bindEvents(app) {
+        document.getElementById('btn-singleplayer').addEventListener('click', event => {
+            app.configuration.players = event.currentTarget.getAttribute('value');
         });
 
-        document.getElementById('btn-multiplayer').addEventListener('click', e => {
-            app.configuration.players = e.currentTarget.getAttribute('value');
+        document.getElementById('btn-multiplayer').addEventListener('click', event => {
+            app.configuration.players = event.currentTarget.getAttribute('value');
         });
-
-        localStorage.setItem('path', '/players');
-
-        //setInterval(this.square, 150);
-        
     }
 
     square() {
-        let section = document.querySelector('.bubbles-circle');
-        let square = document.createElement('span');
-        let size = Math.random() * 50;
+        const section = document.querySelector('.bubbles-circle');
+        const square = document.createElement('span');
+        const size = Math.random() * 50;
     
         square.style.width = 30 + size + 'px';
         square.style.height = 30 + size + 'px';
@@ -36,26 +34,4 @@ export class PlayersController {
         setTimeout(() => square.remove(), 5000);
     }
 
-}
-
-
-const playerComponent = {
-    html: view,
-    events: {
-        'click': {
-            '#btn-singleplayer': e => {
-                app.configuration.players = e.currentTarget.getAttribute('value');
-                // singleplayer
-            },
-            '#btn-multiplayer': e => {
-                app.configuration.players = e.currentTarget.getAttribute('value');
-                // multiplayer
-            }
-        }
-    },
-    styles: [
-        '../styles/bubbles.css',
-        '../styles/styles.css',
-        '../styles/players.css'
-    ]
 }

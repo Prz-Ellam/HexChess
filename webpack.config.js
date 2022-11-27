@@ -89,7 +89,8 @@ module.exports = {
             '@routes': path.resolve(__dirname, 'src/frontend/routes'),
             '@models': path.resolve(__dirname, 'src/frontend/assets/models'),
             '@audios': path.resolve(__dirname, 'src/frontend/assets/audios'),
-            '@images': path.resolve(__dirname, 'src/frontend/assets/images')
+            '@images': path.resolve(__dirname, 'src/frontend/assets/images'),
+            '@assets': path.resolve(__dirname, 'src/frontend/assets')
         },
     },
     plugins: [
