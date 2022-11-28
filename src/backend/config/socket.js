@@ -60,7 +60,6 @@ module.exports = async function (io) {
                 (game.turn === 'GREEN' && updated.greenComplete)) {
 
                 clearInterval(gamesInterval[game.code]['interval']);
-
             }
 
             if (game.redComplete && game.greenComplete) {
@@ -77,33 +76,6 @@ module.exports = async function (io) {
         } 
     });
 
-    clientStream.on('change', async change => {
-
-        if (change.operationType === 'delete') {
-
-            const socketId = change.documentKey._id;
-            console.log(`The games of the client ${socketId} will be deleted`);
-
-            const games = await Game.find({ $or: [ { redPlayer: socketId }, { greenPlayer: socketId } ] });
-            console.log(`Total games deleted: ${games.length}`)
-            games.forEach(game => {
-                if (game.redPlayer === socketId) {
-                    //clearInterval(gamesInterval[game.code]['interval']);
-                    delete gamesInterval[game.code];
-                    console.log(game)
-                    io.to(game.greenPlayer).emit('finishGame');
-                }
-                else {
-                    //clearInterval(gamesInterval[game.code]['interval']);
-                    delete gamesInterval[game.code];
-                    io.to(game.redPlayer).emit('finishGame');
-                }
-            });
-
-            await Game.deleteMany({ $or: [ { redPlayer: socketId }, { greenPlayer: socketId } ] }); 
-        }
-    });
-
     io.on('connection', socket => {
 
         console.log(`New client with id: ${socket.id} joined the server`);
@@ -113,6 +85,23 @@ module.exports = async function (io) {
         socket.on('disconnect', async () => {
 
             console.log(`The client with id: ${socket.id} disconnected from server`);
+            console.log(`The games of the client ${socket.id} will be deleted`);
+
+            const games = await Game.find({ $or: [ { redPlayer: socket.id }, { greenPlayer: socket.id } ] });
+            console.log(`Total games deleted: ${games.length}`)
+            games.forEach(game => {
+                if (game.redPlayer === socket.id) {
+                    delete gamesInterval[game.code];
+                    console.log(game)
+                    io.to(game.greenPlayer).emit('finishGame');
+                }
+                else {
+                    delete gamesInterval[game.code];
+                    io.to(game.redPlayer).emit('finishGame');
+                }
+            });
+
+            await Game.deleteMany({ $or: [ { redPlayer: socket.id }, { greenPlayer: socket.id } ] }); 
             await Clients.deleteOne({ _id: socket.id });
 
         });
