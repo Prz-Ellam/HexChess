@@ -291,7 +291,7 @@ export class GameManager {
 
             const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
             if (remainingTeam === 0) {
-                const winner = (remainingTeam === 'RED') ? 'GREEN' : 'RED'; 
+                const winner = (defeatedTeam === 'RED') ? 'GREEN' : 'RED'; 
                 this.gameOver(winner);
                 return;
             }
@@ -337,7 +337,7 @@ export class GameManager {
 
         const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
         if (remainingTeam === 0) {
-            const winner = (remainingTeam === 'RED') ? 'GREEN' : 'RED';
+            const winner = (defeatedTeam === 'RED') ? 'GREEN' : 'RED';
             this.gameOver(winner);
             return;
         }
