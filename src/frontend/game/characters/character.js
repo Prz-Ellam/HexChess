@@ -176,7 +176,7 @@ export class Character {
                         child.material.opacity = 1.0;
                     }
                 });
-                this.scale.set(.012, .012, .012);
+                this.scale.set(.013, .013, .013);
                 this.powerup = item;
                 this.powerupTurns = 1;
                 break;

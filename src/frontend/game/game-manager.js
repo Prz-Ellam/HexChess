@@ -323,7 +323,7 @@ export class GameManager {
                             child.material.opacity = 0.2;
                             break;
                         case 'Book':
-                            character.scale.set(.012, .012, .012);
+                            character.scale.set(.013, .013, .013);
                             break;
                         case 'Potion':
                             child.material.emissive = new THREE.Color(0x964B00);
