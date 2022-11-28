@@ -17,6 +17,10 @@ body::before {
     z-index: -1;
 }
 
+.bg-purple {
+    background-color: #1B1B36;
+}
+
 h2 {
     font-family: 'Silkscreen', cursive !important;
     color: #FFFFFF !important;
