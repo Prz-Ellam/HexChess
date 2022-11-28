@@ -6,7 +6,13 @@ export class Router {
     constructor(application) {
 
         this.application = application;
-        window.onpopstate = () => { this.resolve() };
+        window.onpopstate = () => {
+            if (this.application.game) {
+                this.application.socket.emit('deleteGame', this.application.game);
+                this.application.game = null;
+            }
+            this.resolve() 
+        };
         window.route = this.routing;
         //window.onbeforeunload = this.close;
 

@@ -212,8 +212,9 @@ module.exports = async function (io) {
     
                 if (!valid)
                     return socket.emit('findGame', {
-                        'status': false,
-                        'message': 'Parameters are not correct'
+                        status: false,
+                        message: 'Parameters are not correct',
+                        code: null
                     });
     
                 const code = nanoid(12);
@@ -230,21 +231,24 @@ module.exports = async function (io) {
                 socket.join(code);
     
                 socket.emit('findGame', {
-                    'status': true,
-                    'message': code
+                    status: true,
+                    message: 'Create a game successfully',
+                    code: code
                 });
             }
             else {
                 if (!game)
                     return socket.emit('findGame', {
                         status: false,
-                        message: "The game doesn't exists"
+                        message: "The game doesn't exists",
+                        code: null
                     });
 
                 if (game.redPlayer === socket.id)
                     return socket.emit('findGame', {
                         status: false,
-                        message: "You are already in the game"
+                        message: "You are already in the game",
+                        code: null
                     });
 
                 const newGame = await Game.findOneAndUpdate({ code: game.code }, 
@@ -253,7 +257,8 @@ module.exports = async function (io) {
 
                 socket.emit('findGame', {
                     status: true,
-                    message: 'You joined the game successfully'
+                    message: 'You joined the game successfully',
+                    code: game.code
                 });
 
                 //io.to(game.code).emit('startGame', newGame);
@@ -331,6 +336,22 @@ module.exports = async function (io) {
         socket.on('move', data => {
             const game = Array.from(socket.rooms)[1];
             io.to(game).emit('move', data);
+        });
+
+        socket.on('deleteGame', async game => {
+            console.log(`Deleting game ${game}`);
+
+            const gameOne = await Game.findOne({ $or: [ { redPlayer: socket.id }, { greenPlayer: socket.id } ] });
+           
+            if (gameOne.redPlayer === socket.id) {
+                console.log(gameOne)
+                io.to(gameOne.greenPlayer).emit('finishGame');
+            }
+            else {
+                io.to(gameOne.redPlayer).emit('finishGame');
+            }
+            
+            await Game.deleteOne({ code: game });
         });
 
         socket.on('setItem', data => {

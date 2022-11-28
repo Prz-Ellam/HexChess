@@ -62,7 +62,11 @@ export class Application {
 
     multiplayer() {
         this.socket.on('findGame', data => {
-            if (!data.status) this.router.redirect('/')
+            if (!data.status) {
+                this.router.redirect('/');
+                return;
+            }
+            this.game = data.code;
         });
         this.socket.emit('findGame', this.configuration);
         this.socket.on('startGame', data => { this.createScene(data.team) });
