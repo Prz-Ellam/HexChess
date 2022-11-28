@@ -311,6 +311,7 @@ export class GameManager {
         const team = recruiter.team;
         const defeatedTeam = character.team;
         character.traverse(child => {
+            character.scale.set(.01, .01, .01);
             if (child.isMesh) {
                 child.material = Character.maps[team][character.character].clone();
                 child.material.emissive = new THREE.Color(0x000000);
@@ -332,7 +333,6 @@ export class GameManager {
             }
         });
 
-        character.scale.set(.01, .01, .01);
         character.team = recruiter.team;
 
         const remainingTeam = getObjectsByProperty(this.scene, 'team', defeatedTeam).length;
