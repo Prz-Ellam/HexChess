@@ -682,7 +682,7 @@ export class GameManager {
     }
 
     gameOver(winner) {
-        if (this.configuration.players === Players.MULTIPLAYER && winner === this.team) {
+        if (winner === this.team) {
             fetch('/api/v1/games', {
                 method: 'POST'
             })
