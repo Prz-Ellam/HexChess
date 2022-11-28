@@ -1,9 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: { 
         main: './src/frontend/main.js' 
     },
@@ -13,7 +14,7 @@ module.exports = {
         clean: true,
         assetModuleFilename: 'assets/[name][ext]'
     },
-    devtool: 'source-map',
+    //devtool: 'source-map',
     module: {
         rules: [
             {
@@ -101,6 +102,13 @@ module.exports = {
         }),
         new MiniCssExtractPlugin({
             filename: 'main.bundle.css'
-        })
-    ]
+        }),
+    ],
+    optimization: {
+        minimizer: [
+          new CssMinimizerPlugin(),
+          '...'
+        ],
+        minimize: true,
+    }
 };

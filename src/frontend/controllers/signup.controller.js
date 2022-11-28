@@ -1,4 +1,5 @@
 import view from '@views/signup.html';
+import Swal from 'sweetalert2';
 import { Router } from '../routes/router';
 
 export class SignupController {
@@ -29,7 +30,20 @@ export class SignupController {
             })
             .then(res => res.json())
             .then(res => {
-                if (res.status) {
+                if (!res.status) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        background: '#1B1B36',
+                        buttonsStyling: false,
+                        text: res.message,
+                        customClass: {
+                            title: 'title-style',
+                            confirmButton: 'btn button button-anim btn-next',
+                        },
+                    });
+                }
+                else {
                     const router = new Router();
                     router.redirect('/');
                 }

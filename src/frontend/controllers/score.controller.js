@@ -16,6 +16,8 @@ export class ScoreController {
         .then(res => {
             const tbody = document.getElementById('table-body');
             let i = 1;
+
+            res.sort((a, b) =>  b.victories - a.victories);
             res.forEach(score => {
                 tbody.innerHTML += `
                 <tr>

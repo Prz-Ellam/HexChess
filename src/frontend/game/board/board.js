@@ -52,14 +52,7 @@ export class Board {
                 hexagon.position.x *= this.space;
                 hexagon.position.y = 0.5;
                 hexagon.position.z = z * 1.535;
-/*
-                if (dificulty === Dificulty.HARD) {
-                    let change = Math.random() * (2 - 1) + 1;
-                    change = Math.round(change);
-                    hexagon.scale.y = change;
-                    hexagon.position.y = change / 2;
-                }
-*/
+
                 const xCoord = (x - startX) + 1;
                 const zCoord = (z * -1) - startZ;
                 hexagon.name = `(${xCoord}, ${zCoord})`;

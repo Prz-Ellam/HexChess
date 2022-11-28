@@ -364,6 +364,10 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
 #btn-play {
     font-size: 2.5em;
     padding: 10px 57px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #btn-play i::before {
