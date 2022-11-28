@@ -678,7 +678,7 @@ export class GameManager {
         this.audio.powerup.play();
         character.setPowerup(item.type);
         this.scene.remove(item);
-        this.items--;
+        this.items--; 
     }
 
     gameOver(winner) {
